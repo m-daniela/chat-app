@@ -1,10 +1,13 @@
 
-import './App.css';
+import './App.scss';
+import ChatWindow from './components/ChatWindow';
+import SidePanel from './components/SidePanel';
 
 function App() {
   return (
     <div className="App">
-      Here goes the project
+      <SidePanel />
+      <ChatWindow />
     </div>
   );
 }
