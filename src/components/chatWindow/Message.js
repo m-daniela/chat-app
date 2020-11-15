@@ -1,11 +1,11 @@
 import React from 'react'
 
 const Message = (props) => {
-    return (
+  return (
         <div className="message">
             lorem ipsum {props.number}
         </div>
-    )
+  )
 }
 
 export default Message

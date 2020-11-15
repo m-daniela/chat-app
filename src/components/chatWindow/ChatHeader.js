@@ -1,11 +1,11 @@
 import React from 'react'
 
 const ChatHeader = () => {
-    return (
+  return (
         <nav>
             Chat Header
         </nav>
-    )
+  )
 }
 
 export default ChatHeader

@@ -15,13 +15,16 @@
 
 ### Tutorials
 - [React Chat with Hooks Tutorial](https://reactjs.chat/)
-- [Building a Live Chat App with React Tutorial - Express and Socket.io](https://www.youtube.com/watch?v=hiiaHyhhwBU)
+- [Building a Live Chat App with React Tutorial - Express and Socket.io](https://www.youtube.com/watch?v=hiiaHyhhwBU)-
 - [Building a Real-Time Chat App with React and Firebase](https://css-tricks.com/building-a-real-time-chat-app-with-react-and-firebase/)
 - [How To Build A Chat App With React, Socket.io, And Express](https://medium.com/dataseries/how-to-build-a-chat-app-with-react-socket-io-and-express-190d927b7002)
 - [React JS Tutorial: Building Firebase Chat App (React Hooks)](https://www.djamware.com/post/5f2a1d9d9c794f177fd7b527/react-js-tutorial-building-firebase-chat-app-react-hooks)
 - [Build a Chat App - React Tutorial Course - with chatkit, might be useful](https://www.youtube.com/watch?v=jFNHerJqvFw)
 - [React Chat Tutorial - stream chat](https://getstream.io/chat/react-chat/tutorial/)
 - [Real-Time Chat Application with React, Nodejs, & Socket.io](https://dev.to/mrshawnhum/real-time-chat-application-with-react-nodejs-socket-io-25c5)
+- [Build a Chat App Using React Hooks in 100 Lines of Code ](https://css-tricks.com/build-a-chat-app-using-react-hooks-in-100-lines-of-code/)
+- [Let’s Create a React app with Firebase Auth, Express Backend and MongoDB Database](https://medium.com/javascript-in-plain-english/lets-create-react-app-with-firebase-auth-express-backend-and-mongodb-database-805c83e4dadd)
+- [Auth context](https://medium.com/javascript-in-plain-english/authentication-in-react-caf2abfa0494)
 
 #### Adding some encryption
 

@@ -1,5 +1,6 @@
 
-@import "./styles/_general";
+@import "./styles/general";
+@import "./styles/forms";
 
 .App {
   height: 100vh;
@@ -7,6 +8,7 @@
   color: var(--primary_font);
   display: flex;
   flex-direction: row;
+  box-sizing: border-box;
 }
 
 nav{
@@ -15,6 +17,8 @@ nav{
   background-color: var(--accent_bg);
   @include vertical_align();
 }
+
+
 
 .side_panel{
   width: 25%;
@@ -49,24 +53,26 @@ nav{
     background-color: var(--accent_bg);
     display: flex;
 
-    input, button{
-      color: var(--primary_font);
-      background-color: transparent;
-      border: none;
-    }
+    // input, button{
+    //   color: var(--primary_font);
+    //   background-color: transparent;
+    //   border: none;
+    // }
 
-    input{
-      width: 100%;
-      margin: 10px;
-      border-bottom: 1px solid var(--highlights);
-    }
+    // input{
+    //   width: 100%;
+    //   margin: 10px;
+    //   border-bottom: 1px solid var(--highlights);
+    //   // background-color: transparentize($color: #4355ff, $amount: .3);
+    // }
 
-    button{
-      padding: 0 20px;
-    }
+    // button{
+    //   padding: 0 20px;
+    // }
     
   }
 }
+
 
 .message{
   width: max-content;
@@ -74,6 +80,7 @@ nav{
   max-width: 50%;
   padding: 15px 20px;
   margin: 10px;
+  border-radius: 5px;
   background-color: var(--message_bg);
 }
 

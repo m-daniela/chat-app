@@ -1,17 +1,16 @@
 import React from 'react'
 import ChatHeader from './ChatHeader'
-import MessageList from './MessageList';
-import MessageInput from './MessageInput';
-
+import MessageList from './MessageList'
+import MessageInput from './MessageInput'
 
 const ChatWindow = () => {
-    return (
+  return (
         <div className="chat_window">
             <ChatHeader />
             <MessageList />
             <MessageInput />
         </div>
-    )
+  )
 }
 
 export default ChatWindow
