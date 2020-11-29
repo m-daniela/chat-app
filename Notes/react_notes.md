@@ -24,7 +24,11 @@ right:
 
 # TIMETABLE
 
-
+{
+  "code": "auth/email-already-in-use",
+  "message": "The email address is already in use by another account.",
+  "a": null
+}
 
 ## General React + Redux maybe
 
@@ -81,6 +85,8 @@ right:
 
 
 ## Firebase
+- [docs](https://firebase.google.com/docs/web/setup)
+
 
 confing:
 
@@ -108,3 +114,9 @@ confing:
 
 
 ```
+
+### User details (update)
+- [docs](https://firebase.google.com/docs/auth/web/manage-users#update_a_users_profile)
+
+## Socket.io
+- [docs](https://socket.io/docs/v3/index.html)

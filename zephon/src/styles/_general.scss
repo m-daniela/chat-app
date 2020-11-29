@@ -1,0 +1,27 @@
+
+:root{
+    // --primary_bg: #3c5e69;
+    // --primary_font: #faf1e7;
+    // --secondary_bg: #222725;
+    // --accent_bg: #161a18;
+    // --message_bg: #e8711e;
+    // --highlights: rgba(255, 255, 255, .4);
+    // --shadows: rgba(0, 0, 0, .4);
+    // --error: #e8711e;
+
+    --primary_bg: #012a16;
+    --primary_font: #faf1e7;
+    --secondary_bg: #091008a1;
+    --accent_bg: #091008;
+    --message_bg: #103724;
+    --highlights: rgba(255, 255, 255, .4);
+    --shadows: rgba(0, 0, 0, .4);
+    --error: #e8711e;
+  
+}
+
+@mixin vertical_align{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
