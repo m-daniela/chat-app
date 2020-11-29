@@ -6,9 +6,11 @@ const MessageList = () => {
   const {messages} = useContext(ChatContext);
   return (
         <div className="message_list">
+          <div>
             {
                 messages.map(elem => <Message key={elem} number={elem}/>)
             }
+          </div>
         </div>
   )
 }

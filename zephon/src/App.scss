@@ -45,7 +45,9 @@ nav{
     margin-top: auto;
     padding-left: 5%;
     padding-right: 5%;
-    overflow-y: scroll;
+    &:first-child{
+      overflow-y: scroll;
+    }
   }
   .message_input{
     width: 100%;

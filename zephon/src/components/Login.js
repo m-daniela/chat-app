@@ -15,7 +15,9 @@ const Login = () => {
             e.preventDefault()
             let data = await signin(email, password);
             const user = data.user;
-            const {uid, displayName} = user;
+            // const {uid, displayName} = user;
+            const {uid} = user;
+            
             login(uid, email);
             history.replace("/");
         }

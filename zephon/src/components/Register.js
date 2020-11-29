@@ -26,7 +26,9 @@ const Register = () => {
                 let data = await register(email, password);
 
                 let user = data.user;
-                const {uid, displayName} = user;
+                // const {uid, displayName} = user;
+                const {uid} = user;
+
                 login(uid, email);
                 history.replace("/");
                 

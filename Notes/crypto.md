@@ -26,6 +26,8 @@
 - [Let’s Create a React app with Firebase Auth, Express Backend and MongoDB Database](https://medium.com/javascript-in-plain-english/lets-create-react-app-with-firebase-auth-express-backend-and-mongodb-database-805c83e4dadd)
 - [Auth context](https://medium.com/javascript-in-plain-english/authentication-in-react-caf2abfa0494)
 - [You Can Build an FB Messenger Style Chat App with ReactJs — Here’s How! (Intermediate)](https://medium.com/@coderacademy/you-can-build-an-fb-messenger-style-chat-app-with-reactjs-heres-how-intermediate-211b523838ad)
+- [Firebase + React](https://www.youtube.com/watch?v=zQyrwxMPm88)
+
 
 #### Express + node
 - [](https://bezkoder.com/react-node-express-mysql/)
@@ -33,6 +35,7 @@
 
 #### Sockets
 - [](https://medium.com/dailyjs/combining-react-with-socket-io-for-real-time-goodness-d26168429a34)
+- [Emits cheatsheet](https://socket.io/docs/v3/emit-cheatsheet/index.html)
 
 #### Adding some encryption
 

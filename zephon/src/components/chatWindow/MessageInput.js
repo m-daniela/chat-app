@@ -17,7 +17,9 @@ const MessageInput = () => {
   }
   return (
         <form className="message_input" onSubmit={e => onSendMessage(e)}>
-            <input type="text" onChange={e => onChanteInput(e.target.value)}/>
+            <input type="text" 
+              onChange={e => onChanteInput(e.target.value)}
+              value={message}/>
             <button type="submit">Send</button>
         </form>
   )

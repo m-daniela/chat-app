@@ -5,8 +5,10 @@ export const ChatContext = createContext();
 
 const reducer = (state, action) => {
     switch(action.type){
-        case ("SEND_MESSAGE"): console.log("help?");
+        case ("SEND_MESSAGE"): {
             return [...state, action.message];
+        }
+       
         default: 
             return state;
     }
@@ -24,10 +26,10 @@ const Context = (props) => {
 
     if (!socket){
         socket = io(":5000");
-        socket.on('message', function(msg){
+        socket.on('broadcast', function(msg){
             dispatch({type: "SEND_MESSAGE", message: msg});
             console.log(msg);
-          });
+        });
     }
 
     return (
