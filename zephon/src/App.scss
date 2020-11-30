@@ -11,10 +11,11 @@
   box-sizing: border-box;
 }
 
-nav{
+.header{
   width: 100%;
   height: 60px;
   background-color: var(--accent_bg);
+  text-indent: 15px;
   @include vertical_align();
 }
 
@@ -26,10 +27,19 @@ nav{
 
 .chat_item{
   @include vertical_align();
-  padding: 10px 15px;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+
   &:hover{
     opacity: 0.6;
   }
+
+  // &:after{
+  //   content: "";
+  //   display: block;
+  //   border-bottom: 1px solid var(--input_bg);
+  //   margin-top: 10px;
+  // }
 
 }
 
@@ -37,6 +47,8 @@ nav{
 .chat_window, .message_list, .chat_list{
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .chat_window{
@@ -45,38 +57,27 @@ nav{
     margin-top: auto;
     padding-left: 5%;
     padding-right: 5%;
-    &:first-child{
-      overflow-y: scroll;
-    }
+    overflow-y: auto;
   }
   .message_input{
     width: 100%;
-    height: 50px;
-    margin-top: 10px;
-    padding-bottom: 10px;
     background-color: var(--accent_bg);
     display: flex;
 
-    // input, button{
-    //   color: var(--primary_font);
-    //   background-color: transparent;
-    //   border: none;
-    // }
-
-    // input{
-    //   width: 100%;
-    //   margin: 10px;
-    //   border-bottom: 1px solid var(--highlights);
-    //   // background-color: transparentize($color: #4355ff, $amount: .3);
-    // }
-
-    // button{
-    //   padding: 0 20px;
-    // }
+    input{
+      @include custom_input;
+      &:focus{
+        @include custom_input;
+      }
+    }
+    button{
+      margin: 0;
+      padding: 0 20px;
+      height: auto;
+    }
     
   }
 }
-
 
 .message{
   // width: max-content;

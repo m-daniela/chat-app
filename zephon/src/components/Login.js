@@ -45,7 +45,7 @@ const Login = () => {
                     Password
                     <input type="password" required onChange={e => onChangePassword(e.target.value)}/>
                 </label>
-                {error === ""? "": error}
+                <span>{error === "" ? "": error}</span>
 
                 <button type="submit" className="primary_button">Log In</button>
                 <Link to="/register">New here? register now</Link>

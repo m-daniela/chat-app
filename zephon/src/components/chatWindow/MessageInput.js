@@ -11,9 +11,12 @@ const MessageInput = () => {
 
   const onSendMessage = (e) => {
     e.preventDefault();
-    dispatch({type: "SEND_MESSAGE", message});
-    sendMessage(message);
-    setMessage("");
+    if(message !== ""){
+      dispatch({type: "SEND_MESSAGE", message});
+      // sendMessage(message);
+      setMessage("");
+    }
+    
   }
   return (
         <form className="message_input" onSubmit={e => onSendMessage(e)}>

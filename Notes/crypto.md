@@ -8,6 +8,21 @@
 	- if I stay with firebase: [](https://developer.virgilsecurity.com/docs/e3kit/)
 - postman
 
+<br>
+
+## Must do
+
+- frontend /
+- an actually nice and good looking color scheme/
+- sockets 
+	- broadcast message/
+	- private messages
+- authetication
+	- works with firebase, must extend it somehow or move the logic to back
+- backend + database
+- ee2e somehow, who knows how
+<br>
+
 ## Getting started - the app
 
 - react + node, maybe, more likely
@@ -27,7 +42,15 @@
 - [Auth context](https://medium.com/javascript-in-plain-english/authentication-in-react-caf2abfa0494)
 - [You Can Build an FB Messenger Style Chat App with ReactJs — Here’s How! (Intermediate)](https://medium.com/@coderacademy/you-can-build-an-fb-messenger-style-chat-app-with-reactjs-heres-how-intermediate-211b523838ad)
 - [Firebase + React](https://www.youtube.com/watch?v=zQyrwxMPm88)
-
+<br>
+- [Building a Persistent React Native Chat App: Part I — Database](https://medium.com/@gabrielrumbaut/building-a-persistent-react-native-chat-app-part-i-database-ae9de470ebff)
+<br>
+- [#3 Private Messaging - A Chat App with Socket.io and ReactJS](https://www.youtube.com/watch?v=PVXHFJlntAU)
+- [React.js Chat App with Firebase Firestore Web Tutorial 2020 - React Js Facebook Messenger Clone App](https://www.youtube.com/watch?v=JTxnkGnaqXE)
+- [Build a Chat App With MongoDB & Socket.io [Part 1]](https://www.youtube.com/watch?v=8Y6mWhcdSUM)
+- [You Can Build an FB Messenger Style Chat App with ReactJs — Here’s How! (Intermediate)](https://medium.com/@coderacademy/you-can-build-an-fb-messenger-style-chat-app-with-reactjs-heres-how-intermediate-211b523838ad)
+<br>
+- [Repo resource](https://github.com/fernandohenriques/chat-app)
 
 #### Express + node
 - [](https://bezkoder.com/react-node-express-mysql/)

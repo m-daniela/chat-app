@@ -9,11 +9,21 @@
     // --shadows: rgba(0, 0, 0, .4);
     // --error: #e8711e;
 
-    --primary_bg: #012a16;
-    --primary_font: #faf1e7;
-    --secondary_bg: #091008a1;
-    --accent_bg: #091008;
-    --message_bg: #103724;
+    // --primary_bg: #012a16;
+    // --primary_font: #faf1e7;
+    // --secondary_bg: #091008a1;
+    // --accent_bg: #091008;
+    // --message_bg: #103724;
+    // --highlights: rgba(255, 255, 255, .4);
+    // --shadows: rgba(0, 0, 0, .4);
+    // --error: #e8711e;
+
+    --primary_bg: #181818;
+    --primary_font: #faf1e7cc;
+    --secondary_bg: #080808a1;
+    --accent_bg: #131313;
+    --message_bg: #222222;
+    --input_bg: #3030307c;
     --highlights: rgba(255, 255, 255, .4);
     --shadows: rgba(0, 0, 0, .4);
     --error: #e8711e;
@@ -24,4 +34,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+@mixin custom_input{
+    background-color: var(--input_bg);
+    margin: 15px;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
 }

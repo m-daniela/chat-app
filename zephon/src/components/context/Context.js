@@ -21,16 +21,16 @@ const sendMessage = (value) =>{
 }
 
 const Context = (props) => {
-    const state = ["abcd", "hello", "lorem"]
+    const state = ["abcd", "hello", "lorem"];
     const [messages, dispatch] = useReducer(reducer, state);
 
-    if (!socket){
-        socket = io(":5000");
-        socket.on('broadcast', function(msg){
-            dispatch({type: "SEND_MESSAGE", message: msg});
-            console.log(msg);
-        });
-    }
+    // if (!socket){
+    //     socket = io(":5000");
+    //     socket.on('broadcast', function(msg){
+    //         dispatch({type: "SEND_MESSAGE", message: msg});
+    //         console.log(msg);
+    //     });
+    // }
 
     return (
         <ChatContext.Provider value={{messages, dispatch, sendMessage}}>

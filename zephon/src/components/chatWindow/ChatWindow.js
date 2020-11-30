@@ -1,12 +1,12 @@
 import React from 'react'
-import ChatHeader from './ChatHeader'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
+import Header from '../common/Header'
 
 const ChatWindow = () => {
   return (
         <div className="chat_window">
-            <ChatHeader />
+            <Header title={"Chat goes here"} />
             <MessageList />
             <MessageInput />
         </div>

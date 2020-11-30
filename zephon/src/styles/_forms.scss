@@ -16,17 +16,22 @@ label{
   margin: 5px 0;
 }
 
-button{
-  margin-top: 20px;
-  padding: 0 20px;
-}
+// button{
+//   margin-top: 20px;
+//   padding: 0 20px;
+// }
 
 .custom_form{
   width: 30%;
   margin: auto;
-  padding: 0 50px;
+  padding: 30px 50px;
   display: flex;
   flex-direction: column;
+  background-color: var(--accent_bg);
+  border-radius: 5px;
+  // clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  // clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+  // clip-path: polygon(50% 0, 70% 10%, 90% 0, 100% 9%, 100% 100%, 0 100%, 0 0, 7% 9%, 21% 0, 36% 10%);
 
   a{
     color: var(--primary_font);
@@ -35,9 +40,14 @@ button{
     padding: 30px;
   }
 
+  span{
+    margin-bottom: 20px;
+  }
+
   input{
-    margin: 5px 0 10px 0;
-    padding: 10px;
+    @include custom_input;
+    margin-left: 0;
+    margin-right: 0;
     &:focus{
       border: 1px solid var(--highlights);
       border-radius: 10px;

@@ -1,11 +1,11 @@
 import React from 'react'
 import ChatList from './ChatList'
-import SideHeader from '../common/SideHeader'
+import Header from '../common/Header'
 
 const SidePanel = () => {
     return (
         <div className="side_panel">
-            <SideHeader title={"Chats"}/>
+            <Header title={"Chats"}/>
             <ChatList />
         </div>
     )

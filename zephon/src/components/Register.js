@@ -64,17 +64,17 @@ const Register = () => {
                 Email
                 <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
             </label>
-            {error.wrongEmail === "" ? "" : error.wrongEmail}
+            <span>{error.wrongEmail === "" ? "" : error.wrongEmail}</span>
             <label>
                 Password
                 <input type="password" required onChange={e => onChangePassword(e.target.value)}/>
             </label>
-            {error.wrongPass === "" ? "" : error.wrongPass}
+            <span>{error.wrongPass === "" ? "" : error.wrongPass}</span>
             <label>
                 Retype password
                 <input type="password" required onChange={e => checkPasswords(e.target.value)}/>
             </label>
-            {error.passNotMatching === "" ? "" : error.passNotMatching}
+            <span>{error.passNotMatching === "" ? "" : error.passNotMatching}</span>
             <button type="submit" className="primary_button">Register</button>
             <Link to="/login">Have an account? log in</Link>
         </form>
