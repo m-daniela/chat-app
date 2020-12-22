@@ -1,9 +1,13 @@
 import React, {useContext, useState} from 'react'
 import {ChatContext} from "../context/Context"
+import {io} from "socket.io-client";
 
-const MessageInput = () => {
+let socket;
+
+const MessageInput = ({addMessage}) => {
   const [message, setMessage] = useState("");
-  const {dispatch, sendMessage} = useContext(ChatContext);
+  // const {dispatch, sendMessage} = useContext(ChatContext);
+  const {dispatch} = useContext(ChatContext);
 
   const onChanteInput = (text) => {
     setMessage(text);
@@ -11,11 +15,26 @@ const MessageInput = () => {
 
   const onSendMessage = (e) => {
     e.preventDefault();
-    if(message !== ""){
-      dispatch({type: "SEND_MESSAGE", message});
-      // sendMessage(message);
+    // if(message !== ""){
+    //   dispatch({type: "SEND_MESSAGE", message});
+    //   sendMessage(message);
+    //   setMessage("");
+    // }
+
+    
+      // socket = io("http://localhost:5000");
+      // socket.emit('message', message);
+      // socket.on("message", (msg) =>{
+      //   addMessage(msg);
+      //   // dispatch({type: "SEND_MESSAGE", message: msg});
+      //   setMessage("");
+      // });
+
+      addMessage(message);
       setMessage("");
-    }
+    
+
+    
     
   }
   return (

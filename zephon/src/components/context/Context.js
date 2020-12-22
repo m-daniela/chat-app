@@ -14,11 +14,12 @@ const reducer = (state, action) => {
     }
 }
 
-let socket;
+// let socket;
 
-const sendMessage = (value) =>{
-    socket.emit("message", value);
-}
+// const sendMessage = (value) =>{
+    
+//     socket.emit("broadcast", value);
+// }
 
 const Context = (props) => {
     const state = ["abcd", "hello", "lorem"];
@@ -26,14 +27,15 @@ const Context = (props) => {
 
     // if (!socket){
     //     socket = io(":5000");
-    //     socket.on('broadcast', function(msg){
+    //     socket.on('broadcast', msg =>{
+    //         // console.log(msg);
+
     //         dispatch({type: "SEND_MESSAGE", message: msg});
-    //         console.log(msg);
     //     });
     // }
 
     return (
-        <ChatContext.Provider value={{messages, dispatch, sendMessage}}>
+        <ChatContext.Provider value={{messages, dispatch}}>
             {props.children}
         </ChatContext.Provider>
     )

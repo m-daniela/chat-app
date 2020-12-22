@@ -20,8 +20,31 @@
 - authetication
 	- works with firebase, must extend it somehow or move the logic to back
 - backend + database
+	- persisting messages
 - ee2e somehow, who knows how
 <br>
+
+
+## Data
+
+### Authetication - user
+- login with email and password
+- has:
+	- uid
+	- display name
+	- email
+	- password
+	- maybe picture, but not interested rn
+
+### Message
+- some id
+- text
+- date
+
+### Conversation
+- some id
+- user[]
+- message[]
 
 ## Getting started - the app
 
@@ -43,13 +66,25 @@
 - [You Can Build an FB Messenger Style Chat App with ReactJs — Here’s How! (Intermediate)](https://medium.com/@coderacademy/you-can-build-an-fb-messenger-style-chat-app-with-reactjs-heres-how-intermediate-211b523838ad)
 - [Firebase + React](https://www.youtube.com/watch?v=zQyrwxMPm88)
 <br>
+
+
 - [Building a Persistent React Native Chat App: Part I — Database](https://medium.com/@gabrielrumbaut/building-a-persistent-react-native-chat-app-part-i-database-ae9de470ebff)
+
+
 <br>
+
+
 - [#3 Private Messaging - A Chat App with Socket.io and ReactJS](https://www.youtube.com/watch?v=PVXHFJlntAU)
+- [Real Time Chat App with ReactJS and Socket.io](https://www.youtube.com/playlist?list=PLfUtdEcvGHFHdOYFXj4cY6ZIFkSp6MOuY)
+- [Code from private messaging](https://github.com/leonwatson2/Tutorial---ReactJS-and-Socket.io-Chat-App/tree/private-messaging)
 - [React.js Chat App with Firebase Firestore Web Tutorial 2020 - React Js Facebook Messenger Clone App](https://www.youtube.com/watch?v=JTxnkGnaqXE)
 - [Build a Chat App With MongoDB & Socket.io [Part 1]](https://www.youtube.com/watch?v=8Y6mWhcdSUM)
 - [You Can Build an FB Messenger Style Chat App with ReactJs — Here’s How! (Intermediate)](https://medium.com/@coderacademy/you-can-build-an-fb-messenger-style-chat-app-with-reactjs-heres-how-intermediate-211b523838ad)
+
+
 <br>
+
+
 - [Repo resource](https://github.com/fernandohenriques/chat-app)
 
 #### Express + node
@@ -233,6 +268,9 @@ General
 Networking - again
 - https://www.thesslstore.com/blog/subnetting-and-masks/
 - https://www.imperva.com/learn/application-security/osi-model/ //
+- https://en.wikipedia.org/wiki/XMPP
+
+
 
 Communication/ Cryptographic security //
 - https://nerdland.net/2010/03/understanding-the-five-aspects-of-cryptographic-security/
