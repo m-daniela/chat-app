@@ -25,13 +25,18 @@
 }
 
 
-.chat_item{
+.side_item{
   @include vertical_align();
   padding: 10px 20px;
   margin-bottom: 10px;
 
   &:hover{
     opacity: 0.6;
+    cursor: pointer;
+  }
+
+  span{
+    font-size: 0.8em;
   }
 
   // &:after{
@@ -57,7 +62,11 @@
     margin-top: auto;
     padding-left: 5%;
     padding-right: 5%;
+    margin-bottom: 20px;
     overflow-y: auto;
+  }
+  .empty{
+    @include centered;
   }
   .message_input{
     width: 100%;

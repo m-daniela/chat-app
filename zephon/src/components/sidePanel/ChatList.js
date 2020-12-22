@@ -1,11 +1,12 @@
-import React from 'react'
-import ChatListItem from './ChatListItem'
+import React, {useContext} from 'react'
+import { ChatContext } from '../context/Context'
+import SideItem from './SideItem'
 
 const ChatList = () => {
-    const names = [1, 2, 3, 4]
+    const {conversations} = useContext(ChatContext);
     return (
         <div className="chat_list">
-            {names.map(elem => <ChatListItem key={elem} number={elem}/>)}
+            {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
         </div>
     )
 }

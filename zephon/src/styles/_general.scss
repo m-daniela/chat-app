@@ -36,6 +36,12 @@
     justify-content: center;
 }
 
+@mixin centered{
+    @include vertical_align;
+    height: 100%;
+    margin: auto;
+}
+
 @mixin custom_input{
     background-color: var(--input_bg);
     margin: 15px;

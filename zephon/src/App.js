@@ -9,8 +9,8 @@ import Login from './components/Login'
 import Register from './components/Register'
 import Authentication, { AuthenticationContext } from './components/context/Authentication'
 import Settings from './components/settingsPanel/Settings';
-import Context from './components/context/Context';
-
+import ContextProvider from './components/context/Context';
+import ConversationProvider from './components/context/ConversationContext';
 
 export const ChatZone = () => {
   const {loggedIn} = useContext(AuthenticationContext);
@@ -28,11 +28,11 @@ export const ChatZone = () => {
   )
 }
 
-
 function App () {
   return (
     <Authentication>
-      <Context>
+      <ConversationProvider>
+      <ContextProvider>
         <Helmet>
           <title>zephon</title>
         </Helmet>
@@ -43,22 +43,19 @@ function App () {
             )}>
             </Route>
             <Route exact path="/login" render={props => (
-              <>
                 <Login />
-              </>
             )}>
             </Route>
             <Route exact path="/register" render={props => (
-              <>
                 <Register />
-              </>
             )}>
             </Route>
 
           </Router>
 
         </div>
-      </Context>
+      </ContextProvider>
+      </ConversationProvider>
     </Authentication>
   )
 }
