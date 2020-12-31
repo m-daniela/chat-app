@@ -1,5 +1,7 @@
-import React, {useReducer, createContext} from 'react'
+import React, {useReducer, createContext, useState, useEffect} from 'react'
 import {io} from "socket.io-client";
+import axios from "axios";
+import {baseUrl} from "../../constants/Constants";
 
 export const ChatContext = createContext();
 
@@ -22,14 +24,27 @@ const reducer = (state, action) => {
 let socket;
 
 const ContextProvider = (props) => {
-    // const state = {test: [], yes: []};
     const state = [];
-    const conversations = ["test", "yes"];
+    const [conversations, setConversations] = useState([]);
     const [messages, dispatch] = useReducer(reducer, state);
 
     if (!socket){
-        socket = io("http://localhost:5000");
+        socket = io(baseUrl);
     }
+
+    const getConversations = () =>{
+        axios.post(`${baseUrl}/`)
+        .then(res => res.data)
+        .then(data => setConversations(data))
+        .catch(err => console.log(err));
+    }
+
+    useEffect(() => {
+        getConversations();
+        
+    }, []);
+
+    
 
     return (
         <ChatContext.Provider value={{messages, dispatch, conversations, socket}}>

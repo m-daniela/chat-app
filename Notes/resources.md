@@ -8,6 +8,9 @@
 **Backend**
 - [Socket.io](https://socket.io/get-started/chat/)
   - [Emits cheatsheet](https://socket.io/docs/v3/emit-cheatsheet/index.html)
+- [Firebase]()
+  - [How to handle authentication on Node JS using Firebase](https://dev.to/betiol/how-to-handle-authentication-on-node-js-using-firebase-5ajn)
+  - [Firebase db](https://medium.com/@therishugupta/store-and-retrieve-data-from-the-firebase-database-in-the-nodejs-app-ee2030b6ef4)
 
 **Frontend**
 

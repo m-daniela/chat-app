@@ -31,31 +31,33 @@ export const ChatZone = () => {
 function App () {
   return (
     <Authentication>
-      <ConversationProvider>
       <ContextProvider>
-        <Helmet>
-          <title>zephon</title>
-        </Helmet>
-        <div className="App">
-          <Router>
-            <Route exact path="/" render={props => (
-              <ChatZone />
-            )}>
-            </Route>
-            <Route exact path="/login" render={props => (
-                <Login />
-            )}>
-            </Route>
-            <Route exact path="/register" render={props => (
-                <Register />
-            )}>
-            </Route>
+        <ConversationProvider>
 
-          </Router>
+          <Helmet>
+            <title>zephon</title>
+          </Helmet>
+          <div className="App">
+            <Router>
+              <Route exact path="/" render={props => (
+                <ChatZone />
+              )}>
+              </Route>
+              <Route exact path="/login" render={props => (
+                  <Login />
+              )}>
+              </Route>
+              <Route exact path="/register" render={props => (
+                  <Register />
+              )}>
+              </Route>
 
-        </div>
+            </Router>
+
+          </div>
+        </ConversationProvider>
+
       </ContextProvider>
-      </ConversationProvider>
     </Authentication>
   )
 }

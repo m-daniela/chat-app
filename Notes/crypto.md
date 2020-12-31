@@ -10,6 +10,9 @@
 
 <br>
 
+
+
+
 ## Must do
 
 - frontend /
@@ -52,7 +55,26 @@
 - https://www.scaledrone.com/blog/tutorial-build-a-reactjs-chat-app/
 
 ### Tutorials
+
+- [Realtime db](https://medium.com/@therishugupta/store-and-retrieve-data-from-the-firebase-database-in-the-nodejs-app-ee2030b6ef4)
+- [](https://riptutorial.com/firebase-database)
+- [](https://www.tutorialspoint.com/firebase/firebase_overview.htm)
+- [Docs](https://firebasetutorials.com/create-firebase-realtime-database/#Add_Firebase_Database_SDK_to_Your_App)
+- [nodejs](https://akarshbarar.medium.com/firebase-with-nodejs-rest-api-cb828f2a499e)
+- [](https://www.freecodecamp.org/news/the-firestore-tutorial-for-2020-learn-by-example/)
+- [Firebase + React](https://www.youtube.com/watch?v=zQyrwxMPm88)
+- [Comparison](https://firebasetutorials.com/firebase-database/#Difference_between_Firebase_Realtime_Database_and_Firebase_Cloud_FireStore)
+- [Simple crud](https://retool.com/blog/crud-with-cloud-firestore-using-the-nodejs-sdk/)
+- [Update user](https://firebase.google.com/docs/auth/web/manage-users)
+- [](https://flaviocopes.com/firebase-firestore/)
+- [](https://medium.com/@ritik.gupta2018/firebase-storage-and-firestore-with-node-js-for-absolute-beginners-7072f4c1a0f5)
+- [](https://indepth.dev/posts/1084/building-an-api-with-firebase)
+
+<br>
+
+
 - [React Chat with Hooks Tutorial](https://reactjs.chat/)
+- [How To Create A Messaging App With Socket.io And React](https://www.youtube.com/watch?v=tBr-PybP_9c)
 - [Building a Live Chat App with React Tutorial - Express and Socket.io](https://www.youtube.com/watch?v=hiiaHyhhwBU)-
 - [Building a Real-Time Chat App with React and Firebase](https://css-tricks.com/building-a-real-time-chat-app-with-react-and-firebase/)
 - [How To Build A Chat App With React, Socket.io, And Express](https://medium.com/dataseries/how-to-build-a-chat-app-with-react-socket-io-and-express-190d927b7002)
@@ -77,7 +99,7 @@
 - [#3 Private Messaging - A Chat App with Socket.io and ReactJS](https://www.youtube.com/watch?v=PVXHFJlntAU)
 - [Real Time Chat App with ReactJS and Socket.io](https://www.youtube.com/playlist?list=PLfUtdEcvGHFHdOYFXj4cY6ZIFkSp6MOuY)
 - [Code from private messaging](https://github.com/leonwatson2/Tutorial---ReactJS-and-Socket.io-Chat-App/tree/private-messaging)
-- [React.js Chat App with Firebase Firestore Web Tutorial 2020 - React Js Facebook Messenger Clone App](https://www.youtube.com/watch?v=JTxnkGnaqXE)
+- [React.js Chat App with Firebase Firestore Web Tutorial 2020 - React Js Facebook Messenger Clone App PRIVATE](https://www.youtube.com/watch?v=JTxnkGnaqXE)
 - [Build a Chat App With MongoDB & Socket.io [Part 1]](https://www.youtube.com/watch?v=8Y6mWhcdSUM)
 - [You Can Build an FB Messenger Style Chat App with ReactJs — Here’s How! (Intermediate)](https://medium.com/@coderacademy/you-can-build-an-fb-messenger-style-chat-app-with-reactjs-heres-how-intermediate-211b523838ad)
 
