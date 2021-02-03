@@ -39,15 +39,18 @@ const ContextProvider = (props) => {
         .catch(err => console.log(err));
     }
 
+    const addNewConversation = (newConversation) =>{
+        setConversations([...conversations, newConversation]);
+    }
+
     useEffect(() => {
         getConversations();
-        
     }, []);
 
     
 
     return (
-        <ChatContext.Provider value={{messages, dispatch, conversations, socket}}>
+        <ChatContext.Provider value={{messages, dispatch, conversations, addNewConversation, socket}}>
             {props.children}
         </ChatContext.Provider>
     )

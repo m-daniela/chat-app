@@ -7,12 +7,14 @@ An [angelic](http://www.bahaistudies.net/asma/zephon-hebrew.pdf) messaging webap
 Start the server
 
 ```bash
-npm run server
+cd ./server
+npm start
 ```
 
 Start the app
 
 ```bash
+cd ./zephon
 npm start
 ```
 

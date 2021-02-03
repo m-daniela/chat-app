@@ -19,7 +19,7 @@ const ChatWindow = () => {
         getChats(current, setMessages);
         // dispatch({type: "SEND_MESSAGE", conversation: current.conversation, message: msg});
       });
-  }, [dispatch, current]);
+  }, [dispatch, current, socket, setMessages]);
 
   useEffect(() =>{
     if(current !== ""){

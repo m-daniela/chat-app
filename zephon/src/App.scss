@@ -11,7 +11,7 @@
   box-sizing: border-box;
 }
 
-.header{
+.header span{
   width: 100%;
   height: 60px;
   background-color: var(--accent_bg);
@@ -24,11 +24,16 @@
   background-color: var(--secondary_bg);
 }
 
+button.side_item{
+  padding-top: 20px;
+  text-align: left;
+}
 
 .side_item{
   @include vertical_align();
   padding: 10px 20px;
   margin-bottom: 10px;
+  border: none;
 
   &:hover{
     opacity: 0.6;
@@ -38,13 +43,6 @@
   span{
     font-size: 0.8em;
   }
-
-  // &:after{
-  //   content: "";
-  //   display: block;
-  //   border-bottom: 1px solid var(--input_bg);
-  //   margin-top: 10px;
-  // }
 
 }
 
@@ -58,33 +56,61 @@
 
 .chat_window{
   width: 80%;
-  .message_list{
-    margin-top: auto;
-    padding-left: 5%;
-    padding-right: 5%;
-    margin-bottom: 20px;
-    overflow-y: auto;
+}
+
+.message_list{
+  margin-top: auto;
+  padding-left: 5%;
+  padding-right: 5%;
+  margin-bottom: 20px;
+  overflow-y: auto;
+}
+.empty{
+  @include centered;
+}
+.message_input{
+  width: 100%;
+  background-color: var(--accent_bg);
+  display: flex;
+
+  input{
+    @include custom_input;
+    &:focus{
+      @include custom_input;
+    }
   }
-  .empty{
-    @include centered;
+
+  button{
+    margin: 0;
+    padding: 0 20px;
+    height: auto;
+    cursor: pointer;
   }
-  .message_input{
+}
+
+.chat_list{
+  .search_input{
     width: 100%;
-    background-color: var(--accent_bg);
-    display: flex;
 
     input{
+      box-sizing: border-box;
+      width: 80%;
       @include custom_input;
       &:focus{
         @include custom_input;
       }
     }
-    button{
+
+    button, label{
       margin: 0;
       padding: 0 20px;
       height: auto;
+      overflow: hidden;
     }
-    
+
+    button{
+      cursor: pointer;
+    }
   }
 }
 

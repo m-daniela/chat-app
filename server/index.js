@@ -34,6 +34,7 @@ const user = "root";
 const password = "pass";
 const database = "zephon";
 
+// dummy data, will probably changed to database data
 let dummy = {
   test1: {
     messages: [
@@ -47,14 +48,17 @@ let dummy = {
   }
 };
 
-let dummyChats = Object.keys(dummy);
 
+// get the names of the chats
 app.post("/", (req, res) => {
   console.log("Server POST");
   // console.log(req);
+  const dummyChats = Object.keys(dummy);
+  // console.log(dummyChats);
   res.json(dummyChats);
 });
 
+// get the messages from a conversation
 app.post("/chats", (req, res) => {
   console.log("Server POST");
   const {user, room} = req.body;
@@ -81,6 +85,7 @@ const io = require('socket.io')(server, {
 io.on('connection', (socket) => {
   console.log('user connected');
 
+  // join a room
   socket.on("join", ({username, room}) => {
     const user = data.join(socket.id, username, room);
     
@@ -90,15 +95,16 @@ io.on('connection', (socket) => {
     // socket.broadcast.to(room).emit("message", message);
   });
 
+  // send a message to a room
+  // add it to the local repo (will be changed to db)
+  // broadcast the message to everyone but the sender
   socket.on('message', (message) => {
     const user = data.current(socket.id);
 
-    // console.log(data.users)
-
     console.log(message);
-    console.log("tell me why, from ", user.room);
+    console.log("To", user.room);
     dummy[user.room].messages.push({sender: message.from, text: message.message, date: message.date});
-    console.log(dummy);
+    // console.log(dummy);
 
 
     // io.emit("message", message);
@@ -110,6 +116,21 @@ io.on('connection', (socket) => {
 
     // io.to(user.room).emit("message", message);
 
+  });
+
+  // add a new chat
+  // broadcast to everyone the fact that a chat 
+  // has been created
+  socket.on("new chat", (chat) =>{
+    const chatName = chat.chat;
+    // const user = data.current(socket.id);
+    dummy[[chatName]] =  {messages: []};
+    console.log(dummy);
+
+    // const newChat = {[`${chatName}`] : {messages: []}};
+    const newChat = {[chatName] : {messages: []}};
+    console.log(newChat);
+    io.emit("new chat", {chatName});
   });
 
   socket.on('disconnect', () => {
