@@ -7,11 +7,14 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const http = require('http').createServer(app);
 
-// data.createChat("example2@mail.com", "example3@mail.com");
-// data.sendMessage("HLZHd2zWU5qtD4H8GeMt", "example3@mail.com", "help", new Date());
-// data.getConversations("example2@mail.com").then(dd => console.log(dd));
-// data.addUser("example2@mail.com");
+// data.addUser("example5@mail.com");
 // data.addUser("example3@mail.com");
+// data.createChat("example5@mail.com", "example3@mail.com");
+
+// data.sendMessage("example5@mail.com", "example3@mail.com", "help", new Date());
+// data.getConversations("example5@mail.com").then(dd => console.log(dd));
+// data.getMessages("example5@mail.com", "example3@mail.com").then(dd => console.log(dd));
+
 
 app.use(cors({
   methods: 'GET,POST,PATCH,DELETE,OPTIONS',
@@ -62,14 +65,20 @@ let dummy = {
 app.post("/", (req, res) => {
   console.log("Server POST");
   // console.log(req);
-  const dummyChats = Object.keys(dummy);
-  // console.log(dummyChats);
+  // const dummyChats = Object.keys(dummy).map(chat => ({[chat]: {
+  //     user1: dummy[chat].user1,
+  //     user2: dummy[chat].user2,
+  //   }})
+  // );
+
+  const dummyChats = Object.keys(dummy)
+  console.log(dummyChats);
   res.json(dummyChats);
 });
 
 // get the messages from a conversation
 app.post("/chats", (req, res) => {
-  console.log("Server POST");
+  console.log("Server POST /chats");
   const {user, room} = req.body;
   try{
     res.json(dummy[room].messages);

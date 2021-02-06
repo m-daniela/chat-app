@@ -18,7 +18,27 @@ const conversations = [];
 // add new user
 // check if it exists, and if not, add it with an empty 
 // array for the conversations
+
 const addUser = async (email) =>{
+  try{
+    const user = await db.collection(cts.users).doc(email).get();
+    if (!user.exists){
+      const userAdded = await db.collection(cts.users).doc(email);
+      await userAdded.set({});
+      await userAdded.collection(cts.conversations).doc("ignore").set({});
+    }
+    else{
+      console.log("help")
+    }
+  }
+  catch (err){
+    console.log(err);
+  }
+}
+
+
+
+const addUser2 = async (email) =>{
   try{
     const user = await db.collection(cts.users).doc(email).get();
     if (!user.exists){
@@ -36,7 +56,7 @@ const addUser = async (email) =>{
 // id is auto generated
 // sender (email) - the one who initialized the chat
 // receiver (email) - the one added to the chat
-const createChat = async (sender, receiver) =>{
+const createChat1 = async (sender, receiver) =>{
   try{
     const conversation = await db.collection(cts.conversations)
       .add({
@@ -65,26 +85,47 @@ const createChat = async (sender, receiver) =>{
   }
 }
 
-// // add a new chat to the database
-// // id is auto generated
-// // sender (email) - the one who initialized the chat
-// // receiver (email) - the one added to the chat
-// const createChat = async (sender, receiver) =>{
-//   const conversation = await db.collection(cts.users)
-//     .doc(sender)
-//     .collection(cts.conversations)
-//     .doc(receiver)
-//     .collection(cts.messages)
-//     .add({
-//       sender: "sys",
-//       text: "start chatting", 
-//       date: new Date(),
-//   });
-//   console.log("New chat created");
-// }
+// add a new chat to the database
+// id is auto generated
+// sender (email) - the one who initialized the chat
+// receiver (email) - the one added to the chat
+const createChat = async (sender, receiver) =>{
+  const message = {
+    sender: "sys",
+    text: "start chatting", 
+    date: new Date(),
+  }
+  try{
+    const conversation1 = await db.collection(cts.users)
+    .doc(sender)
+    .collection(cts.conversations)
+    .doc(receiver);
+    await conversation1.set({});
+    await conversation1.collection(cts.messages)
+    .add({
+      sender: "sys",
+      text: "start chatting", 
+      date: new Date(),
+    });
+
+    const conversation2 = await db.collection(cts.users)
+      .doc(receiver)
+      .collection(cts.conversations)
+      .doc(sender);
+    await conversation2.set({});
+    await conversation2
+      .collection(cts.messages)
+      .add(message);
+    console.log("New chat created");
+  }
+  catch(err){
+    console.log(err);
+  }
+  
+}
 
 
-const sendMessage = async (chat, sender, text, date) => {
+const sendMessage2 = async (chat, sender, text, date) => {
   try{
     await db
       .collection(cts.conversations)
@@ -104,25 +145,31 @@ const sendMessage = async (chat, sender, text, date) => {
   
 }
 
-// const sendMessage = async (user, sender, receiver, text, date) => {
-//   // make this bidirectional
-//   await db.collection(cts.users)
-//     .doc(user)
-//     .collection(cts.conversations)
-//     .doc(receiver)
-//     .collection(cts.messages)
-//     .add({
-//       sender,
-//       text, 
-//       date,
-//     });
-//   console.log("Message sent");
+const sendMessage = async (sender, receiver, text, date) => {
+  // make this bidirectional
+  const message = {
+    sender,
+    text, 
+    date,
+  }
+
+  await db.collection(cts.users)
+    .doc(sender)
+    .collection(cts.conversations)
+    .doc(receiver)
+    .collection(cts.messages)
+    .add(message);
+
+  await db.collection(cts.users)
+    .doc(receiver)
+    .collection(cts.conversations)
+    .doc(sender)
+    .collection(cts.messages)
+    .add(message);
+  console.log("Message sent");
   
-// }
-
-const getMessages = async (conversaionId) => {
-
 }
+
 
 // since the conversations are a list of references to a
 // document in conversations, first I'll try to get the
@@ -130,7 +177,7 @@ const getMessages = async (conversaionId) => {
 // on click, get the messages corresponding
 // will see later, but the style will stay the same
 
-const getConversations = async (user) =>{
+const getConversations2 = async (user) =>{
   const conversations = {}
   try{
     const rawConvos = await db
@@ -217,6 +264,40 @@ const getMessages2 = async (user) =>{
 
   // const saved = convos.map
   // console.log(convos);
+}
+
+
+const getConversations = async (user) =>{
+  const conversations = [];
+  const rawConversations = await db.collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .get();
+
+  rawConversations.forEach(snapshot =>{
+    console.log(snapshot.id);
+    if (snapshot.id !== "ignore") conversations.push(snapshot.id);
+  });
+
+  return conversations;
+}
+
+const getMessages = async (user, conversation) =>{
+  const messages = [];
+  const rawMessages = await db.collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .doc(conversation)
+    .collection(cts.messages)
+    .get();
+
+  rawMessages.forEach(snapshot =>{
+    console.log(snapshot.id);
+    console.log(snapshot.data());
+    messages.push(snapshot.data());
+  });
+
+  return messages;
 }
 
 // db.collection("conversations").get().then((snapshot) => {

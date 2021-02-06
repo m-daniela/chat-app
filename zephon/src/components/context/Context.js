@@ -45,6 +45,7 @@ const ContextProvider = (props) => {
 
     useEffect(() => {
         getConversations();
+        
     }, []);
 
     
