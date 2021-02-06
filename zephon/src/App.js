@@ -5,8 +5,8 @@ import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom'
 import Helmet from "react-helmet";
 import ChatWindow from './components/chatWindow/ChatWindow'
 import SidePanel from './components/sidePanel/SidePanel'
-import Login from './components/Login'
-import Register from './components/Register'
+import Login from './components/userDetails/Login'
+import Register from './components/userDetails/Register'
 import Authentication, { AuthenticationContext } from './components/context/Authentication'
 import Settings from './components/settingsPanel/Settings';
 import ContextProvider from './components/context/Context';

@@ -1,5 +1,6 @@
 import firebase from "firebase";
 
+// configuration & authentication
 const config = {
     // apiKey: "AIzaSyDSM9zkBA8JnGoItYcrsCCNyLk_nnqYFz0",
     // authDomain: "zephon-45471.firebaseapp.com",
