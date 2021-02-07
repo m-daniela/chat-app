@@ -1,13 +1,13 @@
 # zephon
 
-An [angelic](http://www.bahaistudies.net/asma/zephon-hebrew.pdf) messaging webapp.
+An [angelic](http://www.bahaistudies.net/asma/zephon-hebrew.pdf) messaging webapp, created using [React](https://reactjs.org/), [Node.js](https://nodejs.org/en/), [socket.io](https://socket.io/), [Firebase](https://firebase.google.com/) and [Virgil Security](https://developer.virgilsecurity.com/).
 
 **Commands**
 
 Start the server
 
 ```bash
-cd ./server
+cd ./zephon/server
 npm start
 ```
 
@@ -17,6 +17,3 @@ Start the app
 cd ./zephon
 npm start
 ```
-
-**[Resources](./Notes)**
-- [actual resources](./Notes/resources.md)

@@ -4,7 +4,7 @@ import MessageInput from './MessageInput'
 import Header from '../common/Header'
 import {ChatContext} from "../context/Context"
 import { ConversationContext } from '../context/ConversationContext';
-import { getChats } from '../../data/ServerCalls'
+import { getMessages } from '../../data/ServerCalls'
 import { AuthenticationContext } from '../context/Authentication'
 
 
@@ -16,10 +16,9 @@ const ChatWindow = () => {
 
   useEffect(() =>{
       socket.on("message", (msg) =>{
-        getChats(current, setMessages);
-        // dispatch({type: "SEND_MESSAGE", conversation: current.conversation, message: msg});
+        getMessages(email, current, setMessages);
       });
-  }, [dispatch, current, socket, setMessages]);
+  }, [email, dispatch, current, socket, setMessages]);
 
   useEffect(() =>{
     if(current !== ""){
@@ -28,28 +27,12 @@ const ChatWindow = () => {
     else setIsDisabled(true);
   }, [current]);
 
-  const getDate = () =>{
-    const today = new Date();
-    const hour = today.getHours();
-    const minutes = today.getMinutes();
-
-    const day = today.getDate();
-    const month = today.getMonth();
-    const year = today.getFullYear();
-
-    const addZero = (number) => {
-      return number < 10 ? `0${number}` : number;
-    }
-
-    return `${addZero(hour)}:${addZero(minutes)} ${addZero(day)}/${addZero(month)}/${year}`
-  }
-
   const addMessage = (message) =>{
     if(message) {
-      const date = getDate();
+      // const date = getDate();
+      const date = Date();
       socket.emit('message', {message, from: email, date});
-      getChats(current, setMessages);
-      // dispatch({type: "SEND_MESSAGE", conversation: current, message});
+      getMessages(email, current, setMessages);
     }
   }
 

@@ -1,18 +1,14 @@
-import React, {useReducer, createContext, useState, useEffect} from 'react'
+import React, {useReducer, createContext, useState, useEffect, useContext} from 'react'
 import {io} from "socket.io-client";
-import axios from "axios";
 import {baseUrl} from "../../constants/Constants";
+import { AuthenticationContext } from './Authentication';
+import {getChats} from "../../data/ServerCalls";
 
 export const ChatContext = createContext();
 
 const reducer = (state, action) => {
     switch(action.type){
         case ("SEND_MESSAGE"): {
-            // console.log(action.conversation)
-            // return {
-            //     ...state,
-            //     [action.conversation]: [...state[action.conversation], action.message]
-            // };
             return [...state, action.message];
         }
        
@@ -24,6 +20,8 @@ const reducer = (state, action) => {
 let socket;
 
 const ContextProvider = (props) => {
+    const {email} = useContext(AuthenticationContext);
+
     const state = [];
     const [conversations, setConversations] = useState([]);
     const [messages, dispatch] = useReducer(reducer, state);
@@ -33,10 +31,7 @@ const ContextProvider = (props) => {
     }
 
     const getConversations = () =>{
-        axios.post(`${baseUrl}/`)
-        .then(res => res.data)
-        .then(data => setConversations(data))
-        .catch(err => console.log(err));
+        getChats(email, setConversations);
     }
 
     const addNewConversation = (newConversation) =>{
@@ -45,10 +40,7 @@ const ContextProvider = (props) => {
 
     useEffect(() => {
         getConversations();
-        
     }, []);
-
-    
 
     return (
         <ChatContext.Provider value={{messages, dispatch, conversations, addNewConversation, socket}}>

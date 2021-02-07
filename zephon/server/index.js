@@ -7,6 +7,8 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const http = require('http').createServer(app);
 
+
+// testing - keep for now
 // data.addUser("example5@mail.com");
 // data.addUser("example3@mail.com");
 // data.createChat("example5@mail.com", "example3@mail.com");
@@ -36,24 +38,20 @@ app.use(bodyParser.json());
 
 // connection constants and local database
 // the port will change on deployment
-const port = process.env.port || 5000;
+const port = process.env.PORT || 5000;
 const host = "localhost";
 const user = "root";
 const password = "pass";
 const database = "zephon";
 
-// dummy data, will probably changed to database data
+// dummy data, will probably be changed to database data
 let dummy = {
   test1: {
-    user1: "example@mail.com",
-    user2: "example2@mail.com",
     messages: [
       {sender: "example", text: "heheh", date: "13:00 31/11/2020"}
     ]
   },
   test2: {
-    user1: "example3@mail.com",
-    user2: "example2@mail.com",
     messages: [
       {sender: "example", text: "hehe help", date: "13:01 31/11/2020"}
     ]
@@ -64,29 +62,55 @@ let dummy = {
 // get the names of the chats
 app.post("/", (req, res) => {
   console.log("Server POST");
-  // console.log(req);
-  // const dummyChats = Object.keys(dummy).map(chat => ({[chat]: {
-  //     user1: dummy[chat].user1,
-  //     user2: dummy[chat].user2,
-  //   }})
-  // );
+  // console.log(req.body);
+  const user = req.body.user;
 
-  const dummyChats = Object.keys(dummy)
-  console.log(dummyChats);
-  res.json(dummyChats);
+  if (user){
+    data.getConversations(user).then(data => res.json(data));
+
+  }
+
+  // const dummyChats = Object.keys(dummy)
+  // res.json(dummyChats);
+
+
 });
+
+app.post("/auth", (req, res) =>{
+  console.log("Server POST /auth");
+  console.log(req.body);
+  const email = req.body.user;
+  data.addUser(email);
+})
+
 
 // get the messages from a conversation
 app.post("/chats", (req, res) => {
   console.log("Server POST /chats");
   const {user, room} = req.body;
-  try{
-    res.json(dummy[room].messages);
-  }
-  catch (err){
+  console.log(req.body)
+  // try{
+  //   res.json(dummy[room].messages);
+  // }
+  // catch (err){
+  //   console.log("Empty title")
+  //   res.json([]);
+  // }
+  if (room === ""){
     console.log("Empty title")
     res.json([]);
   }
+  else{
+    data.getMessages(user, room)
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      console.log("Post /chats error", err);
+      res.json([]);
+    });
+  }
+  
 });
 
 const server = app.listen(port, () => {
@@ -118,16 +142,17 @@ io.on('connection', (socket) => {
   // broadcast the message to everyone but the sender
   socket.on('message', (message) => {
     const user = data.current(socket.id);
-
+    console.log(user)
     console.log(message);
     console.log("To", user.room);
-    dummy[user.room].messages.push({sender: message.from, text: message.message, date: message.date});
+    // dummy[user.room].messages.push({sender: message.from, text: message.message, date: message.date});
     // console.log(dummy);
 
 
     // io.emit("message", message);
     socket.broadcast.to(user.room).emit("message", {sender: message.from, text: message.message, date: message.date});
 
+    data.sendMessage(message.from, user.room, message.message, message.date);
     // worked before
     // socket.broadcast.emit("message", message);
 
@@ -140,15 +165,20 @@ io.on('connection', (socket) => {
   // broadcast to everyone the fact that a chat 
   // has been created
   socket.on("new chat", (chat) =>{
-    const chatName = chat.chat;
+    const receiver = chat.chat;
+    const sender = chat.sender;
+    console.log("-----", receiver, sender)
     // const user = data.current(socket.id);
-    dummy[[chatName]] =  {messages: []};
-    console.log(dummy);
+    // dummy[[chatName]] =  {messages: []};
+    // console.log(dummy);
 
-    // const newChat = {[`${chatName}`] : {messages: []}};
-    const newChat = {[chatName] : {messages: []}};
-    console.log(newChat);
-    io.emit("new chat", {chatName});
+    // // const newChat = {[`${chatName}`] : {messages: []}};
+    // const newChat = {[chatName] : {messages: []}};
+    // console.log(newChat);
+
+    data.createChat(sender, receiver)
+
+    io.emit("new chat", {chatName: receiver});
   });
 
   socket.on('disconnect', () => {

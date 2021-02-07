@@ -1,4 +1,5 @@
-import React, {useState, createContext} from 'react'
+import React, {useState, createContext, useEffect} from 'react'
+import { authenticate } from '../../data/ServerCalls';
 
 export const AuthenticationContext = createContext({
     login: (uid, email) => {},
@@ -29,6 +30,11 @@ const Authentication = ({children}) => {
         localStorage.removeItem("email");
         setAuthenthication({uid, email, loggedIn: false});
     }
+
+    useEffect(() =>{
+        authenticate(email);
+    }, [email])
+
     return (
         <AuthenticationContext.Provider value={{login, logout, uid, email, loggedIn}}>{children}</AuthenticationContext.Provider>
     )

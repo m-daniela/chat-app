@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from 'react'
+import { getDate } from '../../constants/Constants';
 import { AuthenticationContext } from '../context/Authentication';
-// import {ChatContext} from "../context/Context"
 import { ConversationContext } from '../context/ConversationContext';
 
 
@@ -19,7 +19,7 @@ const Message = ({message}) => {
             {message.text}
           </div>
           <div className="date">
-            {message.date}
+            {!message.date._seconds ? getDate(message.date) : ""}
           </div>
         </div>
   )
@@ -29,6 +29,7 @@ const MessageList = () => {
   // const {conversations} = useContext(ChatContext);
   const {messages} = useContext(ConversationContext);
   // const messages = conversations[current] ? conversations[current].messages : [];
+  const newMessages = messages.slice(1).sort((a, b) => a.date > b.date);
 
   useEffect(() => {
     const container = document.querySelector(".message_list");

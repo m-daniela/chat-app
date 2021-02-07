@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react'
+import { AuthenticationContext } from '../context/Authentication';
 import { ChatContext } from '../context/Context'
 import SideItem from './SideItem'
 
@@ -7,10 +8,11 @@ const NewChat = ({close}) =>{
     const [newChat, setNewChat] = useState("");
     const {socket} = useContext(ChatContext);
 
+    const {email} = useContext(AuthenticationContext);
+
     const searchUser = (e) =>{
         e.preventDefault();
-        // console.log(newChat);
-        socket.emit("new chat", {chat: newChat});
+        socket.emit("new chat", {chat: newChat, sender: email});
         close(false);
     }
 

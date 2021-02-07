@@ -1,12 +1,60 @@
 
+# Contents
+- [Contents](#contents)
+- [Abstract](#abstract)
+- [Basic concepts](#basic-concepts)
+	- [Symmetric-key encryption](#symmetric-key-encryption)
+	- [Public-key encryption](#public-key-encryption)
+	- [TODO: Auth + digital signatures](#todo-auth--digital-signatures)
+	- [End-to-end encryption](#end-to-end-encryption)
+	- [How it works](#how-it-works)
+	- [Challenges](#challenges)
+- [Technologies used](#technologies-used)
+- [Existing e2ee systems](#existing-e2ee-systems)
+	- [Signal protocol - how the other popular message apps work](#signal-protocol---how-the-other-popular-message-apps-work)
+- [App + comparison with other apps](#app--comparison-with-other-apps)
+	- [Resources](#resources)
+	- [Tutorials, code resources](#tutorials-code-resources)
+	- [Frameworks, packages (mostly Virgil security)](#frameworks-packages-mostly-virgil-security)
+		- [Firebase tutorials and integration](#firebase-tutorials-and-integration)
+- [To check](#to-check)
 
-# End-to-end encryption
+# Abstract
 
-End-to-end encryption (E2EE) is a system of communication where only the communicating users can read the messages. Even though the service provider stores the messages, they cannot read or modify the data, since they cannot decrypt it. The recipients retrieve the data and decrypt it themselves.
+- base crypto concepts used
+- frameworks + tech used
+- existing current e2ee systems
+- description + comparison with existing apps
+
+# Basic concepts
+
+## Symmetric-key encryption
+- HOAC 33
+- https://en.wikipedia.org/wiki/Symmetric-key_algorithm
+
+Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
+
+## Public-key encryption
+- HOAC 43
+- https://en.wikipedia.org/wiki/Public-key_cryptography
+
+Public-key encryption, also known as asymmetric encryption, is an encryption scheme which uses a public and a private key. The public key can be publicly available, while the private key must be kept secret by the user. 
+
+To encrypt a message, the sender uses the public key of the receiver, but the messages can be decrypted only by the recipient, using their private key. 
+
+## TODO: Auth + digital signatures
+
+## End-to-end encryption
+- [Wiki](https://en.wikipedia.org/wiki/End-to-end_encryption)
+
+
+End-to-end encryption is a communication system where the messages can be read only by those participating in the conversation, because it is encrypted by the sender. This ensures that the data cannot be read or modified by the service provider (or any third party involved) etc. because the keys to decrypt it are held by the recipients. 
+
+Google bad fragment, data encrypted in transit
 
 ## How it works
 
-End-to-end encryption involves public key cryptography
+End-to-end encryption involves, at first, a key exchange between the two parties.
 
 
 ## Challenges
@@ -19,18 +67,28 @@ End-to-end encryption
 
 **Backdoors**
 
+# Technologies used
+- React for frontend
+- Nodejs for backend
+- Socket.io for real-time communication
+- Firebase for authentication and storage
+- Virgil Security for e2ee and key management
 
-# Signal protocol
+
+# Existing e2ee systems
+
+## Signal protocol - how the other popular message apps work
 - Triple Diffie Hellman key exchange
 - Prekey bundle
 - Double ratchet algo
 
+# App + comparison with other apps
 
 ## Resources
-- [Wiki](https://en.wikipedia.org/wiki/End-to-end_encryption)
-- [](https://protonmail.com/blog/what-is-end-to-end-encryption/)
-- [](https://squareup.com/us/en/townsquare/end-to-end-encryption)
-- [](https://www.geeksforgeeks.org/what-is-e2eeend-to-end-encryption/)
+
+- [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
+- [e2ee](https://squareup.com/us/en/townsquare/end-to-end-encryption)
+- [GFG e2ee](https://www.geeksforgeeks.org/what-is-e2eeend-to-end-encryption/)
 - 10 - 2/2.15
 - 11
 - Key protocols - Applied crypto chapter 12
@@ -62,7 +120,7 @@ Extra
 - [Build an Encrypted Messaging App for Android (Stream chat)](https://getstream.io/blog/encrypted-messaging-app-android/)
 - [Developing a Secure Messaging App for Telehealth with React Using Virgil Security, Higher-Order Components and React Context API](https://webrtc.ventures/2019/06/developing-a-secure-messaging-app-for-telehealth-with-react-using-virgil-security-higher-order-components-and-react-context-api/)
 - [How to build a HIPAA-compliant Firebase Chat using security SDK](https://virgilsecurity.com/blog/hipaa-firebase-2020)
-
+- [Building an Encrypted, HIPAA Compliant Chatbot](https://getstream.io/blog/building-an-end-to-end-encrypted-chatbot-with-stream-react-chat-virgil-security-and-google-dialogflow/)
 
 https://stackoverflow.com/questions/48249900/end-to-end-encryption-for-a-chat-application
 
@@ -74,6 +132,7 @@ https://stackoverflow.com/questions/48249900/end-to-end-encryption-for-a-chat-ap
 - [End-to-End Encryption for any app](https://www.youtube.com/watch?v=79fQ8PwZqmQ)
 - [](https://virgilsecurity.com/blog/end-to-end-encrypted-chat-with-e3kit-and-stream)
 - [Dashboard details and how to use](https://www.back4app.com/docs/security/gdpr-compliant-chat-app)
+- [](https://virgilsecurity.com/blog/build-end-to-end-encrypted-chat-using-pubnub-and-virgil-security)
 
 ### Firebase tutorials and integration 
 - [Intro](https://firebase.google.com/docs/firestore)
@@ -138,4 +197,7 @@ or
 	}
 }
 
- 
+---
+
+to timestamp: const timestamp = dateString => Date(dateString) / 1000
+to date: const date = timestamp => new Date(timestamp * 1000)
