@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
+// import { AuthenticationContext } from '../context/Authentication';
 
 const MessageInput = ({addMessage}) => {
   const [message, setMessage] = useState("");
 
-  const onChanteInput = (text) => {
+  const onChangeInput = (text) => {
     setMessage(text);
   }
 
@@ -16,7 +17,7 @@ const MessageInput = ({addMessage}) => {
   return (
     <form className="message_input" onSubmit={e => onSendMessage(e)}>
       <input type="text"
-        onChange={e => onChanteInput(e.target.value)}
+        onChange={e => onChangeInput(e.target.value)}
         placeholder={"Your message..."}
         value={message}/>
       <button type="submit">Send</button>

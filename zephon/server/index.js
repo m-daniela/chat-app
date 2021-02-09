@@ -1,19 +1,15 @@
 
 require('dotenv').config();
-console.log("-----", process.env.PORT);
-
-
 
 const data = require("./data");
-const auth = require("./auth");
 const {generateVirgilJwt} = require("./jwtToken");
 const {requireAuthHeader} = require("./validation");
+const auth = require("./auth");
 
 const app = require("express")();
 const cors = require("cors");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
-const { copyFileSync } = require("fs");
 const http = require('http').createServer(app);
 
 
@@ -69,7 +65,7 @@ app.post("/", (req, res) => {
   console.log("Server POST");
   // console.log(req.body);
   const user = req.body.user;
-
+  console.log("Server POST", user);
   if (user){
     data.getConversations(user).then(data => res.json(data));
   }
@@ -89,7 +85,7 @@ app.post("/auth", (req, res) =>{
     console.log(req.body);
     const email = req.body.user;
     if (email !== undefined || email !== null){
-      data.addUser(email)
+      data.addUser(email, req, res)
       .then(auth.authenticate(req, res));
     }
   }

@@ -1,4 +1,4 @@
-import React, {useReducer, createContext, useState, useEffect, useContext} from 'react'
+import React, {useReducer, createContext, useState, useContext, useEffect} from 'react'
 import {io} from "socket.io-client";
 import {baseUrl} from "../../constants/Constants";
 import { AuthenticationContext } from './Authentication';
@@ -40,10 +40,11 @@ const ContextProvider = (props) => {
 
     useEffect(() => {
         getConversations();
-    }, []);
+        // eslint-disable-next-line 
+    }, [email]);
 
     return (
-        <ChatContext.Provider value={{messages, dispatch, conversations, addNewConversation, socket}}>
+        <ChatContext.Provider value={{messages, dispatch, conversations, addNewConversation, getConversations, socket}}>
             {props.children}
         </ChatContext.Provider>
     )

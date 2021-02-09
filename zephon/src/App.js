@@ -6,7 +6,7 @@ import Helmet from "react-helmet";
 import ChatWindow from './components/chatWindow/ChatWindow'
 import SidePanel from './components/sidePanel/SidePanel'
 import Login from './components/userDetails/Login'
-import Register from './components/userDetails/Register'
+import Signup from './components/userDetails/Signup'
 import Authentication, { AuthenticationContext } from './components/context/Authentication'
 import Settings from './components/settingsPanel/Settings';
 import ContextProvider from './components/context/Context';
@@ -19,6 +19,7 @@ export const ChatZone = () => {
   if(!loggedIn){
     history.push("/login");
   }
+
   return (
     <>
       <SidePanel />
@@ -29,6 +30,7 @@ export const ChatZone = () => {
 }
 
 function App () {
+
   return (
     <Authentication>
       <ContextProvider>
@@ -48,7 +50,7 @@ function App () {
               )}>
               </Route>
               <Route exact path="/register" render={props => (
-                  <Register />
+                  <Signup />
               )}>
               </Route>
 

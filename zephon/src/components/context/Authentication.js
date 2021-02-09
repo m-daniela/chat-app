@@ -1,5 +1,5 @@
-import React, {useState, createContext, useEffect} from 'react'
-import { authenticate } from '../services/encryption';
+import React, {useState, createContext} from 'react'
+import { e3login, e3register } from '../services/encryption';
 
 export const AuthenticationContext = createContext({
     login: (uid, email) => {},
@@ -18,28 +18,47 @@ const Authentication = ({children}) => {
         email: localStorage.getItem("email"),
         loggedIn: localStorage.getItem("uid") ? true: false
     });
-    const [token, setToken] = useState("");
+    const [eThree, setToken] = useState(null);
     
-    const login = (uid, email) =>{
+
+    const setLocal = (uid, email) => {
         console.log(uid);
         localStorage.setItem("uid", uid);
         localStorage.setItem("email", email);
         setAuthenthication({uid, email, loggedIn: true});
     }
 
+    const login = (uid, email, pass) =>{
+        setLocal(uid, email);
+        e3login(email, pass, setToken);
+    }
+
+    const signup = (uid, email, pass) =>{
+        setLocal(uid, email);
+        e3register(email, pass, setToken);
+    }
+
     const logout = () =>{
         localStorage.removeItem("uid");
         localStorage.removeItem("email");
+        if (eThree !== null){
+            eThree.cleanup();
+        }
         setAuthenthication({uid, email, loggedIn: false});
     }
 
-    useEffect(() =>{
-        authenticate(email, setToken);
-        console.log(token);
-    }, [email])
+    // useEffect(() =>{
+    //     if (email !== ""){
+    //         e3login(email, setToken);
+    //         console.log("token", token);
+    //     }
+    //     // eslint-disable-next-line
+    // }, [email, setToken]);
 
     return (
-        <AuthenticationContext.Provider value={{login, logout, uid, email, loggedIn}}>{children}</AuthenticationContext.Provider>
+        <AuthenticationContext.Provider value={{login, signup, logout, uid, email, loggedIn, eThree}}>
+            {children}
+        </AuthenticationContext.Provider>
     )
 }
 

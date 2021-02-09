@@ -4,7 +4,7 @@ import {register} from "../services/firebase"
 import {AuthenticationContext} from '../context/Authentication';
 
 
-const Register = () => {
+const Signup = () => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState({
         wrongEmail: "",
@@ -13,7 +13,7 @@ const Register = () => {
     });
     const [password, setPassword] = useState("");
     const [samePassword, setSamePassword] = useState("");
-    const {login} = useContext(AuthenticationContext);
+    const {signup} = useContext(AuthenticationContext);
     const history = useHistory();
 
 
@@ -29,7 +29,7 @@ const Register = () => {
                 // const {uid, displayName} = user;
                 const {uid} = user;
 
-                login(uid, email);
+                signup(uid, email, password);
                 history.replace("/");
                 
             }
@@ -81,4 +81,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Signup

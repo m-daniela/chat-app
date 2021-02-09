@@ -2,6 +2,7 @@
 // database interaction
 
 var admin = require("firebase-admin");
+const auth = require("./auth");
 var serviceAccount = require("../../../key.json");
 
 const { cts } = require("./constants");
@@ -21,13 +22,14 @@ const db = admin.firestore();
 // create a conversations collection with 
 // and empty document called "ignore"
 
-const addUser = async (email) =>{
+const addUser = async (email, req, res) =>{
   try{
     const user = await db.collection(cts.users).doc(email).get();
     if (!user.exists){
       const userAdded = await db.collection(cts.users).doc(email);
       await userAdded.set({});
       await userAdded.collection(cts.conversations).doc("ignore").set({});
+      // auth.authenticate(req, res);
     }
     else{
       console.log(`${email} already here`)
@@ -152,6 +154,11 @@ const getMessages = async (user, conversation) =>{
   return messages;
 }
 
+
+// // delete message
+// const deleteMessage = async (uid) => {
+
+// }
 
 
 // here will go some user lvl logic
