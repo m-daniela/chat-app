@@ -52,7 +52,7 @@ End-to-end encryption is a communication system where the messages can be read o
 
 Google bad fragment, data encrypted in transit
 
-## How it works
+## How it works, MAC
 
 End-to-end encryption involves, at first, a key exchange between the two parties.
 
@@ -201,3 +201,10 @@ or
 
 to timestamp: const timestamp = dateString => Date(dateString) / 1000
 to date: const date = timestamp => new Date(timestamp * 1000)
+
+--- 
+
+Analyzing the examples
+
+Client
+- identity - the name of the user (email in this case)

@@ -1,5 +1,5 @@
 import React, {useState, createContext, useEffect} from 'react'
-import { authenticate } from '../../data/ServerCalls';
+import { authenticate } from '../services/encryption';
 
 export const AuthenticationContext = createContext({
     login: (uid, email) => {},
@@ -18,6 +18,8 @@ const Authentication = ({children}) => {
         email: localStorage.getItem("email"),
         loggedIn: localStorage.getItem("uid") ? true: false
     });
+    const [token, setToken] = useState("");
+    
     const login = (uid, email) =>{
         console.log(uid);
         localStorage.setItem("uid", uid);
@@ -32,7 +34,8 @@ const Authentication = ({children}) => {
     }
 
     useEffect(() =>{
-        authenticate(email);
+        authenticate(email, setToken);
+        console.log(token);
     }, [email])
 
     return (

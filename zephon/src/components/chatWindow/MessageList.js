@@ -26,10 +26,7 @@ const Message = ({message}) => {
 }
 
 const MessageList = () => {
-  // const {conversations} = useContext(ChatContext);
   const {messages} = useContext(ConversationContext);
-  // const messages = conversations[current] ? conversations[current].messages : [];
-  const newMessages = messages.slice(1).sort((a, b) => a.date > b.date);
 
   useEffect(() => {
     const container = document.querySelector(".message_list");

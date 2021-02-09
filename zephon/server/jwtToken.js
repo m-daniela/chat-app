@@ -18,10 +18,10 @@ async function getJwtGenerator() {
 	});
 }
 
-const generatorPromise = getJwtGenerator();
+// const generatorPromise = getJwtGenerator();
 
 const generateVirgilJwt = async (req, res) => {
-    const generator = await generatorPromise;
+    const generator = await getJwtGenerator();
     const virgilJwtToken = generator.generateToken(req.user.identity);
 
     res.json({ virgilToken: virgilJwtToken.toString() });

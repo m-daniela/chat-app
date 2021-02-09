@@ -22,7 +22,6 @@ const db = admin.firestore();
 // and empty document called "ignore"
 
 const addUser = async (email) =>{
-  console.log(email)
   try{
     const user = await db.collection(cts.users).doc(email).get();
     if (!user.exists){
@@ -31,7 +30,7 @@ const addUser = async (email) =>{
       await userAdded.collection(cts.conversations).doc("ignore").set({});
     }
     else{
-      console.log("help")
+      console.log(`${email} already here`)
     }
   }
   catch (err){

@@ -1,10 +1,19 @@
 
+require('dotenv').config();
+console.log("-----", process.env.PORT);
+
+
+
 const data = require("./data");
+const auth = require("./auth");
+const {generateVirgilJwt} = require("./jwtToken");
+const {requireAuthHeader} = require("./validation");
 
 const app = require("express")();
 const cors = require("cors");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
+const { copyFileSync } = require("fs");
 const http = require('http').createServer(app);
 
 
@@ -39,10 +48,6 @@ app.use(bodyParser.json());
 // connection constants and local database
 // the port will change on deployment
 const port = process.env.PORT || 5000;
-const host = "localhost";
-const user = "root";
-const password = "pass";
-const database = "zephon";
 
 // dummy data, will probably be changed to database data
 let dummy = {
@@ -67,7 +72,6 @@ app.post("/", (req, res) => {
 
   if (user){
     data.getConversations(user).then(data => res.json(data));
-
   }
 
   // const dummyChats = Object.keys(dummy)
@@ -76,12 +80,27 @@ app.post("/", (req, res) => {
 
 });
 
+// authenticate 
+// add a user to the database if not there already
+// ask for jwt 
 app.post("/auth", (req, res) =>{
   console.log("Server POST /auth");
-  console.log(req.body);
-  const email = req.body.user;
-  data.addUser(email);
+  try{
+    console.log(req.body);
+    const email = req.body.user;
+    if (email !== undefined || email !== null){
+      data.addUser(email)
+      .then(auth.authenticate(req, res));
+    }
+  }
+  catch(err){
+    console.log("Server POST /auth:", err);
+  }
+  
 })
+
+// get jwt
+app.get('/virgil-jwt', requireAuthHeader, generateVirgilJwt);
 
 
 // get the messages from a conversation
@@ -97,7 +116,7 @@ app.post("/chats", (req, res) => {
   //   res.json([]);
   // }
   if (room === ""){
-    console.log("Empty title")
+    console.log("POST /chats: no conversation selected")
     res.json([]);
   }
   else{
@@ -133,8 +152,6 @@ io.on('connection', (socket) => {
     
     // console.log(user);
     socket.join(room);
-
-    // socket.broadcast.to(room).emit("message", message);
   });
 
   // send a message to a room
@@ -148,16 +165,9 @@ io.on('connection', (socket) => {
     // dummy[user.room].messages.push({sender: message.from, text: message.message, date: message.date});
     // console.log(dummy);
 
-
-    // io.emit("message", message);
     socket.broadcast.to(user.room).emit("message", {sender: message.from, text: message.message, date: message.date});
 
     data.sendMessage(message.from, user.room, message.message, message.date);
-    // worked before
-    // socket.broadcast.emit("message", message);
-
-
-    // io.to(user.room).emit("message", message);
 
   });
 

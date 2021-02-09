@@ -29,7 +29,6 @@ const ChatWindow = () => {
 
   const addMessage = (message) =>{
     if(message) {
-      // const date = getDate();
       const date = Date();
       socket.emit('message', {message, from: email, date});
       getMessages(email, current, setMessages);

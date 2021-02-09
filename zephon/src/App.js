@@ -1,5 +1,5 @@
 
-import './App.scss'
+import './styles/App.scss'
 import React, {useContext} from 'react'
 import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom'
 import Helmet from "react-helmet";
