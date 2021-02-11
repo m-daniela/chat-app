@@ -1,14 +1,24 @@
 
+/inc - incomplete
+/rer - needs review/ needs to be rewritten
+/ex - examples or diagrams missing
+/math - mathematical aspects missing
+
 # Contents
 - [Contents](#contents)
 - [Abstract](#abstract)
+- [Introduction](#introduction)
 - [Basic concepts](#basic-concepts)
 	- [Symmetric-key encryption](#symmetric-key-encryption)
 	- [Public-key encryption](#public-key-encryption)
 	- [TODO: Auth + digital signatures](#todo-auth--digital-signatures)
 	- [End-to-end encryption](#end-to-end-encryption)
-	- [How it works](#how-it-works)
-	- [Challenges](#challenges)
+	- [How it works, MAC](#how-it-works-mac)
+	- [Limitations](#limitations)
+		- [Metadata about the users](#metadata-about-the-users)
+		- [Man-in-the-middle attacks](#man-in-the-middle-attacks)
+		- [Endpoint security](#endpoint-security)
+		- [Backdoors](#backdoors)
 - [Technologies used](#technologies-used)
 - [Existing e2ee systems](#existing-e2ee-systems)
 	- [Signal protocol - how the other popular message apps work](#signal-protocol---how-the-other-popular-message-apps-work)
@@ -17,9 +27,12 @@
 	- [Tutorials, code resources](#tutorials-code-resources)
 	- [Frameworks, packages (mostly Virgil security)](#frameworks-packages-mostly-virgil-security)
 		- [Firebase tutorials and integration](#firebase-tutorials-and-integration)
+- [Papers](#papers)
 - [To check](#to-check)
 
 # Abstract
+
+# Introduction
 
 - base crypto concepts used
 - frameworks + tech used
@@ -34,6 +47,8 @@
 
 Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
 
+/ex
+
 ## Public-key encryption
 - HOAC 43
 - https://en.wikipedia.org/wiki/Public-key_cryptography
@@ -42,30 +57,65 @@ Public-key encryption, also known as asymmetric encryption, is an encryption sch
 
 To encrypt a message, the sender uses the public key of the receiver, but the messages can be decrypted only by the recipient, using their private key. 
 
+/ex
+
 ## TODO: Auth + digital signatures
 
 ## End-to-end encryption
 - [Wiki](https://en.wikipedia.org/wiki/End-to-end_encryption)
+- [Encryption in-transit and Encryption at-rest – Definitions and Best Practices](https://www.ryadel.com/en/data-encryption-in-transit-at-rest-definitions-best-practices-tutorial-guide/)
+- [Data Protection: Data In transit vs. Data At Rest](https://digitalguardian.com/blog/data-protection-data-in-transit-vs-data-at-rest)
+- [Brief presentation about ee2e](https://www.youtube.com/watch?v=jkV1KEJGKRA)
+- [What end-to-end encryption is, and why you need it](https://www.kaspersky.com/blog/what-is-end-to-end-encryption/37011/)
+- [What is End-to-End Encryption?](https://standardnotes.org/knowledge/2/what-is-end-to-end-encryption)
+- [end-to-end encryption (E2EE) ](https://searchsecurity.techtarget.com/definition/end-to-end-encryption-E2EE)
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
 
 
-End-to-end encryption is a communication system where the messages can be read only by those participating in the conversation, because it is encrypted by the sender. This ensures that the data cannot be read or modified by the service provider (or any third party involved) etc. because the keys to decrypt it are held by the recipients. 
 
-Google bad fragment, data encrypted in transit
+End-to-end encryption is a communication system in which the messages can only be read by those participating in the conversation because they are encrypted by the sender. This ensures that the data cannot be read or modified by the service provider or any third party involved, hackers, Gov etc. since the keys to decrypt it are held by the recipients. 
+
+/inc /rer /ex
+This solution arised from the fact that many email or messaging applications use third parties to store the data and it is only encrypted "in transit", meaning that while the data is in motion, from one place to another (either through the internet or in a private network ex tls), it is encrypted. But when it reaches the server, the service provider is able to decrypt and read it, before sending it forward to the intended recipient. 
+
+/inc
+This might also lead to unauthorized access from the outside if the server is compromised. 
 
 ## How it works, MAC
+- [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
 
-End-to-end encryption involves, at first, a key exchange between the two parties.
+
+/rer /ex /inc
+End-to-end encryption involves public and private keys. The private key is held by the participant in the conversation and will be later used to decrypt the oncomming messages, thus it should not be accessible to anyone else. The public key of the recipient is publicly available and the sender uses it in order to encrypt a message for the recipient. 
+
+## Limitations
+
+### Metadata about the users
+
+/inc
+Various information, such as to whom or when the user sent messages, is still available to the third parties. 
+
+### Man-in-the-middle attacks
+
+Since the endpoints need the public key of the intended recipient, a man-in-the-middle attack is possible. The attacker can inject themselves in the middle and the sender will use the public key of the attacker. Now, they can decrypt it using their private key and read or temper with the message, and then send it to the recipient, by encrypting it with their public key. 
+
+/inc /ex
+This can be avoided if the identities of the participants are verified - digital signature, authentication or other certificates
 
 
-## Challenges
+### Endpoint security
+/inc
+The messages are only protected in transit and at rest from possible eavesdroppers on the communication channel but the endpoints are still vulnerable. This happens because after decryption, the messages in plaintext are available to anyone who has access to that device. 
 
-End-to-end encryption 
+### Backdoors
+/ex
+The application providers might include, intentionally or not, ways to access the data by bypassing the encryption, called backdoors.
 
-**Man in the middle attacks**
-
-**Endpoint security**
-
-**Backdoors**
 
 # Technologies used
 - React for frontend
@@ -82,11 +132,20 @@ End-to-end encryption
 - Prekey bundle
 - Double ratchet algo
 
+- [Signal protocol - wiki](https://en.wikipedia.org/wiki/Signal_Protocol)
+- [Signal docs](https://signal.org/docs/)
+- [The X3DH Key Agreement Protocol](https://signal.org/docs/specifications/x3dh/)
+- [A Formal Security Analysis of the Signal Messaging Protoco](https://eprint.iacr.org/2016/1013.pdf)
+- [Hecar Lexicon: What Is the Signal Encryption Protocol?](https://www.wired.com/story/signal-encryption-protocol-hacker-lexicon/)
+- []()
+- []()
+
+
+
 # App + comparison with other apps
 
 ## Resources
 
-- [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
 - [e2ee](https://squareup.com/us/en/townsquare/end-to-end-encryption)
 - [GFG e2ee](https://www.geeksforgeeks.org/what-is-e2eeend-to-end-encryption/)
 - 10 - 2/2.15
@@ -96,6 +155,17 @@ End-to-end encryption
 - [Double Ratchet algo](https://en.wikipedia.org/wiki/Double_Ratchet_Algorithm)
 - [JSON web tokens (JWT)](https://jwt.io/introduction)
 - [JWT](https://developer.virgilsecurity.com/docs/e3kit/fundamentals/jwt/)
+- [Data Encryption in Transit](https://brightlineit.com/data-encryption-transit-business-needs-know/)
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+
 
 **Videos**
 - [Brief presentation about ee2e](https://www.youtube.com/watch?v=jkV1KEJGKRA)
@@ -153,6 +223,21 @@ https://stackoverflow.com/questions/48249900/end-to-end-encryption-for-a-chat-ap
 - [End-to-End Encryption for Firebase](https://developer.virgilsecurity.com/docs/e3kit/integrations/firebase/)
 
 - []()
+
+# Papers
+- [Breaking Message Integrity ofan End-to-End Encryption Scheme of LINE?](https://eprint.iacr.org/2018/668.pdf)
+- [End-to-End Encryption Techniques](https://www.irjet.net/archives/V7/i6/IRJET-V7I6202.pdf)
+- [Privacy Protected Email + various other papers on email privacy and encryption and others (01 - )](https://www.w3.org/2014/strint/papers/01.pdf)
+- [AppliedCryptoHardening](https://www.w3.org/2014/strint/papers/05.pdf)
+- [Strengtheningthe path and strengtheningthe end-points](https://www.w3.org/2014/strint/papers/09.pdf)
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+
+https://www.w3.org/2014/strint/papers/02.pdf
 
 
 # To check
