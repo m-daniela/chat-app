@@ -30,22 +30,31 @@
 - [Papers](#papers)
 - [To check](#to-check)
 
-# Abstract
-
-# Introduction
 
 - base crypto concepts used
 - frameworks + tech used
 - existing current e2ee systems
 - description + comparison with existing apps
 
+
+# Abstract
+
+# Introduction
+
 # Basic concepts
+
+General structure
+
+1. A short definition
+2. How it works and how it is used
+3. Different properties
+4. Examples
+
 
 ## Symmetric-key encryption
 - HOAC 33
 - https://en.wikipedia.org/wiki/Symmetric-key_algorithm
 
-Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
 
 /ex
 
@@ -53,13 +62,117 @@ Symmetric-key encryption is an encryption scheme which uses the same key for bot
 - HOAC 43
 - https://en.wikipedia.org/wiki/Public-key_cryptography
 
-Public-key encryption, also known as asymmetric encryption, is an encryption scheme which uses a public and a private key. The public key can be publicly available, while the private key must be kept secret by the user. 
 
-To encrypt a message, the sender uses the public key of the receiver, but the messages can be decrypted only by the recipient, using their private key. 
+## Authentication
+- intro - hoac 42
+- identification and entity auth - hoac 401
+- https://en.wikipedia.org/wiki/Authentication
+- https://economictimes.indiatimes.com/definition/Authentication
+- https://www.bu.edu/tech/about/security-resources/bestpractice/auth/
 
-/ex
+- https://www.idc-online.com/technical_references/pdfs/data_communications/ZERO%20KNOWLEDGE.pdf - ZEROKNOWLEDGEPASSWORDAUTHENTICATION PROTOCOL
 
-## TODO: Auth + digital signatures
+Authentication (from Greek: αὐθεντικός authentikos, "real, genuine", from αὐθέντης authentes, "author") is the act of proving an assertion, such as the identity of a computer system user. In contrast with identification, the act of indicating a person or thing's identity, authentication is the process of verifying that identity.[1] It might involve validating personal identity documents, verifying the authenticity of a website with a digital certificate,[2] determining the age of an artifact by carbon dating, or ensuring that a product or document is not counterfeit. 
+
+---
+
+This chapter considers techniques designed to allow one party (the verifier) to gain assurances
+that the identity of another (the claimant) is as declared, thereby preventing impersonation.
+The most common technique is by the verifier checking the correctness of a message
+(possibly in response to an earlier message) which demonstrates that the claimant is
+in possession of a secret associated by design with the genuine party. Names for such techniques
+include identification, entity authentication, and (less frequently) identity verification.
+
+A major difference between entity authentication and message authentication (as provided
+by digital signatures or MACs) is that message authentication itself provides no timeliness
+guarantees with respect to when a message was created, whereas entity authentication
+involves corroboration of a claimant’s identity through actual communications with an
+associated verifier during execution of the protocol itself (i.e., in real-time, while the verifying
+entity awaits). Conversely, entity authentication typically involves no meaningful
+message other than the claim of being a particular entity, whereas message authentication
+does. Techniques which provide both entity authentication and key establishment are deferred
+to Chapter 12; in some cases, key establishment is essentially message authentication
+where the message is the key.
+
+**Identification objectives**
+
+The general setting for an identification protocol involves a prover or claimantAand a verifier
+B. The verifier is presented with, or presumes beforehand, the purported identity of the
+claimant. The goal is to corroborate that the identity of the claimant is indeed A, i.e., to
+provide entity authentication.
+
+Entity authentication is the process whereby one party is assured (through acquisition
+of corroborative evidence) of the identity of a second party involved in a protocol,
+and that the second has actually participated (i.e., is active at, or immediately prior to, the
+time the evidence is acquired).
+
+**Objectives of identification protocols**
+
+From the point of view of the verifier, the outcome of an entity authentication protocol is
+either acceptance of the claimant’s identity as authentic (completion with acceptance), or
+termination without acceptance (rejection). They include the following:
+
+- In the case of honest parties A and B, A is able to successfully authenticate itself to
+B, i.e., B will complete the protocol having accepted A’s identity.
+- (transferability) B cannot reuse an identification exchange with A so as to successfully
+impersonate A to a third party C.
+- (impersonation) The probability is negligible that any party C distinct from A, carrying
+out the protocol and playing the role of A, can cause B to complete and accept
+A’s identity. Here negligible typically means “is so small that it is not of practical
+significance”; the precise definition depends on the application.
+- The previous points remain true even if: a (polynomially) large number of previous
+authentications between A and B have been observed; the adversary C has participated
+in previous protocol executions with either or both A and B; and multiple instances
+of the protocol, possibly initiated by C, may be run simultaneously
+
+## Digital signatures
+- intro - hoac 40
+- digital signatures (ch 11) - hoac 441 
+- https://en.wikipedia.org/wiki/Digital_signature
+- https://blog.pandadoc.com/what-is-a-digital-signature-and-how-does-it-work/
+- https://www.docusign.com/how-it-works/electronic-signature/digital-signature/digital-signature-faq
+- https://cybersecurity.att.com/blogs/security-essentials/digital-signatures-101-a-powerful-and-underused-cybersecurity-ally /////
+
+A cryptographic primitive which is fundamental in authentication, authorization, and nonrepudiation
+is the digital signature. The purpose of a digital signature is to provide a means
+for an entity to bind its identity to a piece of information. The process of signing entails
+transforming the message and some secret information held by the entity into a tag called
+a signature. A generic description follows.
+
+
+---
+
+A digital signature is a mathematical scheme for verifying the authenticity of digital messages or documents. A valid digital signature, where the prerequisites are satisfied, gives a recipient very strong reason to believe that the message was created by a known sender (authentication), and that the message was not altered in transit (integrity).[1]
+
+Digital signatures are a standard element of most cryptographic protocol suites, and are commonly used for software distribution, financial transactions, contract management software, and in other cases where it is important to detect forgery or tampering.
+
+
+Digital signatures employ asymmetric cryptography. In many instances they provide a layer of validation and security to messages sent through a non-secure channel: Properly implemented, a digital signature gives the receiver reason to believe the message was sent by the claimed sender. Digital signatures are equivalent to traditional handwritten signatures in many respects, but properly implemented digital signatures are more difficult to forge than the handwritten type. Digital signature schemes, in the sense used here, are cryptographically based, and must be implemented properly to be effective. 
+
+Digital signatures can also provide non-repudiation, meaning that the signer cannot successfully claim they did not sign a message, while also claiming their private key remains secret. Further, some non-repudiation schemes offer a timestamp for the digital signature, so that even if the private key is exposed, the signature is valid.[14][15] Digitally signed messages may be anything representable as a bitstring: examples include electronic mail, contracts, or a message sent via some other cryptographic protocol 
+
+A digital signature scheme typically consists of three algorithms;
+
+    A key generation algorithm that selects a private key uniformly at random from a set of possible private keys. The algorithm outputs the private key and a corresponding public key.
+    A signing algorithm that, given a message and a private key, produces a signature.
+    A signature verifying algorithm that, given the message, public key and signature, either accepts or rejects the message's claim to authenticity.
+
+----
+
+
+Adigital signature of a message is a number dependent on some secret known
+only to the signer, and, additionally, on the content of the message being signed. Signatures
+must be verifiable; if a dispute arises as to whether a party signed a document (caused by either
+a lying signer trying to repudiate a signature it did create, or a fraudulent claimant), an
+unbiased third party should be able to resolve the matter equitably, without requiring access
+to the signer’s secret information (private key).
+
+There are several properties which the signing and verification transformations must satisfy.
+(a) s is a valid signature of A on message m if and only if VA(m, s) = true.
+(b) It is computationally infeasible for any entity other than A to find, for any m∈M,
+an s ∈ S such that VA(m, s) = true.
+
+
 
 ## End-to-end encryption
 - [Wiki](https://en.wikipedia.org/wiki/End-to-end_encryption)
@@ -69,52 +182,34 @@ To encrypt a message, the sender uses the public key of the receiver, but the me
 - [What end-to-end encryption is, and why you need it](https://www.kaspersky.com/blog/what-is-end-to-end-encryption/37011/)
 - [What is End-to-End Encryption?](https://standardnotes.org/knowledge/2/what-is-end-to-end-encryption)
 - [end-to-end encryption (E2EE) ](https://searchsecurity.techtarget.com/definition/end-to-end-encryption-E2EE)
+- [A Deep Dive on End-to-End Encryption: How Do Public Key Encryption Systems Work?](https://ssd.eff.org/en/module/deep-dive-end-end-encryption-how-do-public-key-encryption-systems-work)
+- [WhatsApp, Signal and End-To-End Encryption](https://fcivaner.medium.com/messaging-open-source-and-end-to-end-encryption-41a0252541bb)
+- [using quantum key distribution](https://www.ijtsrd.com/papers/ijtsrd18723.pdf)
+- [efficient](https://www.delltechnologies.com/en-us/collaterals/unauth/white-papers/products/storage/h18483-dell-emc-powermax-end-to-end-efficient-encryption.pdf)
 - []()
 - []()
-- []()
-- []()
-- []()
-- []()
-
-
-
-End-to-end encryption is a communication system in which the messages can only be read by those participating in the conversation because they are encrypted by the sender. This ensures that the data cannot be read or modified by the service provider or any third party involved, hackers, Gov etc. since the keys to decrypt it are held by the recipients. 
-
-/inc /rer /ex
-This solution arised from the fact that many email or messaging applications use third parties to store the data and it is only encrypted "in transit", meaning that while the data is in motion, from one place to another (either through the internet or in a private network ex tls), it is encrypted. But when it reaches the server, the service provider is able to decrypt and read it, before sending it forward to the intended recipient. 
-
-/inc
-This might also lead to unauthorized access from the outside if the server is compromised. 
+- https://www.theitstuff.com/what-is-end-to-end-encryption - algo
 
 ## How it works, MAC
 - [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
 
-
-/rer /ex /inc
-End-to-end encryption involves public and private keys. The private key is held by the participant in the conversation and will be later used to decrypt the oncomming messages, thus it should not be accessible to anyone else. The public key of the recipient is publicly available and the sender uses it in order to encrypt a message for the recipient. 
+ 
 
 ## Limitations
+- details are usually present in the general sources
 
 ### Metadata about the users
 
-/inc
-Various information, such as to whom or when the user sent messages, is still available to the third parties. 
 
 ### Man-in-the-middle attacks
 
-Since the endpoints need the public key of the intended recipient, a man-in-the-middle attack is possible. The attacker can inject themselves in the middle and the sender will use the public key of the attacker. Now, they can decrypt it using their private key and read or temper with the message, and then send it to the recipient, by encrypting it with their public key. 
-
-/inc /ex
-This can be avoided if the identities of the participants are verified - digital signature, authentication or other certificates
 
 
 ### Endpoint security
-/inc
-The messages are only protected in transit and at rest from possible eavesdroppers on the communication channel but the endpoints are still vulnerable. This happens because after decryption, the messages in plaintext are available to anyone who has access to that device. 
+
 
 ### Backdoors
-/ex
-The application providers might include, intentionally or not, ways to access the data by bypassing the encryption, called backdoors.
+
 
 
 # Technologies used
@@ -126,6 +221,10 @@ The application providers might include, intentionally or not, ways to access th
 
 
 # Existing e2ee systems
+
+## PGP
+- https://en.wikipedia.org/wiki/Pretty_Good_Privacy
+- https://ssd.eff.org/en/module/deep-dive-end-end-encryption-how-do-public-key-encryption-systems-work (end)
 
 ## Signal protocol - how the other popular message apps work
 - Triple Diffie Hellman key exchange
@@ -139,6 +238,7 @@ The application providers might include, intentionally or not, ways to access th
 - [Hecar Lexicon: What Is the Signal Encryption Protocol?](https://www.wired.com/story/signal-encryption-protocol-hacker-lexicon/)
 - []()
 - []()
+- https://en.wikipedia.org/wiki/Montgomery_curve
 
 
 
