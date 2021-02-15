@@ -3,7 +3,7 @@
 
 var admin = require("firebase-admin");
 const auth = require("./auth");
-var serviceAccount = require("../../../key.json");
+var serviceAccount = require("../../key.json");
 
 const { cts } = require("./constants");
 

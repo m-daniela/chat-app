@@ -15,5 +15,8 @@ export const getChats = (user, setConversations) => {
     axios.post(baseUrl, {user})
         .then(res => res.data)
         .then(data => setConversations(data))
-        .catch(err => console.log(err));
+        .catch(err => {
+            console.log(err);
+            setConversations([]);
+        });
 }

@@ -20,7 +20,7 @@ const reducer = (state, action) => {
 let socket;
 
 const ContextProvider = (props) => {
-    const {email} = useContext(AuthenticationContext);
+    const {email, eThree} = useContext(AuthenticationContext);
 
     const state = [];
     const [conversations, setConversations] = useState([]);
@@ -39,9 +39,11 @@ const ContextProvider = (props) => {
     }
 
     useEffect(() => {
+        console.log("Context")
         getConversations();
+        console.log("Contaxt", conversations)
         // eslint-disable-next-line 
-    }, [email]);
+    }, [email, eThree]);
 
     return (
         <ChatContext.Provider value={{messages, dispatch, conversations, addNewConversation, getConversations, socket}}>

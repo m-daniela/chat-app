@@ -13,7 +13,7 @@ import ContextProvider from './components/context/Context';
 import ConversationProvider from './components/context/ConversationContext';
 
 export const ChatZone = () => {
-  const {loggedIn} = useContext(AuthenticationContext);
+  const {loggedIn, eThree} = useContext(AuthenticationContext);
   const history = useHistory();
 
   if(!loggedIn){

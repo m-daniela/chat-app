@@ -11,7 +11,7 @@ const Message = ({message, pks}) => {
 
   // clean this part
   useEffect(() => {
-    if (message.text.length > 20){
+    if (message.sender !== "sys"){
       if (email === message.sender) {
         setAuthor("current");
         eThree.authDecrypt(message.text, pks.currentPK)
@@ -25,10 +25,13 @@ const Message = ({message, pks}) => {
         eThree.authDecrypt(message.text, pks.recipientPK)
           .then(decrypted => {
             console.log("Plaintext", decrypted);
-            setMessage(decrypted)
+            setMessage(decrypted);
           })
           .catch(err => console.log(err));
       }
+    }
+    else{
+      setMessage(message.text);
     }
   }, [])
   
@@ -40,9 +43,7 @@ const Message = ({message, pks}) => {
             {message.sender}
           </div>
           <div className="text">
-            {/* {message.text} */}
             {decryptedMessage}
-            {/* {12345} */}
           </div>
           <div className="date">
             {!message.date._seconds ? getDate(message.date) : ""}

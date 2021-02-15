@@ -25,7 +25,9 @@ const Login = () => {
                     login(uid, email, password);
                     history.replace("/");
                 })
+                .then(_ => console.log("data added"))
                 .then(_ => getConversations())
+                .then(_ => console.log("conversations taken"))
                 .catch(err => console.log(err));
             
             
