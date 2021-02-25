@@ -173,7 +173,8 @@ io.on('connection', (socket) => {
   socket.on("new chat", (chat) =>{
     const receiver = chat.chat;
     const sender = chat.sender;
-    console.log("-----", receiver, sender)
+    const date = chat.date;
+    console.log("-----", receiver, sender, date)
     // const user = data.current(socket.id);
     // dummy[[chatName]] =  {messages: []};
     // console.log(dummy);
@@ -182,7 +183,7 @@ io.on('connection', (socket) => {
     // const newChat = {[chatName] : {messages: []}};
     // console.log(newChat);
 
-    data.createChat(sender, receiver)
+    data.createChat(sender, receiver, date)
 
     io.emit("new chat", {chatName: receiver});
   });

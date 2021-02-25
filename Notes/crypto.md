@@ -10,6 +10,13 @@
 
 <br>
 
+# To fix
+- reset everything on logout - conversation remains selected
+- order by timestamp/
+- same id for messages
+
+example5@mail.com
+
 
 
 

@@ -2,6 +2,7 @@
 // database interaction
 
 var admin = require("firebase-admin");
+const fieldValue = require("firebase-admin").firestore.FieldValue;
 const auth = require("./auth");
 var serviceAccount = require("../../key.json");
 
@@ -21,6 +22,15 @@ const db = admin.firestore();
 // uid (email)
 // create a conversations collection with 
 // and empty document called "ignore"
+
+const convertToTimestamp = (date) =>{
+  // return new db.FieldValue.Timestamp(date.seconds, date.nanoseconds);
+  const timestamp = admin.firestore.Timestamp.fromDate(new Date(date));
+  console.log("time", timestamp)
+  // console.log("timestamp", admin.firestore.FieldValue.serverTimestamp(date.seconds, date.nanoseconds))
+  return timestamp;
+  // return new admin.firestore.FieldValue.serverTimestamp(date.seconds, date.nanoseconds);
+}
 
 const addUser = async (email, req, res) =>{
   try{
@@ -45,12 +55,14 @@ const addUser = async (email, req, res) =>{
 // the other's participant email as uid
 // sender (email) - the one who initialized the chat
 // receiver (email) - the one added to the chat
-const createChat = async (sender, receiver) =>{
+const createChat = async (sender, receiver, date) =>{
   const message = {
     sender: "sys",
     text: "Start chatting", 
-    date: new Date(),
+    date: convertToTimestamp(date),
+    // date,
   }
+  console.log(message)
   try{
     const conversation1 = await db.collection(cts.users)
     .doc(sender)
@@ -58,11 +70,7 @@ const createChat = async (sender, receiver) =>{
     .doc(receiver);
     await conversation1.set({});
     await conversation1.collection(cts.messages)
-    .add({
-      sender: "sys",
-      text: "start chatting", 
-      date: new Date(),
-    });
+    .add(message);
 
     const conversation2 = await db.collection(cts.users)
       .doc(receiver)
@@ -75,7 +83,7 @@ const createChat = async (sender, receiver) =>{
     console.log("New chat created");
   }
   catch(err){
-    console.log(err);
+    console.log("err");
   }
   
 }
@@ -90,7 +98,7 @@ const sendMessage = async (sender, receiver, text, date) => {
   const message = {
     sender,
     text, 
-    date,
+    date: convertToTimestamp(date),
   }
 
   console.log("data", message);

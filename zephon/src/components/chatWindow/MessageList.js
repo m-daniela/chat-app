@@ -33,7 +33,8 @@ const Message = ({message, pks}) => {
     else{
       setMessage(message.text);
     }
-  }, [])
+  // eslint-disable-next-line
+  }, []);
   
   
 
@@ -46,7 +47,9 @@ const Message = ({message, pks}) => {
             {decryptedMessage}
           </div>
           <div className="date">
-            {!message.date._seconds ? getDate(message.date) : ""}
+            {console.log(message.date)}
+            {getDate(message.date)}
+            {/* {!message.date._seconds ? getDate(message.date) : ""} */}
           </div>
         </div>
   )
@@ -63,7 +66,7 @@ const MessageList = ({pks}) => {
   return (
     <div className="message_list">
       {
-        messages.map(elem => <Message key={Math.random() * 100} pks={pks} message={elem}/>)
+        messages.map(elem => <Message key={Math.random() * 10000} pks={pks} message={elem}/>)
       }
     </div>
   )

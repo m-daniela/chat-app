@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { AuthenticationContext } from '../context/Authentication';
 import { ChatContext } from '../context/Context'
-import SideItem from './SideItem'
+import SideItem from './SideItem';
+import firebase from "firebase";
 
 // add a new chat
 const NewChat = ({close}) =>{
@@ -12,7 +13,9 @@ const NewChat = ({close}) =>{
 
     const searchUser = (e) =>{
         e.preventDefault();
-        socket.emit("new chat", {chat: newChat, sender: email});
+        // const date = new firebase.firestore.Timestamp.now();
+        const date = new Date();
+        socket.emit("new chat", {chat: newChat, sender: email, date});
         close(false);
     }
 
@@ -38,7 +41,7 @@ const ChatList = () => {
     const {conversations, socket, addNewConversation} = useContext(ChatContext);
     const [addChat, setAddChat] = useState(false);
 
-    console.log("????", conversations)
+    // console.log("????", conversations)
 
     useEffect(() =>{
         socket.on("new chat", (newChat) => {

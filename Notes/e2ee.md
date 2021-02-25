@@ -257,6 +257,18 @@ an s ∈ S such that VA(m, s) = true.
 
 # Existing e2ee systems
 
+## Signal Protocol
+- Signal, Whatsapp, Facebook Messenger
+
+
+## MTProto 2.0
+- Telegram
+https://core.telegram.org/mtproto
+
+## Signcryption
+- iMessage
+
+
 ## PGP
 - https://en.wikipedia.org/wiki/Pretty_Good_Privacy
 - https://ssd.eff.org/en/module/deep-dive-end-end-encryption-how-do-public-key-encryption-systems-work (end)
@@ -278,6 +290,11 @@ an s ∈ S such that VA(m, s) = true.
 ### Diffie Hellamn
 - https://www.cs.jhu.edu/~rubin/courses/sp03/papers/diffie.hellman.pdf
 
+## Line
+
+- https://www.jstage.jst.go.jp/article/transfun/E103.A/1/E103.A_2019EAP1041/_article/-char/ja/
+- https://eprint.iacr.org/2018/668.pdf - same as above, but free
+- https://arstechnica.com/information-technology/2020/10/study-shows-which-messengers-leak-your-data-drain-your-battery-and-more/
 
 
 # App + comparison with other apps
@@ -368,12 +385,19 @@ https://stackoverflow.com/questions/48249900/end-to-end-encryption-for-a-chat-ap
 - [Privacy Protected Email + various other papers on email privacy and encryption and others (01 - )](https://www.w3.org/2014/strint/papers/01.pdf)
 - [AppliedCryptoHardening](https://www.w3.org/2014/strint/papers/05.pdf)
 - [Strengtheningthe path and strengtheningthe end-points](https://www.w3.org/2014/strint/papers/09.pdf)
+- [Asymmetric Message Franking:Content Moderation for Metadata-Private End-to-End Encryption](https://eprint.iacr.org/2019/565.pdf)
+- [On Ends-to-Ends Encryption:Asynchronous Group Messaging with Strong Security Guarantees](https://eprint.iacr.org/2017/666.pdf)
+- [Achieve Fully Decentralized End to End encryptionmeeting via Blockchain](https://eprint.iacr.org/2020/1572.pdf)
 - []()
 - []()
 - []()
-- []()
-- []()
-- []()
+- https://web.cs.ucdavis.edu/~rogaway/papers/moral.pdf
+- https://link.springer.com/chapter/10.1007/978-3-319-45982-0_22
+- https://www.jstage.jst.go.jp/article/ipsjjip/27/0/27_763/_pdf/-char/en
+- https://www.mdpi.com/1424-8220/21/4/1058/htm - GROUP MESSAGING WITH RATCHET
+- https://www.scirp.org/html/1-9302677_99260.htm - SMS
+- https://www.securityweek.com/academics-devise-attacks-targeting-email-end-end-encryption
+
 
 https://www.w3.org/2014/strint/papers/02.pdf
 

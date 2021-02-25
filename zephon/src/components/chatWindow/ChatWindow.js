@@ -7,7 +7,7 @@ import { ConversationContext } from '../context/ConversationContext';
 import { getMessages } from '../../data/ServerCalls'
 import { AuthenticationContext } from '../context/Authentication'
 import { getPublicKey } from '../services/encryption'
-
+import firebase from "firebase";
 
 const ChatWindow = () => {
   const {dispatch, socket} = useContext(ChatContext);
@@ -37,7 +37,9 @@ const ChatWindow = () => {
 
   const addMessage = (message) =>{
     if(message) {
-      const date = Date();
+      const date = new Date();
+      // const date = firebase.firestore.Timestamp.now();
+      
       eThree.authEncrypt(message, [currentPK, recipientPK])
         .then(enc => {
           socket.emit('message', {message: enc, from: email, date});
@@ -60,6 +62,16 @@ const ChatWindow = () => {
       //   })
 
 
+    }
+    else{
+      // testing the timestamp part
+      const date_timestamp = firebase.firestore.Timestamp.now()
+      const date_normal = new Date()
+      const date_javascript = date_timestamp.toDate()
+      console.log(date_timestamp)
+      console.log(date_javascript)
+      console.log(date_normal)
+      console.log(firebase.firestore.Timestamp(date_timestamp.seconds, date_timestamp.nanoseconds))
     }
   }
 
