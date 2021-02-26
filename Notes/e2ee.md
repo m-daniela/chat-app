@@ -334,9 +334,9 @@ https://core.telegram.org/mtproto
 
 Extra
 - [Group chats encryption](https://www.youtube.com/watch?v=Q0_lcKrUdWg)
-- [Context tutorial, probably better](https://www.taniarascia.com/using-context-api-in-react/)
 
 ## Tutorials, code resources
+- [Context tutorial, probably better](https://www.taniarascia.com/using-context-api-in-react/)
 - [How to implement end-to-end encryption for simplified security](https://virgilsecurity.com/blog/simplified-firebase-sdk)
 - [End-to-End Encryption implementation guide](https://matrix.org/docs/guides/end-to-end-encryption-implementation-guide)
 - [Encrypted chatbot](https://medium.com/better-programming/building-an-end-to-end-encrypted-chatbot-with-stream-react-chat-virgil-security-and-google-c000bb585453)
