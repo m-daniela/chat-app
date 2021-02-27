@@ -240,6 +240,10 @@
 - forward secrecy - clients reinitiate re-keying after 100 msg enc / decr or if it has been in usde for 1 week
 - the old keys are discarded
 
+- e2ee is available only for secret chats and calls (2 people, groups are not included)
+- no default encryption
+- messages are not stored after delivery
+
 
 ## Signcryption and iMessage
 - [Official](https://support.apple.com/en-us/HT209110)
@@ -348,3 +352,86 @@
 
 - [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
 - [2020 - Challenges in E2E Encrypted Group Messaging](./PDF/Papers/20.%20Challenges%20in%20E2E%20Encrypted%20Group%20Messaging%20-%20GroupMessagingReport.pdf)
+
+## Threema
+
+
+# Terms and algorithms + other stuff
+- [curve analysis](https://safecurves.cr.yp.to/)
+- [AEAD = authenticated encryption](https://en.wikipedia.org/wiki/Authenticated_encryption)
+
+
+## Elliptic curve Diffie Hellman (ECDH)
+- [wiki](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman)
+- EC public-private key pair for both parties, to establish a shared secret
+- key establishment:
+	- domain parameters:
+		- p  - prime number (or in case of binary, m and f(x))
+		- a, b - const of the curve
+		- G - generator/ base point
+		- n - smalles number st nG = 0
+		- h - cofactor
+- each party has a private key d and a public key Q = d * G, then
+	- A: (d_A, Q_A)
+	- B: (d_B, Q_B)
+- resulting in the shared secret x_k, from 
+	- A: (x_k, y_k) = d_A * Q_B = d_A * d_b * G
+	- B: (x_k, y_k) = d_B * Q_A = d_B * d_A * G
+
+
+## Integrated enc scheme
+- [wiki](https://en.wikipedia.org/wiki/Integrated_Encryption_Scheme)
+- hybrid enc scheme prividing [semantic security](https://en.wikipedia.org/wiki/Semantic_security) (only negligible info about the plaintext can be feasibly extracted form the ciphertext) against an adversary allowed to used chosen plaintext and chosen ciphertext attacks
+- sec based on the computaional Diffie Hellamn prob
+- ECIES (Elliptic curve integrated enc scheme) is included
+
+## Curve25519
+- [wiki](https://en.wikipedia.org/wiki/Curve25519)
+- released in 2005
+- elliptic curve
+- 128 bits of security (256 bits kye size)
+- used with elliptic curve Diffie Hellman key exchange
+- one of the fastest
+- used curve is y^2 = x^3 486662x^2 + x ([Montgomery curve](https://en.wikipedia.org/wiki/Montgomery_curve)) over the field of Z_(2^255 - 19), base point x = 9
+
+## NIST curves
+- [wiki](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography#Fast_reduction_(NIST_curves))
+ 
+
+
+## AES
+- [wiki](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
+- symmetric block cipher
+- substitution-permutation network
+- blocks of 128, 192, 256 bits
+
+
+## AES GCM
+- [GCM = Galois/ Counter Mode](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
+- [CTR mode = counter mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_(CTR)) - turns a block cipher into a stream cipher
+
+## SHA 
+- [SHA - secure hash algos](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms)
+- family of hash functions, published by NIST
+- [something about these](https://www.thesslstore.com/blog/difference-sha-1-sha-2-sha-256-hash-algorithms/)
+
+
+## SHA 1
+- [wiki](https://en.wikipedia.org/wiki/SHA-1)
+- 160 bit hash value (message digest lol)
+
+
+## SHA 2
+- [wiki](https://en.wikipedia.org/wiki/SHA-2)
+- 6 hash functions:
+	- SHA 224 bits
+	- SHA 256 bits
+	- SHA 384 bits
+	- SHA 512 bits
+	- SHA 512/ 224 bits
+	- SHA 512/ 256 bits
+
+
+## OAEP - optimal asym enc padding
+- [wiki](https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding)
+- padding scheme often used with RSA (RSA OEAP)
