@@ -16,7 +16,7 @@ const Message = ({message, pks}) => {
         setAuthor("current");
         eThree.authDecrypt(message.text, pks.currentPK)
           .then(decrypted => {
-            console.log("Plaintext", decrypted);
+            // console.log("Plaintext", decrypted);
             setMessage(decrypted)
           })
           .catch(err => console.log(err));
@@ -24,7 +24,7 @@ const Message = ({message, pks}) => {
       else{
         eThree.authDecrypt(message.text, pks.recipientPK)
           .then(decrypted => {
-            console.log("Plaintext", decrypted);
+            // console.log("Plaintext", decrypted);
             setMessage(decrypted);
           })
           .catch(err => console.log(err));
@@ -47,9 +47,7 @@ const Message = ({message, pks}) => {
             {decryptedMessage}
           </div>
           <div className="date">
-            {console.log(message.date)}
             {getDate(message.date)}
-            {/* {!message.date._seconds ? getDate(message.date) : ""} */}
           </div>
         </div>
   )

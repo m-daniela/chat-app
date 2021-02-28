@@ -14,7 +14,7 @@ const addZero = (number) => {
 
 export const getDate = (format) => {
   let today = null;
-  console.log("getDate", format.seconds)
+  // console.log("getDate", format.seconds)
 
   if (format._seconds !== undefined){
     const date = new firebase.firestore.Timestamp(format._seconds, format._nanoseconds);
@@ -24,7 +24,7 @@ export const getDate = (format) => {
     today = new Date(format);
   }
   // const today = format.toDate();
-  console.log(123, today)
+  // console.log(123, today)
   if (today === undefined || today === null){
     return "";
   }

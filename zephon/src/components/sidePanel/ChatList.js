@@ -41,8 +41,6 @@ const ChatList = () => {
     const {conversations, socket, addNewConversation} = useContext(ChatContext);
     const [addChat, setAddChat] = useState(false);
 
-    // console.log("????", conversations)
-
     useEffect(() =>{
         socket.on("new chat", (newChat) => {
             addNewConversation(newChat.chatName);

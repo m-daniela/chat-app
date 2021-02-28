@@ -14,6 +14,8 @@
 - reset everything on logout - conversation remains selected
 - order by timestamp/
 - same id for messages
+- refresh mesages /
+- fix the real time thing
 
 example5@mail.com
 

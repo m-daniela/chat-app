@@ -18,11 +18,16 @@ const ChatWindow = () => {
   const [currentPK, setCurrentPK] = useState(null); 
   const [recipientPK, setRecipientPK] = useState(null); 
 
-  useEffect(() =>{
-      socket.on("message", (msg) =>{
-        getMessages(email, current, setMessages);
-      });
-  }, [email, dispatch, current, socket, setMessages]);
+  socket.on("message", (message) =>{
+    console.log("here we are", message);
+    getMessages(email, current, setMessages);
+  });
+
+  // useEffect(() =>{
+  //     socket.on("message", (msg) =>{
+  //       getMessages(email, current, setMessages);
+  //     });
+  // }, [email, dispatch, current, socket, setMessages]);
 
   useEffect(() =>{
     if(current !== ""){
