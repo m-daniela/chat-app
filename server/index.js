@@ -155,13 +155,14 @@ io.on('connection', (socket) => {
   // broadcast the message to everyone but the sender
   socket.on('message', (message) => {
     const user = data.current(socket.id);
-    console.log(user)
     console.log(message);
+    console.log("from", user);
     console.log("To", user.room);
     // dummy[user.room].messages.push({sender: message.from, text: message.message, date: message.date});
     // console.log(dummy);
 
-    socket.broadcast.to(user.room).emit("message", {sender: message.from, text: message.message, date: message.date});
+    // io.broadcast.to(user.room).emit("message", {sender: message.from, text: message.message, date: message.date});
+    socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
 
     data.sendMessage(message.from, user.room, message.message, message.date);
 

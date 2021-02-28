@@ -18,16 +18,23 @@ const ChatWindow = () => {
   const [currentPK, setCurrentPK] = useState(null); 
   const [recipientPK, setRecipientPK] = useState(null); 
 
-  socket.on("message", (message) =>{
-    console.log("here we are", message);
-    getMessages(email, current, setMessages);
-  });
+  
+ 
 
-  // useEffect(() =>{
-  //     socket.on("message", (msg) =>{
-  //       getMessages(email, current, setMessages);
-  //     });
-  // }, [email, dispatch, current, socket, setMessages]);
+  useEffect(() =>{
+    socket.on("message", (message) =>{
+      console.log("here again", current);
+      if (current !== ""){
+        getMessages(email, current, setMessages);
+      }
+      else{
+        // console.log("kill me", message.sender);
+        getMessages(email, message.sender, setMessages);
+
+      }
+    });
+  }, [dispatch, current, socket, setMessages]);
+  // }, [socket]);
 
   useEffect(() =>{
     if(current !== ""){
