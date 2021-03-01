@@ -2,17 +2,21 @@ import React, {useEffect, useContext, useState} from 'react'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import Header from '../common/Header'
-import {ChatContext} from "../context/Context"
-import { ConversationContext } from '../context/ConversationContext';
-import { getMessages } from '../../data/ServerCalls'
-import { AuthenticationContext } from '../context/Authentication'
-import { getPublicKey } from '../services/encryption'
-import firebase from "firebase";
+import { getPublicKey } from '../services/encryption';
+import { useSelector, useDispatch } from 'react-redux'
+import { SocketContext } from '../context/SocketContext'
+import { addMessage } from '../reducers/redux'
+// import firebase from "firebase";
 
 const ChatWindow = () => {
-  const {dispatch, socket} = useContext(ChatContext);
-  const {current, setMessages} = useContext(ConversationContext);
-  const {email, eThree} = useContext(AuthenticationContext);
+  const {socket} = useContext(SocketContext);
+  const dispatch = useDispatch();
+  const email = useSelector(state => state.email);
+  const token = useSelector(state => state.token);
+  const current = useSelector(state => state.current);
+  console.log("ChatWindow", current);
+
+  // getMessagesThunk(email, conversation)
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [currentPK, setCurrentPK] = useState(null); 
@@ -24,38 +28,43 @@ const ChatWindow = () => {
   useEffect(() =>{
     socket.on("message", (message) =>{
       console.log("here again", current);
-      if (current !== ""){
-        getMessages(email, current, setMessages);
+      if (message.sender === current){
+        dispatch(addMessage({message}));
       }
-      else{
-        // console.log("kill me", message.sender);
-        getMessages(email, message.sender, setMessages);
+      // if (current !== ""){
+      //   getMessages(email, current, setMessages);
+      // }
+      // else{
+      //   // console.log("kill me", message.sender);
+      //   getMessages(email, message.sender, setMessages);
 
-      }
+      // }
     });
-  }, [dispatch, current, socket, setMessages]);
+  }, [dispatch, current, socket]);
   // }, [socket]);
 
   useEffect(() =>{
-    if(current !== ""){
+    if(current !== undefined && current !== ""){
       setIsDisabled(false);
-      getPublicKey(email, eThree, setCurrentPK);
-      getPublicKey(current, eThree, setRecipientPK);
+      getPublicKey(email, token, setCurrentPK);
+      getPublicKey(current, token, setRecipientPK);
 
     }
     else setIsDisabled(true);
     // eslint-disable-next-line
   }, [current]);
 
-  const addMessage = (message) =>{
+  const addNewMessage = (message) =>{
     if(message) {
       const date = new Date();
       // const date = firebase.firestore.Timestamp.now();
       
-      eThree.authEncrypt(message, [currentPK, recipientPK])
+      token.authEncrypt(message, [currentPK, recipientPK])
         .then(enc => {
           socket.emit('message', {message: enc, from: email, date});
-          getMessages(email, current, setMessages);
+          // getMessages(email, current, setMessages);
+          dispatch(addMessage({message}));
+
         })
         .catch(err => console.log(err));
       
@@ -75,16 +84,6 @@ const ChatWindow = () => {
 
 
     }
-    else{
-      // testing the timestamp part
-      const date_timestamp = firebase.firestore.Timestamp.now()
-      const date_normal = new Date()
-      const date_javascript = date_timestamp.toDate()
-      console.log(date_timestamp)
-      console.log(date_javascript)
-      console.log(date_normal)
-      console.log(firebase.firestore.Timestamp(date_timestamp.seconds, date_timestamp.nanoseconds))
-    }
   }
 
   return (
@@ -97,7 +96,7 @@ const ChatWindow = () => {
             </div> : 
             <>
               <MessageList pks={{currentPK, recipientPK}}/>
-              <MessageInput addMessage={addMessage} />
+              <MessageInput addMessage={addNewMessage} />
             </>}
           
       </div>

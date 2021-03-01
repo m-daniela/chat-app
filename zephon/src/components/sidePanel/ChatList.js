@@ -1,15 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react'
-import { AuthenticationContext } from '../context/Authentication';
-import { ChatContext } from '../context/Context'
+import { useDispatch, useSelector } from 'react-redux';
+import { SocketContext } from '../context/SocketContext';
+import { addConversation } from '../reducers/redux';
 import SideItem from './SideItem';
-import firebase from "firebase";
+// import firebase from "firebase";
 
 // add a new chat
 const NewChat = ({close}) =>{
     const [newChat, setNewChat] = useState("");
-    const {socket} = useContext(ChatContext);
+    const {socket} = useContext(SocketContext);
 
-    const {email} = useContext(AuthenticationContext);
+    const email = useSelector(state => state.email);
+
 
     const searchUser = (e) =>{
         e.preventDefault();
@@ -38,14 +40,17 @@ const NewChat = ({close}) =>{
 }
 
 const ChatList = () => {
-    const {conversations, socket, addNewConversation} = useContext(ChatContext);
+    const {socket} = useContext(SocketContext);
+    const conversations = useSelector(state => state.conversations.conversations);
+    const dispatch = useDispatch();
     const [addChat, setAddChat] = useState(false);
 
     useEffect(() =>{
         socket.on("new chat", (newChat) => {
-            addNewConversation(newChat.chatName);
+            dispatch(addConversation({conversation: newChat.chatName}));
         });
-    }, [socket, addNewConversation]);
+        // eslint-disable-next-line
+    }, [socket]);
 
     const addNewChat = () =>{
         setAddChat(true);
@@ -55,6 +60,7 @@ const ChatList = () => {
         <div className="chat_list">
             {!addChat ? <>
                 <button className="side_item" onClick={addNewChat}>Add new chat</button>
+                {/* {console.log("ChatList", conversations)} */}
                 {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
                 </>
                 :

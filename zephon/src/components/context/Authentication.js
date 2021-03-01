@@ -1,5 +1,5 @@
-import React, {useState, createContext, useEffect} from 'react'
-import { useHistory } from 'react-router-dom';
+import React, {useState, createContext } from 'react'
+// import { useHistory } from 'react-router-dom';
 import { e3login, e3register } from '../services/encryption';
 
 export const AuthenticationContext = createContext({
@@ -14,7 +14,7 @@ export const AuthenticationContext = createContext({
 });
 
 const Authentication = ({children}) => {
-    const history = useHistory();
+    // const history = useHistory();
     const [{uid, email, loggedIn}, setAuthenthication] = useState({
         uid: localStorage.getItem("uid"),
         email: localStorage.getItem("email"),

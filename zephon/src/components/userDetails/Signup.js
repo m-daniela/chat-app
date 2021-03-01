@@ -1,7 +1,8 @@
-import React, {useState, useContext} from 'react'
+import React, {useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import {register} from "../services/firebase"
-import {AuthenticationContext} from '../context/Authentication';
+import { useDispatch } from 'react-redux';
+import { registerThunk } from '../reducers/redux';
 
 
 const Signup = () => {
@@ -13,9 +14,8 @@ const Signup = () => {
     });
     const [password, setPassword] = useState("");
     const [samePassword, setSamePassword] = useState("");
-    const {signup} = useContext(AuthenticationContext);
     const history = useHistory();
-
+    const dispatch = useDispatch();
 
 
     const onSubmitAction = async (e) =>  {
@@ -28,8 +28,8 @@ const Signup = () => {
                 let user = data.user;
                 // const {uid, displayName} = user;
                 const {uid} = user;
-
-                signup(uid, email, password);
+                dispatch(registerThunk({uid, email, password}));
+                // signup(uid, email, password);
                 history.replace("/");
                 
             }

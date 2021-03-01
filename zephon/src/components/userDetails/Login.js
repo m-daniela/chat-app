@@ -1,15 +1,14 @@
-import React, {useState, useContext} from 'react'
+import React, {useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import {signin} from "../services/firebase"
-import {AuthenticationContext} from '../context/Authentication';
-import { ChatContext } from '../context/Context';
+import { useDispatch } from 'react-redux';
+import { getConversationsThunk, loginThunk } from '../reducers/redux';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const {login} = useContext(AuthenticationContext);
-    const {getConversations} = useContext(ChatContext);
+    const dispatch = useDispatch();
     const history = useHistory();
 
     const onSubmitAction = async (e) => {
@@ -21,12 +20,12 @@ const Login = () => {
                     const user = data.user;
                     // const {uid, displayName} = user;
                     const {uid} = user;
-                    
-                    login(uid, email, password);
+                    dispatch(loginThunk({uid, email, password}))
+                    // login(uid, email, password);
                     history.replace("/");
                 })
                 .then(_ => console.log("data added"))
-                .then(_ => getConversations())
+                .then(_ => dispatch(getConversationsThunk(email)))
                 .then(_ => console.log("conversations taken"))
                 .catch(err => console.log(err));
             

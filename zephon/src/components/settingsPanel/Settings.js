@@ -1,12 +1,16 @@
-import React, {useContext} from 'react'
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Header from '../common/Header'
 
-import { AuthenticationContext } from '../context/Authentication'
+import { logout } from '../reducers/redux'
 
 const Settings = () => {
-    const {logout, email} = useContext(AuthenticationContext);
+    const email = useSelector(state => state.email);
+    const dispatch = useDispatch();
+
+
     const handleLogout = () =>{
-        logout();
+        dispatch(logout());
     }
     return (
         <div className="settings_panel">

@@ -1,17 +1,17 @@
 import React, {useContext} from 'react'
-import { ConversationContext } from '../context/ConversationContext';
-import { AuthenticationContext } from '../context/Authentication';
-import { ChatContext } from '../context/Context';
+import { useDispatch, useSelector } from 'react-redux';
+import { SocketContext } from '../context/SocketContext';
+import { changeConversation } from '../reducers/redux';
 
 // let socket;
 
 const SideItem = ({name}) => {
-    const {dispatch} = useContext(ConversationContext);
-    const {email} = useContext(AuthenticationContext);
-    const {socket} = useContext(ChatContext);
+    const dispatch = useDispatch();
+    const email = useSelector(state => state.user.email);
+    const {socket} = useContext(SocketContext);
 
     const handleClick = () =>{
-        dispatch({type: "CHANGE_CONVERSATION", name});
+        dispatch(changeConversation({conversation: name}));
         // socket = io("http://localhost:5000");
         socket.emit("join", ({username: email, room: name}));
     }
@@ -19,7 +19,7 @@ const SideItem = ({name}) => {
     return (
         <div className="side_item" onClick={() => handleClick()}>
             {name}
-            <span>Last message ig</span>
+            <span>Fancy text</span>
         </div>
     )
 }

@@ -461,3 +461,141 @@ XSS //
 
 
 
+---
+
+
+CONTEXT
+
+authContext.js
+- state - uid, email, loggedIn 
+- state - eThree
+- func - setLocal - set local parameters
+- func - login - call e3 login function and save locally
+- func - signup - call the e3 register function and save locally
+- func - logout - reset everything
+
+
+context.js
+- context - email, eThree
+- state - conversations - list of convos
+- reducer - messages - list of messages depending on the selected conversation NOT USED
+- func - getConversations - get conversations based on the logged email
+- func - addNewConversation(newConversation) - add to the list of convos
+
+
+conversationContext.js
+- context - email 
+- reducer - conversation - sent as current 
+- state - messages - list of messages from the selected chat
+- useEffect - calls getMessages 
+
+
+
+CHAT WINDOW
+
+chatWindow.js
+- context - dispatch, socket - ChatContext
+- context - current, setMessages - ConversationContext
+- context - email, eThree - AuthContext
+- effect - on message received, call get messages
+- func - addMessage(message) - encrypt and emit
+
+messageList.js
+- context - email, eThree - AuthContext
+
+
+SETTINGS PANEL
+
+settings.js
+- context - email, logout - AuthContext
+
+SIDE PANEL
+
+chatList.js
+- context - conversations, socket, addNewConversation - ChatContext
+- effect - on new chat, add new conversation
+
+newChat.js
+- context - socket - ChatContext
+- context - email - AuthContext
+- func - emit new chat
+
+sideItem.js
+- context - dispatch - ConversationContext
+- context - email - AuthenticationContext
+- context - socket - ChatContext
+- func - handleClick - dispatch CHANGE_CONVO, emit join
+
+
+USER DETAILS
+
+login.js
+- context - login - AuthenticationContext
+- context - getConversations - ChatContext
+
+signup.js
+- context - signup - AuthenticationContext
+
+
+---
+
+https://github.com/angle943/redux-toolkit-comparison/blob/finished-version/src/redux-toolkit.ts
+
+
+https://dev.to/ganeshmani/modern-react-redux-toolkit-login-user-registration-tutorial-and-example-7h0
+
+
+https://cloudnweb.dev/2020/04/modern-react-redux-tutotials-redux-toolkit/
+
+
+https://medium.com/swlh/action-cable-react-hooks-redux-toolkit-yet-another-chat-app-with-unread-messages-feature-93f5f36d4489
+
+---
+
+
+user: {
+	uid,
+	email,
+	loggedIn,
+	token,
+}
+should:
+	login
+	signup
+	logout
+	saveLocallyOrNotReally
+
+
+conversations: {
+	current,
+	conversations, // list of convos
+}
+should:
+	changeConversation
+	seeAllConversations
+	addConversation
+
+
+chat: {
+	messages, 
+}
+should:
+	showMessages
+	addMessage
+
+
+---
+
+ChatWindow
+- getMessages
+
+
+---
+
+token is not serializable
+
+NORMALIZE DATA 
+
+- https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
+
+JUST SAVE IT IN SOME OTHER WAY

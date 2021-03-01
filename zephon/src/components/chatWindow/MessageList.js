@@ -1,11 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, { useEffect, useState} from 'react'
+import { useSelector } from 'react-redux';
 import { getDate } from '../../constants/Constants';
-import { AuthenticationContext } from '../context/Authentication';
-import { ConversationContext } from '../context/ConversationContext';
 
 
 const Message = ({message, pks}) => {
-  const {email, eThree} = useContext(AuthenticationContext);
+  const email = useSelector(state => state.email);
+  const token = useSelector(state => state.token);
+
   const [decryptedMessage, setMessage] = useState("Decrypting...");
   const [author, setAuthor] = useState("other");
 
@@ -14,15 +15,15 @@ const Message = ({message, pks}) => {
     if (message.sender !== "sys"){
       if (email === message.sender) {
         setAuthor("current");
-        eThree.authDecrypt(message.text, pks.currentPK)
+        token.authDecrypt(message.text, pks.currentPK)
           .then(decrypted => {
             // console.log("Plaintext", decrypted);
-            setMessage(decrypted)
+            setMessage(decrypted);
           })
           .catch(err => console.log(err));
       }
       else{
-        eThree.authDecrypt(message.text, pks.recipientPK)
+        token.authDecrypt(message.text, pks.recipientPK)
           .then(decrypted => {
             // console.log("Plaintext", decrypted);
             setMessage(decrypted);
@@ -54,7 +55,7 @@ const Message = ({message, pks}) => {
 }
 
 const MessageList = ({pks}) => {
-  const {messages} = useContext(ConversationContext);
+  const messages = useSelector(state => state.chat.messages);
 
   useEffect(() => {
     const container = document.querySelector(".message_list");
