@@ -1,8 +1,10 @@
-import React, {useState } from 'react'
+import React, {useContext, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import {register} from "../services/firebase"
 import { useDispatch } from 'react-redux';
 import { registerThunk } from '../reducers/redux';
+import { E3Context } from '../context/E3Context';
+import { e3register } from '../services/encryption';
 
 
 const Signup = () => {
@@ -16,6 +18,7 @@ const Signup = () => {
     const [samePassword, setSamePassword] = useState("");
     const history = useHistory();
     const dispatch = useDispatch();
+    const {setToken} = useContext(E3Context);
 
 
     const onSubmitAction = async (e) =>  {
@@ -30,7 +33,9 @@ const Signup = () => {
                 const {uid} = user;
                 dispatch(registerThunk({uid, email, password}));
                 // signup(uid, email, password);
-                history.replace("/");
+                e3register(email, password, setToken);
+
+                history.push("/");
                 
             }
             else{

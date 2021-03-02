@@ -1,7 +1,7 @@
 
 import './styles/App.scss'
 import React from 'react'
-import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 
 import Helmet from "react-helmet";
@@ -11,23 +11,28 @@ import Login from './components/userDetails/Login'
 import Signup from './components/userDetails/Signup'
 import Settings from './components/settingsPanel/Settings';
 import SocketProvider from './components/context/SocketContext';
+import E3Provider from './components/context/E3Context';
 
 export const ChatZone = () => {
   // const {loggedIn, eThree} = useContext(AuthenticationContext);
-  const loggedIn = useSelector(state => state.loggedIn);
-  const history = useHistory();
-
-  if(!loggedIn){
-    history.push("/login");
-  }
-
+  const loggedIn = useSelector(state => state.user.loggedIn);
+  // const history = useHistory();
+  console.log("Chat zone", loggedIn);
+  // if(!loggedIn){
+  //   history.push("/login");
+  // }
   return (
     <>
-      <SidePanel />
-      <ChatWindow />
-      <Settings />
+      {loggedIn ? <>
+          <SidePanel />
+          <ChatWindow />
+          <Settings />
+        </> : 
+        <Redirect to="/login"/>
+      }
     </>
   )
+  
 }
 
 function App () {
@@ -37,6 +42,7 @@ function App () {
     //   <ContextProvider>
     //     <ConversationProvider>
     <SocketProvider>
+      <E3Provider>
           <Helmet>
             <title>zephon</title>
           </Helmet>
@@ -58,6 +64,7 @@ function App () {
             </Router>
 
           </div>
+        </E3Provider>
       </SocketProvider>
     //     </ConversationProvider>
 

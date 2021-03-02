@@ -1,14 +1,17 @@
-import React, {useState } from 'react'
+import React, {useContext, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import {signin} from "../services/firebase"
 import { useDispatch } from 'react-redux';
-import { getConversationsThunk, loginThunk } from '../reducers/redux';
+import { getConversationsThunk, login, loginThunk } from '../reducers/redux';
+import { E3Context } from '../context/E3Context';
+import { e3login } from '../services/encryption';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const dispatch = useDispatch();
+    const {setToken} = useContext(E3Context);
     const history = useHistory();
 
     const onSubmitAction = async (e) => {
@@ -20,13 +23,16 @@ const Login = () => {
                     const user = data.user;
                     // const {uid, displayName} = user;
                     const {uid} = user;
-                    dispatch(loginThunk({uid, email, password}))
+                    dispatch(login({uid, email, loggedIn: true}));
+                    e3login(email, password, setToken);
                     // login(uid, email, password);
-                    history.replace("/");
+                    // history.replace("/");
+                    dispatch(getConversationsThunk({email}))
                 })
                 .then(_ => console.log("data added"))
-                .then(_ => dispatch(getConversationsThunk(email)))
+                // .then(_ => dispatch(getConversationsThunk(email)))
                 .then(_ => console.log("conversations taken"))
+                .then(_ => history.push("/"))
                 .catch(err => console.log(err));
             
             

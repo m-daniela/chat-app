@@ -8,17 +8,17 @@ const initialUserState = {
     uid: null,
     email: null,
     loggedIn: false,
-    token: null,
 };
 
 const initialConversationsState = {
-    current: "",
     conversations: [],
 };
 
-const initialStateChat = {
-    messages: [],
-};
+const initialSelectedConversationState = {
+    current: "",
+}
+
+const initialStateChat = [];
 
 // middleware
 
@@ -27,11 +27,10 @@ const initialStateChat = {
 export const loginThunk = createAsyncThunk(
     "user/login", 
     async ({uid, email, password}, thunkAPI) => {
-        console.log("Redux: login - email", email)
         // this is a non-serializable object
         // too bad
         const response = await e3login2(email, password);
-        console.log("Redux: login", response);
+        console.log("Redux: login", typeof response);
         if (response === null){
             return initialUserState;
         }
@@ -90,12 +89,14 @@ const userSlice = createSlice({
     name: "user", 
     initialState: initialUserState,
     reducers: {
-        logout: (state, action) => initialUserState
+        logout: (state, action) => initialUserState,
+        login: (state, action) => action.payload,
+        register: (state, action) => action.payload,
     },
-    extraReducers: {
-        [loginThunk.fulfilled]: (state, action) => action.payload,
-        [registerThunk.fulfilled]: (state, action) => action.payload,
-    }
+    // extraReducers: {
+    //     [loginThunk.fulfilled]: (state, action) => action.payload,
+    //     [registerThunk.fulfilled]: (state, action) => action.payload,
+    // }
 });
 
 // conversation reducer
@@ -106,7 +107,7 @@ const conversationsSlice = createSlice({
     name: "conversations",
     initialState: initialConversationsState,
     reducers: {
-        changeConversation: (state, action) => state.current = action.payload.conversation,
+        // changeConversation: (state, action) => state.current = action.payload.name,
         addConversation: (state, action) => state.conversations.push(action.payload.conversation)
     },
     extraReducers: {
@@ -116,27 +117,42 @@ const conversationsSlice = createSlice({
     }
 });
 
+
+const selectedSlice = createSlice({
+    name: "selected",
+    initialState: "",
+    reducers: {
+        changeConversation: (state, action) => action.payload,
+    },
+});
+
+
+
 // chat reducer
 // add the message to the chat
 const chatSlice = createSlice({
     name: "chat", 
     initialState: initialStateChat,
     reducers: {
-        addMessage: (state, action) => state.messages.push(action.payload.message)
+        addMessage: (state, action) => {state.push(action.payload)}
     },
     extraReducers: {
-        [getMessagesThunk.fulfilled]: (state, action) =>{
-            state.messages = action.payload;
-        }
+        [getMessagesThunk.fulfilled]: (state, action) => action.payload,
+        // [selected.actions.changeConversation.type]: (state, action) => {}
+        // {
+        //     state = action.payload;
+        // }
     }
 });
 
 export const {
+    login,
+    register,
     logout
 } = userSlice.actions;
 
 export const {
-    changeConversation,
+    // changeConversation,
     addConversation
 } = conversationsSlice.actions;
 
@@ -144,13 +160,21 @@ export const {
     addMessage
 } = chatSlice.actions;
 
+export const {
+    changeConversation
+} = selectedSlice.actions
 
 const reducer = combineReducers({
     user: userSlice.reducer,
     conversations: conversationsSlice.reducer,
+    selected: selectedSlice.reducer,
     chat: chatSlice.reducer,
 })
 
 export default configureStore({
-    reducer
+    reducer,
+    middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });

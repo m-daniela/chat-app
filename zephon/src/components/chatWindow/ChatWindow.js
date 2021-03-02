@@ -6,14 +6,16 @@ import { getPublicKey } from '../services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../context/SocketContext'
 import { addMessage } from '../reducers/redux'
+import { E3Context } from '../context/E3Context';
 // import firebase from "firebase";
 
 const ChatWindow = () => {
   const {socket} = useContext(SocketContext);
+  const {token} = useContext(E3Context);
   const dispatch = useDispatch();
-  const email = useSelector(state => state.email);
-  const token = useSelector(state => state.token);
-  const current = useSelector(state => state.current);
+  const email = useSelector(state => state.user.email);
+  // const token = useSelector(state => state.user.token);
+  const current = useSelector(state => state.selected);
   console.log("ChatWindow", current);
 
   // getMessagesThunk(email, conversation)
@@ -63,7 +65,8 @@ const ChatWindow = () => {
         .then(enc => {
           socket.emit('message', {message: enc, from: email, date});
           // getMessages(email, current, setMessages);
-          dispatch(addMessage({message}));
+          console.log("Chat window", {message: enc, from: email, date})
+          dispatch(addMessage({message: enc, from: email, date}));
 
         })
         .catch(err => console.log(err));
