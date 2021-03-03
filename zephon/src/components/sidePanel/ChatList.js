@@ -10,11 +10,12 @@ const NewChat = ({close}) =>{
     const [newChat, setNewChat] = useState("");
     const {socket} = useContext(SocketContext);
 
-    const email = useSelector(state => state.email);
-
+    const email = useSelector(state => state.user.email);
+    
 
     const searchUser = (e) =>{
         e.preventDefault();
+        console.log("New chat", email)
         // const date = new firebase.firestore.Timestamp.now();
         const date = new Date();
         socket.emit("new chat", {chat: newChat, sender: email, date});
@@ -41,13 +42,13 @@ const NewChat = ({close}) =>{
 
 const ChatList = () => {
     const {socket} = useContext(SocketContext);
-    const conversations = useSelector(state => state.conversations.conversations);
+    const conversations = useSelector(state => state.conversations);
     const dispatch = useDispatch();
     const [addChat, setAddChat] = useState(false);
 
     useEffect(() =>{
         socket.on("new chat", (newChat) => {
-            dispatch(addConversation({conversation: newChat.chatName}));
+            dispatch(addConversation(newChat.chatName));
         });
         // eslint-disable-next-line
     }, [socket]);
@@ -60,7 +61,6 @@ const ChatList = () => {
         <div className="chat_list">
             {!addChat ? <>
                 <button className="side_item" onClick={addNewChat}>Add new chat</button>
-                {/* {console.log("ChatList", conversations)} */}
                 {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
                 </>
                 :

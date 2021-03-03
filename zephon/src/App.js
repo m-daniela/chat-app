@@ -17,7 +17,7 @@ export const ChatZone = () => {
   // const {loggedIn, eThree} = useContext(AuthenticationContext);
   const loggedIn = useSelector(state => state.user.loggedIn);
   // const history = useHistory();
-  console.log("Chat zone", loggedIn);
+  // console.log("Chat zone", loggedIn);
   // if(!loggedIn){
   //   history.push("/login");
   // }

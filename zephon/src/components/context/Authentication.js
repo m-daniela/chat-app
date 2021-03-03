@@ -24,7 +24,7 @@ const Authentication = ({children}) => {
     
 
     const setLocal = (uid, email) => {
-        console.log(uid);
+        // console.log(uid);
         localStorage.setItem("uid", uid);
         localStorage.setItem("email", email);
         setAuthenthication({uid, email, loggedIn: true});

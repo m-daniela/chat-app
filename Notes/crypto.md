@@ -12,10 +12,13 @@
 
 # To fix
 - reset everything on logout - conversation remains selected
-- order by timestamp/
 - same id for messages
-- refresh mesages /
+- chat name selection - working only on second click - need to change the state
+
+# Fixed
 - fix the real time thing
+- refresh mesages
+- order by timestamp
 
 example5@mail.com
 

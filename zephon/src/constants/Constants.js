@@ -12,12 +12,19 @@ const addZero = (number) => {
   return number < 10 ? `0${number}` : number;
 }
 
+
+
 export const getDate = (format) => {
   let today = null;
-  // console.log("getDate", format.seconds)
+  console.log("Constants", format)
+
 
   if (format._seconds !== undefined){
     const date = new firebase.firestore.Timestamp(format._seconds, format._nanoseconds);
+    today = date.toDate();
+  }
+  else if(format.seconds > 0){
+    const date = new firebase.firestore.Timestamp(format.seconds, format.nanoseconds);
     today = date.toDate();
   }
   else{

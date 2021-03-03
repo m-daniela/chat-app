@@ -42,9 +42,7 @@ const ContextProvider = (props) => {
     }
 
     useEffect(() => {
-        console.log("Context")
         getConversations();
-        console.log("Contaxt", conversations)
         // eslint-disable-next-line 
     }, [email, eThree]);
 

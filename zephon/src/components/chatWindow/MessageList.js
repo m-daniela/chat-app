@@ -14,6 +14,7 @@ const Message = ({message, pks}) => {
 
   // clean this part
   useEffect(() => {
+    // console.log("Message", message)
     if (message.sender !== "sys"){
       if (email === message.sender) {
         setAuthor("current");
@@ -28,6 +29,7 @@ const Message = ({message, pks}) => {
         token.authDecrypt(message.text, pks.recipientPK)
           .then(decrypted => {
             // console.log("Plaintext", decrypted);
+            // console.log("MessageList", decrypted)
             setMessage(decrypted);
           })
           .catch(err => console.log(err));
@@ -58,7 +60,7 @@ const Message = ({message, pks}) => {
 
 const MessageList = ({pks}) => {
   const messages = useSelector(state => state.chat);
-  console.log("Message List", messages)
+  // console.log("Message List", messages)
 
   useEffect(() => {
     const container = document.querySelector(".message_list");

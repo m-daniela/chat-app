@@ -10,9 +10,11 @@ const initialUserState = {
     loggedIn: false,
 };
 
-const initialConversationsState = {
-    conversations: [],
-};
+// const initialConversationsState = {
+//     conversations: [],
+// };
+
+const initialConversationsState = [];
 
 const initialSelectedConversationState = {
     current: "",
@@ -30,7 +32,7 @@ export const loginThunk = createAsyncThunk(
         // this is a non-serializable object
         // too bad
         const response = await e3login2(email, password);
-        console.log("Redux: login", typeof response);
+        // console.log("Redux: login", typeof response);
         if (response === null){
             return initialUserState;
         }
@@ -48,7 +50,7 @@ export const registerThunk = createAsyncThunk(
     "user/register", 
     async ({uid, email, password}, thunkAPI) => {
         const response = await e3register2(email, password);
-        console.log("Redux: register", response);
+        // console.log("Redux: register", response);
         if (response === null){
             return initialUserState;
         }
@@ -67,7 +69,7 @@ export const getConversationsThunk = createAsyncThunk(
     'conversations/getConversations',
     async ({email}, thunkAPI) => {
         const response = await getChats2(email);
-        console.log("Redux: getConversations", response);
+        // console.log("Redux: getConversations", response);
         return response;
     }
 );
@@ -77,7 +79,7 @@ export const getMessagesThunk = createAsyncThunk(
     "chat/getMessages",
     async ({email, conversation}, thunkAPI) => {
         const response = await getMessages2(email, conversation);
-        console.log("Redux: getMessages", response);
+        // console.log("Redux: getMessages", response);
         return response;
     }
 );
@@ -108,12 +110,13 @@ const conversationsSlice = createSlice({
     initialState: initialConversationsState,
     reducers: {
         // changeConversation: (state, action) => state.current = action.payload.name,
-        addConversation: (state, action) => state.conversations.push(action.payload.conversation)
+        addConversation: (state, action) => {state.push(action.payload)}
     },
     extraReducers: {
-        [getConversationsThunk.fulfilled]: (state, action) => {
-            state.conversations = action.payload;
-        }
+        [getConversationsThunk.fulfilled]: (state, action) => action.payload
+        // {
+        //     state.conversations = action.payload;
+        // }
     }
 });
 

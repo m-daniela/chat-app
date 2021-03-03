@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../context/SocketContext'
 import { addMessage } from '../reducers/redux'
 import { E3Context } from '../context/E3Context';
-// import firebase from "firebase";
+import firebase from "firebase";
 
 const ChatWindow = () => {
   const {socket} = useContext(SocketContext);
@@ -16,7 +16,7 @@ const ChatWindow = () => {
   const email = useSelector(state => state.user.email);
   // const token = useSelector(state => state.user.token);
   const current = useSelector(state => state.selected);
-  console.log("ChatWindow", current);
+  // console.log("ChatWindow", current);
 
   // getMessagesThunk(email, conversation)
 
@@ -29,9 +29,9 @@ const ChatWindow = () => {
 
   useEffect(() =>{
     socket.on("message", (message) =>{
-      console.log("here again", current);
+      // console.log("here again", current);
       if (message.sender === current){
-        dispatch(addMessage({message}));
+        dispatch(addMessage(message));
       }
       // if (current !== ""){
       //   getMessages(email, current, setMessages);
@@ -59,14 +59,15 @@ const ChatWindow = () => {
   const addNewMessage = (message) =>{
     if(message) {
       const date = new Date();
-      // const date = firebase.firestore.Timestamp.now();
+      const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+      // console.log("????", firebase.firestore.Timestamp.now())
       
       token.authEncrypt(message, [currentPK, recipientPK])
         .then(enc => {
           socket.emit('message', {message: enc, from: email, date});
           // getMessages(email, current, setMessages);
           console.log("Chat window", {message: enc, from: email, date})
-          dispatch(addMessage({message: enc, from: email, date}));
+          dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
 
         })
         .catch(err => console.log(err));
