@@ -37,7 +37,6 @@ const ChatWindow = () => {
       //   getMessages(email, current, setMessages);
       // }
       // else{
-      //   // console.log("kill me", message.sender);
       //   getMessages(email, message.sender, setMessages);
 
       // }

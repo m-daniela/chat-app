@@ -16,7 +16,7 @@ const addZero = (number) => {
 
 export const getDate = (format) => {
   let today = null;
-  console.log("Constants", format)
+  // console.log("Constants", format)
 
 
   if (format._seconds !== undefined){

@@ -3,18 +3,22 @@ import { useSelector, useDispatch } from 'react-redux'
 import Header from '../common/Header'
 import { E3Context } from '../context/E3Context'
 
-import { logout } from '../reducers/redux'
+import { clearChat, clearConversations, clearSelected, logout } from '../reducers/redux'
 
 const Settings = () => {
     const email = useSelector(state => state.user.email);
     const dispatch = useDispatch();
-    const {logout} = useContext(E3Context);
+    const {logout: clear} = useContext(E3Context);
 
 
     const handleLogout = () =>{
         dispatch(logout());
-        logout();
+        dispatch(clearConversations());
+        dispatch(clearChat());
+        dispatch(clearSelected());
+        clear();
     }
+
     return (
         <div className="settings_panel">
             <Header title={"Privacy Settings"}/>

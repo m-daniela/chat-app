@@ -16,9 +16,7 @@ const initialUserState = {
 
 const initialConversationsState = [];
 
-const initialSelectedConversationState = {
-    current: "",
-}
+const initialSelectedConversationState = "";
 
 const initialStateChat = [];
 
@@ -85,19 +83,45 @@ export const getMessagesThunk = createAsyncThunk(
 );
 
 
+export const clearChatThunk = createAsyncThunk(
+    "chat/clear" , 
+    async (thunkAPI) => {
+        return initialStateChat;
+    }
+)
+
+export const clearConversationsThunk = createAsyncThunk(
+    "conversations/clear" , 
+    async (thunkAPI) => {
+        return initialConversationsState;
+    }
+)
+
+export const logoutThunk = createAsyncThunk(
+    "user/logout", 
+    async (thunkAPI) => {
+        // clearChat();
+        // clearConversations();
+        // clearSelected();
+        return initialUserState;
+    }
+)
+
 // reducers
 
 const userSlice = createSlice({
     name: "user", 
     initialState: initialUserState,
     reducers: {
-        logout: (state, action) => initialUserState,
+        logout: {
+            reducer: (state, action) => action.payload,
+            prepare: () => {return {payload: initialUserState}}
+        },
         login: (state, action) => action.payload,
         register: (state, action) => action.payload,
     },
     // extraReducers: {
-    //     [loginThunk.fulfilled]: (state, action) => action.payload,
-    //     [registerThunk.fulfilled]: (state, action) => action.payload,
+    //     [logoutThunk.fulfilled]: (state, action) => action.payload,
     // }
 });
 
@@ -110,7 +134,11 @@ const conversationsSlice = createSlice({
     initialState: initialConversationsState,
     reducers: {
         // changeConversation: (state, action) => state.current = action.payload.name,
-        addConversation: (state, action) => {state.push(action.payload)}
+        addConversation: (state, action) => {state.push(action.payload)},
+        clearConversations: {
+            reducer: (state, action) => action.payload,
+            prepare: () => {return {payload: initialConversationsState}}
+        }
     },
     extraReducers: {
         [getConversationsThunk.fulfilled]: (state, action) => action.payload
@@ -123,28 +151,34 @@ const conversationsSlice = createSlice({
 
 const selectedSlice = createSlice({
     name: "selected",
-    initialState: "",
+    initialState: initialSelectedConversationState,
     reducers: {
         changeConversation: (state, action) => action.payload,
+        clearSelected: {
+            reducer: (state, action) => action.payload,
+            prepare: () => {return {payload: initialSelectedConversationState}}
+        }
     },
 });
 
 
 
-// chat reducer
+// chat reducer:
 // add the message to the chat
+// get messages for the given chat name
+// clear the list
 const chatSlice = createSlice({
     name: "chat", 
     initialState: initialStateChat,
     reducers: {
-        addMessage: (state, action) => {state.push(action.payload)}
+        addMessage: (state, action) => {state.push(action.payload)},
+        clearChat: {
+            reducer: (state, action) => action.payload,
+            prepare: () => {return {payload: initialStateChat}}
+        }
     },
     extraReducers: {
         [getMessagesThunk.fulfilled]: (state, action) => action.payload,
-        // [selected.actions.changeConversation.type]: (state, action) => {}
-        // {
-        //     state = action.payload;
-        // }
     }
 });
 
@@ -156,15 +190,18 @@ export const {
 
 export const {
     // changeConversation,
-    addConversation
+    addConversation,
+    clearConversations
 } = conversationsSlice.actions;
 
 export const {
-    addMessage
+    addMessage,
+    clearChat
 } = chatSlice.actions;
 
 export const {
-    changeConversation
+    changeConversation,
+    clearSelected
 } = selectedSlice.actions
 
 const reducer = combineReducers({

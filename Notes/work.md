@@ -348,3 +348,67 @@
 
 - [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
 - [2020 - Challenges in E2E Encrypted Group Messaging](./PDF/Papers/20.%20Challenges%20in%20E2E%20Encrypted%20Group%20Messaging%20-%20GroupMessagingReport.pdf)
+
+
+---
+
+# lab 1
+- stabilirea temei
+- document
+	- titlu
+	- 2-3 paragrafe cu ideea
+	- 3 referinte
+	- semnaturi
+
+
+
+The main focus of this thesis is to explore various end-to-end encryption protocols used in popular messaging apps and past and present issues found. 
+
+- group messaging, forward secrecy etc. on text messages
+- attachement encryption
+
+
+References
+- https://eprint.iacr.org/2016/1013.pdf - A Formal Security Analysis of the Signal Messaging Protocol
+- https://www.ndss-symposium.org/wp-content/uploads/ndss2021_1C-4_24180_paper.pdf - Improving Signal’s Sealed Sender 
+- https://eprint.iacr.org/2020/224.pdf - signcryption in iMessage
+- https://signal.org/docs/ - Signal official docs
+
+
+---
+
+
+# Working
+- login
+- logout
+- see conversations
+- add conversation
+- see messages
+- send msg (real time)
+- encryption + decryption
+
+
+# To fix
+- state updates twitching/ loading 
+- signup fix (login model)
+- same id for messages
+- check private keys
+- add session
+- cache accessed chats
+- optimize data clearing, data loading
+- maybe add deletion on messages/ chats
+
+
+# Fixed
+- reset everything on logout - conversation remains selected
+- chat name selection - working only on second click - need to change the state
+- fix the real time thing
+- refresh mesages
+- order by timestamp
+
+example5@mail.com
+
+
+
+
+

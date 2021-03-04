@@ -14,7 +14,7 @@ const SideItem = ({name}) => {
     const handleClick = () =>{
         console.log(current)
         dispatch(changeConversation(name));
-        dispatch(getMessagesThunk({email, conversation: current}))
+        dispatch(getMessagesThunk({email, conversation: name}))
         // socket = io("http://localhost:5000");
         console.log(current)
         socket.emit("join", ({username: email, room: name}));
