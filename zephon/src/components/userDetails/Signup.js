@@ -2,7 +2,7 @@ import React, {useContext, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import {register} from "../services/firebase"
 import { useDispatch } from 'react-redux';
-import { registerThunk } from '../reducers/redux';
+import { register as signup } from '../reducers/redux';
 import { E3Context } from '../context/E3Context';
 import { e3register } from '../services/encryption';
 
@@ -26,16 +26,21 @@ const Signup = () => {
             e.preventDefault()
             if (password === samePassword){
 
-                let data = await register(email, password);
+                register(email, password)
+                    .then(data =>{
+                        let user = data.user;
+                        // const {uid, displayName} = user;
+                        const {uid} = user;
+                        e3register(email, password, setToken);
+                        dispatch(signup({uid, email, loggedIn: true}));
+                        // signup(uid, email, password);
+                    })
+                    .then(_ => history.push("/"))
+                    .catch(err => console.log(err));
+                // let data = await register(email, password);
 
-                let user = data.user;
-                // const {uid, displayName} = user;
-                const {uid} = user;
-                dispatch(registerThunk({uid, email, password}));
-                // signup(uid, email, password);
-                e3register(email, password, setToken);
+                
 
-                history.push("/");
                 
             }
             else{

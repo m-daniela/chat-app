@@ -10,9 +10,6 @@ const initialUserState = {
     loggedIn: false,
 };
 
-// const initialConversationsState = {
-//     conversations: [],
-// };
 
 const initialConversationsState = [];
 
@@ -100,9 +97,6 @@ export const clearConversationsThunk = createAsyncThunk(
 export const logoutThunk = createAsyncThunk(
     "user/logout", 
     async (thunkAPI) => {
-        // clearChat();
-        // clearConversations();
-        // clearSelected();
         return initialUserState;
     }
 )
@@ -142,9 +136,6 @@ const conversationsSlice = createSlice({
     },
     extraReducers: {
         [getConversationsThunk.fulfilled]: (state, action) => action.payload
-        // {
-        //     state.conversations = action.payload;
-        // }
     }
 });
 

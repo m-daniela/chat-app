@@ -29,9 +29,7 @@ const Login = () => {
                     // history.replace("/");
                     dispatch(getConversationsThunk({email}))
                 })
-                .then(_ => console.log("data added"))
                 // .then(_ => dispatch(getConversationsThunk(email)))
-                .then(_ => console.log("conversations taken"))
                 .then(_ => history.push("/"))
                 .catch(err => console.log(err));
             

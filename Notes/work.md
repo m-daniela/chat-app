@@ -91,6 +91,17 @@
 ### Backdoors
 
 
+# Used technologies
+- React
+- node.js
+- Redux toolkit
+- Virgil security 
+	- [browser code](https://github.com/VirgilSecurity/virgil-e3kit-js/tree/master/packages/e3kit-browser)
+	- [docs](https://developer.virgilsecurity.com/docs/e3kit/)
+- socket.io
+- Firebase
+
+
 # Existing Technologies
 
 ## Signal protocol
@@ -343,12 +354,155 @@
 
 - data is encrypted with 128 bit key using AES GCM [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) cipher
 
+## Threema
+- [open source](https://github.com/threema-ch/threema-web)
+- [links](https://threema.ch/en/security)
+- [2020 audit](https://threema.ch/press-files/2_documentation/security_audit_report_threema_2020.pdf)
+- [the thing used for encryption](https://nacl.cr.yp.to/)
+
+- [From the official faq page](https://threema.ch/en/faq/why_secure)
+- Swiss, 2012
+- uses 2 diff encryption layers
+	- end-to-end 
+	- transport layer lol 
+- Elliptic curve based (255 bits)
+- ECDH with curve25519
+- hash function + random nonce = 256 symmetric key for each message
+- to encrypt: [XSalsa20](https://en.wikipedia.org/wiki/Salsa20)
+- 128 bit MAC added to detect forgeries
+- forward secrecy on the network connection
+- doesn't require phone number/ email and it provides a [Threema ID](https://threema.ch/en/faq/threema_id) and contacts access is not mandatory
+- personal info is hashed
+- contacts or group chats are stored in a decentralized way on the users' devices, not on a server
+- messages and media are e2ee
+- data stored on servers:
+	- messages and group chats until they are sent
+	- email addresses and contacts are hashed until the comparizon is done (I guess it's the fact that the other one accepts your request/ you are in their contacts list?)
+	- key pairs are locally generated 
+	- no logs on who talks to whom
+- for android - AES 256 based encryption for stored messages, media and the ID's private key
+- for ios - ios data protection for local encryption
+- ID verification to avoid MITM attacks
+
+- [Whitepaper](https://threema.ch/press-files/2_documentation/cryptography_whitepaper.pdf)
+- 3 verif lvls
+	- typed id and contact not found in the address book by phone nr or email
+	- id matched with one of the contacts
+	- persoanlly verified id (scanned the QR code)
+- [NaCl encryption](https://nacl.cr.yp.to/) box model used to encrypt and auth the messages
+- SHA256 of the raw public key => first 16 bits are the fingerprint
+- to encrypt and decrypt a message
+	- ECDH over Curve25519 hased with the result of HSalsa20 => shared secret
+	- random nonce generated
+	- XSalsa20 stream cipher with the shared secret and the random nonce to encrypt the plaintext
+	- sender uses Poly1305 to compute a MAC and adds it to the ciphertext (prepend) a portion from XSalsa20 is used ot form the MAC key
+	- sends MAC, cipertext and nonce to recv
+	- decrypt and verify authenticity by reversing the steps
+
 
 ## Group messaging
 
 - [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
 - [2020 - Challenges in E2E Encrypted Group Messaging](./PDF/Papers/20.%20Challenges%20in%20E2E%20Encrypted%20Group%20Messaging%20-%20GroupMessagingReport.pdf)
 
+
+
+# Terms and algorithms + other stuff
+- [curve analysis](https://safecurves.cr.yp.to/)
+- [AEAD = authenticated encryption](https://en.wikipedia.org/wiki/Authenticated_encryption)
+
+## Message authentication code
+- [wiki](https://en.wikipedia.org/wiki/Message_authentication_code)
+- short piece of info used to authenticate a message (confirm that it comes from the stated sender and has not been changed) - authentication and integrity
+
+## Crypto nonce
+- [wiki](https://en.wikipedia.org/wiki/Cryptographic_nonce)
+- random/ pesuod-random number that can be used just once in a crypto communication, in an auth protocol to ensure that old communications cannot be reused in replay attacks 
+
+## Replay attacks
+- [wiki](https://en.wikipedia.org/wiki/Replay_attack)
+- playback attacks
+- sending valid data repeatedly or delayed maliciously or fraudulently
+
+
+## Elliptic curve Diffie Hellman (ECDH)
+- [wiki](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman)
+- EC public-private key pair for both parties, to establish a shared secret
+- key establishment:
+	- domain parameters:
+		- p  - prime number (or in case of binary, m and f(x))
+		- a, b - const of the curve
+		- G - generator/ base point
+		- n - smalles number st nG = 0
+		- h - cofactor
+- each party has a private key d and a public key Q = d * G, then
+	- A: (d_A, Q_A)
+	- B: (d_B, Q_B)
+- resulting in the shared secret x_k, from 
+	- A: (x_k, y_k) = d_A * Q_B = d_A * d_b * G
+	- B: (x_k, y_k) = d_B * Q_A = d_B * d_A * G
+
+
+## Integrated enc scheme
+- [wiki](https://en.wikipedia.org/wiki/Integrated_Encryption_Scheme)
+- hybrid enc scheme prividing [semantic security](https://en.wikipedia.org/wiki/Semantic_security) (only negligible info about the plaintext can be feasibly extracted form the ciphertext) against an adversary allowed to used chosen plaintext and chosen ciphertext attacks
+- sec based on the computaional Diffie Hellamn prob
+- ECIES (Elliptic curve integrated enc scheme) is included
+
+## Curve25519
+- [wiki](https://en.wikipedia.org/wiki/Curve25519)
+- released in 2005
+- elliptic curve
+- 128 bits of security (256 bits kye size)
+- used with elliptic curve Diffie Hellman key exchange
+- one of the fastest
+- used curve is y^2 = x^3 + 486662x^2 + x ([Montgomery curve](https://en.wikipedia.org/wiki/Montgomery_curve)) over the field of Z_(2^255 - 19), base point x = 9
+
+## NIST curves
+- [wiki](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography#Fast_reduction_(NIST_curves))
+ 
+
+
+## AES
+- [wiki](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
+- symmetric block cipher
+- substitution-permutation network
+- blocks of 128, 192, 256 bits
+
+
+## AES GCM
+- [GCM = Galois/ Counter Mode](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
+- [CTR mode = counter mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_(CTR)) - turns a block cipher into a stream cipher
+
+## SHA 
+- [SHA - secure hash algos](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms)
+- family of hash functions, published by NIST
+- [something about these](https://www.thesslstore.com/blog/difference-sha-1-sha-2-sha-256-hash-algorithms/)
+
+
+## SHA 1
+- [wiki](https://en.wikipedia.org/wiki/SHA-1)
+- 160 bit hash value (message digest lol)
+
+
+## SHA 2
+- [wiki](https://en.wikipedia.org/wiki/SHA-2)
+- 6 hash functions:
+	- SHA 224 bits
+	- SHA 256 bits
+	- SHA 384 bits
+	- SHA 512 bits
+	- SHA 512/ 224 bits
+	- SHA 512/ 256 bits
+
+
+## OAEP - optimal asym enc padding
+- [wiki](https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding)
+- padding scheme often used with RSA (RSA OEAP)
+
+## Other websites
+- https://www.securemessagingapps.com/
+- 
 
 ---
 
@@ -362,10 +516,13 @@
 
 
 
-The main focus of this thesis is to explore various end-to-end encryption protocols used in popular messaging apps and past and present issues found. 
+The main focus of this thesis is to explore various end-to-end encryption protocols used in popular messaging applications and past and present issues found. 
 
-- group messaging, forward secrecy etc. on text messages
-- attachement encryption
+The application is a web based real-time chat application and will provide end-to-end encryption for both private and group chats. There will also be a comparison with the non-encrypted version, for demo purposes, in order to present the risks of sending unprotected data. 
+
+
+
+
 
 
 References
@@ -377,9 +534,13 @@ References
 
 ---
 
+- attachement enc
+- group
+- demo + no encryption
 
-# Working
+# Working features
 - login
+- signup
 - logout
 - see conversations
 - add conversation
@@ -388,9 +549,10 @@ References
 - encryption + decryption
 
 
-# To fix
+# To fix/ do
+- error handling
+- duplicating messages again???
 - state updates twitching/ loading 
-- signup fix (login model)
 - same id for messages
 - check private keys
 - add session
@@ -400,6 +562,7 @@ References
 
 
 # Fixed
+- signup fix (login model)
 - reset everything on logout - conversation remains selected
 - chat name selection - working only on second click - need to change the state
 - fix the real time thing
@@ -407,8 +570,4 @@ References
 - order by timestamp
 
 example5@mail.com
-
-
-
-
 
