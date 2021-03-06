@@ -3,20 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SocketContext } from '../context/SocketContext';
 import { addConversation } from '../reducers/redux';
 import SideItem from './SideItem';
-// import firebase from "firebase";
 
-// add a new chat
+
+/*
+Chat List and New Chat
+- Chat List 
+    - add new chat
+    - socket on "new chat"
+- New Chat - socket emit "new chat"
+*/
 const NewChat = ({close}) =>{
     const [newChat, setNewChat] = useState("");
     const {socket} = useContext(SocketContext);
-
     const email = useSelector(state => state.user.email);
-    
 
     const searchUser = (e) =>{
         e.preventDefault();
         console.log("New chat", email)
-        // const date = new firebase.firestore.Timestamp.now();
         const date = new Date();
         socket.emit("new chat", {chat: newChat, sender: email, date});
         close(false);
@@ -26,7 +29,9 @@ const NewChat = ({close}) =>{
         <>
             <button 
                 className="side_item" 
-                onClick={() => close(false)}>Cancel</button>
+                onClick={() => close(false)}>
+                    Cancel
+            </button>
             <form 
                 className="search_input" 
                 onSubmit={(e) => searchUser(e)}>

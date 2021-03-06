@@ -17,24 +17,16 @@ const Login = () => {
     const onSubmitAction = async (e) => {
         try{
             e.preventDefault()
-            // let data = await signin(email, password);
             signin(email, password)
                 .then(data => {
                     const user = data.user;
-                    // const {uid, displayName} = user;
                     const {uid} = user;
                     dispatch(login({uid, email, loggedIn: true}));
                     e3login(email, password, setToken);
-                    // login(uid, email, password);
-                    // history.replace("/");
                     dispatch(getConversationsThunk({email}))
                 })
-                // .then(_ => dispatch(getConversationsThunk(email)))
                 .then(_ => history.push("/"))
                 .catch(err => console.log(err));
-            
-            
-            
         }
         catch (error){
             console.log(error);
@@ -51,20 +43,20 @@ const Login = () => {
     }
 
     return (
-            <form className="custom_form" onSubmit={e => onSubmitAction(e)}>
-                <label>
-                    Email
-                    <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
-                </label>
-                <label>
-                    Password
-                    <input type="password" required onChange={e => onChangePassword(e.target.value)}/>
-                </label>
-                <span>{error === "" ? "": error}</span>
+        <form className="custom_form" onSubmit={e => onSubmitAction(e)}>
+            <label>
+                Email
+                <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
+            </label>
+            <label>
+                Password
+                <input type="password" required onChange={e => onChangePassword(e.target.value)}/>
+            </label>
+            <span>{error === "" ? "": error}</span>
 
-                <button type="submit" className="primary_button">Log In</button>
-                <Link to="/register">New here? register now</Link>
-            </form>
+            <button type="submit" className="primary_button">Log In</button>
+            <Link to="/register">New here? register now</Link>
+        </form>
     )
 }
 

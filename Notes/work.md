@@ -516,12 +516,6 @@
 
 
 
-The main focus of this thesis is to explore various end-to-end encryption protocols used in popular messaging applications and past and present issues found. 
-
-The application is a web based real-time chat application and will provide end-to-end encryption for both private and group chats. There will also be a comparison with the non-encrypted version, for demo purposes, in order to present the risks of sending unprotected data. 
-
-
-
 
 
 
@@ -535,7 +529,7 @@ References
 ---
 
 - attachement enc
-- group
+- group enc
 - demo + no encryption
 
 # Working features
@@ -570,4 +564,11 @@ References
 - order by timestamp
 
 example5@mail.com
+
+--- 
+
+MessageList.js
+
+- Message
+	- fix decryption - twitching, simplify if
 

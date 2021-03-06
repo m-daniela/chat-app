@@ -1,6 +1,5 @@
 import { configureStore, createSlice, createAsyncThunk, combineReducers } from "@reduxjs/toolkit";
-import { getChats2, getMessages2 } from "../../data/ServerCalls";
-import { e3login2, e3register2 } from "../services/encryption";
+import { getChats, getMessages } from "../../data/ServerCalls";
 
 // initial states
 
@@ -19,52 +18,11 @@ const initialStateChat = [];
 
 // middleware
 
-
-// get eThree token for the logged user
-export const loginThunk = createAsyncThunk(
-    "user/login", 
-    async ({uid, email, password}, thunkAPI) => {
-        // this is a non-serializable object
-        // too bad
-        const response = await e3login2(email, password);
-        // console.log("Redux: login", typeof response);
-        if (response === null){
-            return initialUserState;
-        }
-        return {
-            uid, 
-            email, 
-            loggedIn: true,
-            token: response,
-        };
-    }
-);
-
-// get eThree token for new user
-export const registerThunk = createAsyncThunk(
-    "user/register", 
-    async ({uid, email, password}, thunkAPI) => {
-        const response = await e3register2(email, password);
-        // console.log("Redux: register", response);
-        if (response === null){
-            return initialUserState;
-        }
-        return {
-            uid, 
-            email, 
-            loggedIn: true,
-            token: response,
-        };
-    }
-);
-
-
 // get conversations for a given user
 export const getConversationsThunk = createAsyncThunk(
     'conversations/getConversations',
     async ({email}, thunkAPI) => {
-        const response = await getChats2(email);
-        // console.log("Redux: getConversations", response);
+        const response = await getChats(email);
         return response;
     }
 );
@@ -73,13 +31,13 @@ export const getConversationsThunk = createAsyncThunk(
 export const getMessagesThunk = createAsyncThunk(
     "chat/getMessages",
     async ({email, conversation}, thunkAPI) => {
-        const response = await getMessages2(email, conversation);
-        // console.log("Redux: getMessages", response);
+        const response = await getMessages(email, conversation);
         return response;
     }
 );
 
 
+// clear the state
 export const clearChatThunk = createAsyncThunk(
     "chat/clear" , 
     async (thunkAPI) => {
@@ -114,9 +72,6 @@ const userSlice = createSlice({
         login: (state, action) => action.payload,
         register: (state, action) => action.payload,
     },
-    // extraReducers: {
-    //     [logoutThunk.fulfilled]: (state, action) => action.payload,
-    // }
 });
 
 // conversation reducer
@@ -127,7 +82,6 @@ const conversationsSlice = createSlice({
     name: "conversations",
     initialState: initialConversationsState,
     reducers: {
-        // changeConversation: (state, action) => state.current = action.payload.name,
         addConversation: (state, action) => {state.push(action.payload)},
         clearConversations: {
             reducer: (state, action) => action.payload,
@@ -180,7 +134,6 @@ export const {
 } = userSlice.actions;
 
 export const {
-    // changeConversation,
     addConversation,
     clearConversations
 } = conversationsSlice.actions;

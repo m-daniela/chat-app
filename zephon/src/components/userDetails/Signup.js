@@ -20,7 +20,6 @@ const Signup = () => {
     const dispatch = useDispatch();
     const {setToken} = useContext(E3Context);
 
-
     const onSubmitAction = async (e) =>  {
         try{
             e.preventDefault()
@@ -29,19 +28,12 @@ const Signup = () => {
                 register(email, password)
                     .then(data =>{
                         let user = data.user;
-                        // const {uid, displayName} = user;
                         const {uid} = user;
                         e3register(email, password, setToken);
                         dispatch(signup({uid, email, loggedIn: true}));
-                        // signup(uid, email, password);
                     })
                     .then(_ => history.push("/"))
                     .catch(err => console.log(err));
-                // let data = await register(email, password);
-
-                
-
-                
             }
             else{
                 setError({passNotMatching: "The passwords are not matching"});

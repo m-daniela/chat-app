@@ -14,13 +14,8 @@ import SocketProvider from './components/context/SocketContext';
 import E3Provider from './components/context/E3Context';
 
 export const ChatZone = () => {
-  // const {loggedIn, eThree} = useContext(AuthenticationContext);
   const loggedIn = useSelector(state => state.user.loggedIn);
-  // const history = useHistory();
-  // console.log("Chat zone", loggedIn);
-  // if(!loggedIn){
-  //   history.push("/login");
-  // }
+
   return (
     <>
       {loggedIn ? <>
@@ -32,15 +27,10 @@ export const ChatZone = () => {
       }
     </>
   )
-  
 }
 
 function App () {
-
   return (
-    // <Authentication>
-    //   <ContextProvider>
-    //     <ConversationProvider>
     <SocketProvider>
       <E3Provider>
           <Helmet>
@@ -66,10 +56,6 @@ function App () {
           </div>
         </E3Provider>
       </SocketProvider>
-    //     </ConversationProvider>
-
-    //   </ContextProvider>
-    // </Authentication>
   )
 }
 

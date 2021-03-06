@@ -6,12 +6,12 @@ export const E3Context = createContext();
 const E3Provider = ({children}) =>{
     const [token, setToken] = useState(null);
 
-    const logout = () =>{
+    const clear = () =>{
         setToken(null);
     }
 
     return (
-        <E3Context.Provider value={{token, setToken, logout}}>
+        <E3Context.Provider value={{token, setToken, clear}}>
             {children}
         </E3Context.Provider>
     )

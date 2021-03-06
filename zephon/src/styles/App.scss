@@ -149,3 +149,23 @@ button.side_item{
   }
 }
 
+// scrollbars
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--highlights) var(--primary_bg);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--primary_bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--highlights);
+  border-radius: 20px;
+  border: none;
+}

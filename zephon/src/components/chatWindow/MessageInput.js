@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-// import { AuthenticationContext } from '../context/Authentication';
 
 const MessageInput = ({addMessage}) => {
   const [message, setMessage] = useState("");
