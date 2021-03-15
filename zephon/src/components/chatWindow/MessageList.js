@@ -18,20 +18,22 @@ const Message = ({message, pks}) => {
   // clean this part
   useEffect(() => {
     if (message.sender !== "sys"){
-      if (email === message.sender) {
+      if (pks !== null && email === message.sender) {
         setAuthor("current");
-        token.authDecrypt(message.text, pks.currentPK)
+        token.authDecrypt(message.text, pks[email])
           .then(decrypted => {
             setMessage(decrypted);
           })
           .catch(err => console.log(err));
       }
       else{
-        token.authDecrypt(message.text, pks.recipientPK)
-          .then(decrypted => {
-            setMessage(decrypted);
-          })
-          .catch(err => console.log(err));
+        if (pks !== null){
+          token.authDecrypt(message.text, pks[message.sender])
+            .then(decrypted => {
+              setMessage(decrypted);
+            })
+            .catch(err => console.log(err));
+          }
       }
     }
     else{
@@ -56,7 +58,8 @@ const Message = ({message, pks}) => {
 }
 
 const MessageList = ({pks}) => {
-  const messages = useSelector(state => state.chat);
+  const messages = useSelector(state => state.chat.messages);
+  console.log("Message list", messages)
 
   useEffect(() => {
     const container = document.querySelector(".message_list");
@@ -67,7 +70,7 @@ const MessageList = ({pks}) => {
   return (
     <div className="message_list">
       {
-        messages.map(elem => <Message key={Math.random() * 10000} pks={pks} message={elem}/>)
+        messages?.map(elem => <Message key={Math.random() * 10000} pks={pks} message={elem}/>)
       }
     </div>
   )

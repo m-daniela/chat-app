@@ -22,10 +22,12 @@ const ChatWindow = () => {
   const dispatch = useDispatch();
   const email = useSelector(state => state.user.email);
   const current = useSelector(state => state.selected);
+  const participants = useSelector(state => state.chat.participants);
 
   const [isDisabled, setIsDisabled] = useState(true);
-  const [currentPK, setCurrentPK] = useState(null); 
-  const [recipientPK, setRecipientPK] = useState(null); 
+  // const [currentPK, setCurrentPK] = useState(null); 
+  // const [recipientPK, setRecipientPK] = useState(null); 
+  const [participantsPK, setParticipantsPK] = useState(null)
 
   useEffect(() =>{
     socket.on("message", (message) =>{
@@ -36,22 +38,24 @@ const ChatWindow = () => {
   }, [dispatch, current, socket]);
 
   useEffect(() =>{
-    if(current !== undefined && current !== ""){
+    if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
-      getPublicKey(email, token, setCurrentPK);
-      getPublicKey(current, token, setRecipientPK);
+      // getPublicKey(email, token, setCurrentPK);
+      const currentParticipants = participants.filter(e => e !== email);
+      console.log("Chat window participants", participants, currentParticipants)
+      getPublicKey(participants, token, setParticipantsPK);
 
     }
     else setIsDisabled(true);
     // eslint-disable-next-line
-  }, [current]);
+  }, [current, participants]);
 
   const addNewMessage = (message) =>{
     if(message) {
       const date = new Date();
       const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
-      
-      token.authEncrypt(message, [currentPK, recipientPK])
+      // console.log("Recipients", recipientPK)
+      token.authEncrypt(message, participantsPK)
         .then(enc => {
           socket.emit('message', {message: enc, from: email, date});
           console.log("Chat window", {message: enc, from: email, date})
@@ -70,7 +74,7 @@ const ChatWindow = () => {
               <p>Please choose a chat to see magical stuff</p>
             </div> : 
             <>
-              <MessageList pks={{currentPK, recipientPK}}/>
+              <MessageList pks={participantsPK}/>
               <MessageInput addMessage={addNewMessage} />
             </>}
       </div>

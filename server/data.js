@@ -15,18 +15,19 @@ const db = admin.firestore();
 const users = {};
 
 
+const convertToTimestamp = (date) =>{
+  const timestamp = admin.firestore.Timestamp.fromDate(new Date(date));
+  return timestamp;
+}
+
+
 // add new user
 // check if it exists, and if not, 
 // add a new document in the users collection 
 // uid (email)
 // create a conversations collection with 
 // and empty document called "ignore"
-
-const convertToTimestamp = (date) =>{
-  const timestamp = admin.firestore.Timestamp.fromDate(new Date(date));
-  return timestamp;
-}
-
+// email - email of the user
 const addUser = async (email, req, res) =>{
   try{
     const user = await db.collection(cts.users).doc(email).get();
@@ -49,6 +50,7 @@ const addUser = async (email, req, res) =>{
 // the other's participant email as uid
 // sender (email) - the one who initialized the chat
 // receiver (email) - the one added to the chat
+// date - date used for the default message
 const createChat = async (sender, receiver, date) =>{
   const message = {
     sender: "sys",
@@ -57,28 +59,86 @@ const createChat = async (sender, receiver, date) =>{
   }
   console.log("Create chat: Message to be sent", message);
   try{
-    const conversation1 = await db.collection(cts.users)
-      .doc(sender)
-      .collection(cts.conversations)
-      .doc(receiver);
-    await conversation1.set({});
-    await conversation1.collection(cts.messages)
-      .add(message);
+    const participants = [sender, receiver];
+    createChatDatabase(sender, receiver, participants, message);
+    createChatDatabase(receiver, sender, participants, message);
 
-    const conversation2 = await db.collection(cts.users)
-      .doc(receiver)
-      .collection(cts.conversations)
-      .doc(sender);
-    await conversation2.set({});
-    await conversation2
-      .collection(cts.messages)
-      .add(message);
-    console.log("Create chat: New chat created");
+    // const conversation1 = await db.collection(cts.users)
+    //   .doc(sender)
+    //   .collection(cts.conversations)
+    //   .doc(receiver);
+    // await conversation1.set({});
+    // await conversation1.collection(cts.messages)
+    //   .add(message);
+
+    // const conversation2 = await db.collection(cts.users)
+    //   .doc(receiver)
+    //   .collection(cts.conversations)
+    //   .doc(sender);
+    // await conversation2.set({});
+    // await conversation2
+    //   .collection(cts.messages)
+    //   .add(message);
+    // console.log("Create chat: New chat created");
   }
   catch(err){
     console.log("Create chat: err");
   }
   
+}
+
+// create a group chat
+// sender - email of the user who starts the conversation
+// name - name of the chat
+// receivers - array of emails with the users added to the group
+// date - date used for the default message
+const createGroup = async (sender, name, receivers, date) => {
+  const message = {
+    sender: "sys",
+    text: "Start chatting, group.", 
+    date: convertToTimestamp(date),
+  }
+  console.log("Create group: Message to be sent", message);
+  try{
+    const participants = [sender, ...receivers];
+    createChatDatabase(sender, name, participants, message);
+
+    for (const receiver of receivers){
+      createChatDatabase(receiver, name, participants, message);
+    }
+
+    console.log("Create group chat: New chat created");
+  }
+  catch(err){
+    console.log("Create group chat: ", err);
+  }
+}
+
+// chat creation logic
+// it will add to the list of participants
+// automatically, even if it is a private chat
+// sender - email of the user who starts the conversation
+// receiver - email of the recv or the name of the chat
+// participants - array of emails with the participants
+// message - the default message object
+const createChatDatabase = async (sender, receiver, participants, message) =>{
+  try{
+    const conversation = await db.collection(cts.users)
+      .doc(sender)
+      .collection(cts.conversations)
+      .doc(receiver);
+    await conversation.set({participants});
+    await conversation
+      .collection(cts.messages)
+      .add(message);
+    // await conversation
+    //   .collection(cts.participants)
+    //   .doc(receiver)
+    //   .set({});
+  }
+  catch(err){
+    console.log("Create chat database: ", err);
+  }
 }
 
 // send a message
@@ -137,19 +197,44 @@ const getConversations = async (user) =>{
 // get messages from a conversation for a user
 const getMessages = async (user, conversation) =>{
   const messages = [];
-  const rawMessages = await db.collection(cts.users)
-    .doc(user)
-    .collection(cts.conversations)
-    .doc(conversation)
+  const conversationDB = await db
+  .collection(cts.users)
+  .doc(user)
+  .collection(cts.conversations)
+  .doc(conversation);
+
+  const rawMessages = await conversationDB
     .collection(cts.messages)
     .orderBy("date")
     .get();
+
+  // const rawMessages = await db
+  //   .collection(cts.users)
+  //   .doc(user)
+  //   .collection(cts.conversations)
+  //   .doc(conversation)
+  //   .collection(cts.messages)
+  //   .orderBy("date")
+  //   .get();
 
   rawMessages.forEach(snapshot =>{
     messages.push(snapshot.data());
   });
 
-  return messages;
+  const participants = await db
+    .collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .doc(conversation)
+    .get();
+  // participants.forEach(snapshot => {
+  //     console.log("Get messages: ", snapshot)
+
+  //   })
+
+  console.log("Get messages: ", participants.data())
+
+  return {messages, participants: participants.data().participants};
 }
 
 
@@ -168,6 +253,7 @@ module.exports = {
   addUser, 
   current, 
   createChat, 
+  createGroup,
   sendMessage, 
   getMessages, 
   getConversations,

@@ -135,6 +135,22 @@ io.on('connection', (socket) => {
     io.emit("new chat", {chatName: receiver});
   });
 
+  // add a new group chat
+  // broadcast to everyone the fact that a chat 
+  // has been created
+  socket.on("new group", (chat) =>{
+    const name = chat.chat;
+    const receivers = chat.receivers;
+    const sender = chat.sender;
+    const date = chat.date;
+    console.log("-----", receivers, sender, date)
+
+    data.createGroup(sender, name, receivers, date)
+
+    io.emit("new group", {chatName: name});
+  });
+  
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });

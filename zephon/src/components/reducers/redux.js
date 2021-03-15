@@ -9,12 +9,11 @@ const initialUserState = {
     loggedIn: false,
 };
 
-
 const initialConversationsState = [];
 
 const initialSelectedConversationState = "";
 
-const initialStateChat = [];
+const initialStateChat = {messages: [], participants: []};
 
 // middleware
 
@@ -116,7 +115,7 @@ const chatSlice = createSlice({
     name: "chat", 
     initialState: initialStateChat,
     reducers: {
-        addMessage: (state, action) => {state.push(action.payload)},
+        addMessage: (state, action) => {state.messages.push(action.payload)},
         clearChat: {
             reducer: (state, action) => action.payload,
             prepare: () => {return {payload: initialStateChat}}

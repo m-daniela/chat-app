@@ -1,10 +1,10 @@
 
 - [Introduction](#introduction)
-	- [Basic concepts](#basic-concepts)
-		- [Symmetric key enc](#symmetric-key-enc)
-		- [Public key enc](#public-key-enc)
-		- [Authentication](#authentication)
-		- [Digital signatures](#digital-signatures)
+- [Basic concepts](#basic-concepts)
+	- [Symmetric key enc](#symmetric-key-enc)
+	- [Public key enc](#public-key-enc)
+	- [Authentication](#authentication)
+	- [Digital signatures](#digital-signatures)
 	- [End to end encryption](#end-to-end-encryption)
 	- [How it works, MAC](#how-it-works-mac)
 	- [Limitations](#limitations)
@@ -12,6 +12,7 @@
 		- [Man-in-the-middle attacks](#man-in-the-middle-attacks)
 		- [Endpoint security](#endpoint-security)
 		- [Backdoors](#backdoors)
+- [Used technologies](#used-technologies)
 - [Existing Technologies](#existing-technologies)
 	- [Signal protocol](#signal-protocol)
 		- [Diffie Hellamn and the rest](#diffie-hellamn-and-the-rest)
@@ -19,26 +20,51 @@
 	- [Signcryption and iMessage](#signcryption-and-imessage)
 		- [Signcryption](#signcryption)
 	- [Letter Sealing](#letter-sealing)
+	- [Threema](#threema)
 	- [Group messaging](#group-messaging)
+- [Terms and algorithms + other stuff](#terms-and-algorithms--other-stuff)
+	- [Message authentication code](#message-authentication-code)
+	- [Crypto nonce](#crypto-nonce)
+	- [Replay attacks](#replay-attacks)
+	- [Elliptic curve Diffie Hellman (ECDH)](#elliptic-curve-diffie-hellman-ecdh)
+	- [Integrated enc scheme](#integrated-enc-scheme)
+	- [Curve25519](#curve25519)
+	- [NIST curves](#nist-curves)
+	- [AES](#aes)
+	- [AES GCM](#aes-gcm)
+	- [SHA](#sha)
+	- [SHA 1](#sha-1)
+	- [SHA 2](#sha-2)
+	- [OAEP - optimal asym enc padding](#oaep---optimal-asym-enc-padding)
+	- [Zero-knowledge proof](#zero-knowledge-proof)
+	- [Proof of work](#proof-of-work)
+	- [Other websites](#other-websites)
+- [Conclusions](#conclusions)
+- [lab 1](#lab-1)
+- [lab 2](#lab-2)
+- [Working features](#working-features)
+- [To fix/ do](#to-fix-do)
+- [Fixed](#fixed)
 
 
 # Introduction
 
-## Basic concepts
+# Basic concepts
+- [might be useful for this section](https://cryptobook.nakov.com/)
 
-### Symmetric key enc
+## Symmetric key enc
 - HOAC 33
 - https://en.wikipedia.org/wiki/Symmetric-key_algorithm
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
 
 
-### Public key enc
+## Public key enc
 - HOAC 43
 - https://en.wikipedia.org/wiki/Public-key_cryptography
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
 
 
-### Authentication
+## Authentication
 - intro - hoac 42
 - identification and entity auth - hoac 401
 - https://en.wikipedia.org/wiki/Authentication
@@ -47,7 +73,7 @@
 - https://www.idc-online.com/technical_references/pdfs/data_communications/ZERO%20KNOWLEDGE.pdf - ZEROKNOWLEDGEPASSWORDAUTHENTICATION PROTOCOL
 
 
-### Digital signatures
+## Digital signatures
 - intro - hoac 40
 - digital signatures (ch 11) - hoac 441 
 - https://en.wikipedia.org/wiki/Digital_signature
@@ -69,6 +95,8 @@
 - [using quantum key distribution](https://www.ijtsrd.com/papers/ijtsrd18723.pdf)
 - [efficient](https://www.delltechnologies.com/en-us/collaterals/unauth/white-papers/products/storage/h18483-dell-emc-powermax-end-to-end-efficient-encryption.pdf)
 - https://www.theitstuff.com/what-is-end-to-end-encryption - algo
+
+- https://infosec-handbook.eu/blog/limits-e2ee/ to read
 
 ## How it works, MAC
 - [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
@@ -223,6 +251,47 @@
 	- making it harder for the attacker to lie about their identity: add more identifying info in the associated data, hash more identifying info etc. 
 	- if they are still able to lie, that's bad
 
+### Signal generalities
+- [20. Cohn-Gordon2020_Article_AFormalSecurityAnalysisOfTheSi](./PDF/Papers/Signal/20.%20Cohn-Gordon2020_Article_AFormalSecurityAnalysisOfTheSi.pdf) which is [this one]()
+- ratcheting, forward secrecy
+- X3DH
+- **EXTRA** - OTR was the first security protocol for instant messaging and after each message round trip?, the users established a new ephemeral Diffie-Hellman shared secret => ratcheting because you couldn't decrypt past messages
+- **EXTRA** - widespread adoption of secure instant messaging protocols started with iMessage
+- 3 stages:
+	- initial key exchange with X3DH - long term, mid term and ephemeral DH keys to produce a shared secret root value
+	- async ratchet - users alternate in sending the new ephemeral keys with prev generated root keys to generate forward secret chaining keys
+	- sym ratchet - use key derivation functions to ratchet forward chaining keys to create sym enc keys
+- => each message is encrypted with a new message key
+- the ping pong pattern of new epehemaral keys inject auto entropy
+- TextSecure - used Double ratche, called Axolotl ratchet at that time => RedPhone => Signal
+- over 10 diff types of keys and a chain of updated keys
+
+- async transmission protocol which requires pre-send batches of ephemeral public keys
+- when a sender wants to send the messages, they get the keys and performs an AKE like protocol using the long term and ephemeral keys tp compute the message encryption key 
+- the message keys depend on previous computations of the keys
+
+
+- registration - users register their identity w/ a key distribution server and upload the long, mid term and eph keys
+- session setup - get the public keys of the recv and establish initial enc keys (x3dh)
+- sync messaging (asym ratchet updates) - sender exchanges their public keys with the recv and generate a shared secret => start chains of message keys, fresh ephemeral keys
+- async messaging (sym ratchet) - a new sym message key is derived from the previous state, if no new message was sent by the recv, keys derived from the previous ephemeral dh public key of the sender
+
+
+- uses X25519 or X448
+- key derivation functions: HMAC SHA256, HKDF SHA256
+- AEAD - encrypt then MAC scheme: AES256 in CBC, PKCS#5 padding, MAC is HMAC sha 256
+- signature scheme based on ed25519
+- the rest is highlighted in the other version of the paper
+
+
+
+- [20. Signal Protocol - Makalah-Kripto-2020-06.pdf](./Pdf/papers/signal/20.%20Signal%20Protocol%20-%20Makalah-Kripto-2020-06.pdf)
+- generate keys and send the bundle
+- X25519, X448 ECDH
+- xed-dsa signature scheme - x25519 or x448
+- wrote before about the exchange
+
+
 
 ## MTProto
 - https://core.telegram.org/mtproto
@@ -251,6 +320,8 @@
 - forward secrecy - clients reinitiate re-keying after 100 msg enc / decr or if it has been in usde for 1 week
 - the old keys are discarded
 
+
+- group messages are not encrypted, encryption is not by default
 
 ## Signcryption and iMessage
 - [Official](https://support.apple.com/en-us/HT209110)
@@ -500,75 +571,38 @@
 - [wiki](https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding)
 - padding scheme often used with RSA (RSA OEAP)
 
+## Zero-knowledge proof
+- [wiki](https://en.wikipedia.org/wiki/Zero-knowledge_proof)
+- prove that you know a value x without showing it or give additional info
+
+## Proof of work 
+- [wiki](https://en.wikipedia.org/wiki/Proof_of_work)
+- (unrelated)
+- a form of a zero knwoledge proof in which the prover proves to the verifiers that a certain lvl of computational effort was made for a purpose
+- verifiers can confirm this with minimal effort on their side
+- invented to deter ddos attacks and spam etc. 
+
+
+## AKE
+- authenticated key exchange
+- require a trusted third party to certify users' identities
+
+
+## Curve448
+- [wiki](https://en.wikipedia.org/wiki/Curve448)
+- 224 bits
+- designed for ECDH key agreement
+
+## Deniable encryption
+- [wiki](https://en.wikipedia.org/wiki/Deniable_encryption)
+- adversary cannot prove that the plaintext from an enc msg exists
+
+
 ## Other websites
 - https://www.securemessagingapps.com/
 - 
 
----
-
-# lab 1
-- stabilirea temei
-- document
-	- titlu
-	- 2-3 paragrafe cu ideea
-	- 3 referinte
-	- semnaturi
 
 
-
-
-
-
-References
-- https://eprint.iacr.org/2016/1013.pdf - A Formal Security Analysis of the Signal Messaging Protocol
-- https://www.ndss-symposium.org/wp-content/uploads/ndss2021_1C-4_24180_paper.pdf - Improving Signal’s Sealed Sender 
-- https://eprint.iacr.org/2020/224.pdf - signcryption in iMessage
-- https://signal.org/docs/ - Signal official docs
-
-
----
-
-- attachement enc
-- group enc
-- demo + no encryption
-
-# Working features
-- login
-- signup
-- logout
-- see conversations
-- add conversation
-- see messages
-- send msg (real time)
-- encryption + decryption
-
-
-# To fix/ do
-- error handling
-- duplicating messages again???
-- state updates twitching/ loading 
-- same id for messages
-- check private keys
-- add session
-- cache accessed chats
-- optimize data clearing, data loading
-- maybe add deletion on messages/ chats
-
-
-# Fixed
-- signup fix (login model)
-- reset everything on logout - conversation remains selected
-- chat name selection - working only on second click - need to change the state
-- fix the real time thing
-- refresh mesages
-- order by timestamp
-
-example5@mail.com
-
---- 
-
-MessageList.js
-
-- Message
-	- fix decryption - twitching, simplify if
+# Conclusions
 
