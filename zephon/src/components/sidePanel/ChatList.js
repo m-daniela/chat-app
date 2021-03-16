@@ -19,7 +19,6 @@ const NewChat = ({close}) =>{
 
     const searchUser = (e) =>{
         e.preventDefault();
-        console.log("New chat", email)
         const date = new Date();
         socket.emit("new chat", {chat: newChat, sender: email, date});
         close(false);
@@ -55,7 +54,6 @@ const NewGroupChat = ({close}) =>{
 
     const searchUser = (e) =>{
         e.preventDefault();
-        console.log("New chat", email)
         const date = new Date();
         socket.emit("new group", {chat: newChat, sender: email, receivers: participants, date});
         close(false);
@@ -65,7 +63,6 @@ const NewGroupChat = ({close}) =>{
     const addMoreUsers = (e) =>{
         e.preventDefault();
         setParticipants([...participants, current]);
-        console.log("Chat list group", participants)
         setCurrent("");
     }
 

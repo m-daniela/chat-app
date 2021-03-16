@@ -10,8 +10,6 @@ const app = require("express")();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-// const mysql = require("mysql");
-// const http = require('http').createServer(app);
 
 app.use(cors({
   methods: 'GET,POST,PATCH,DELETE,OPTIONS',
@@ -39,16 +37,17 @@ app.post("/", (req, res) => {
 });
 
 // authenticate 
-// add a user to the database if not there already
-// ask for jwt 
+// add a user to the database if it is not there
+// already and ask for the jwt
 app.post("/auth", (req, res) =>{
   console.log("Server POST /auth");
   try{
     console.log(req.body);
     const email = req.body.user;
     if (email !== undefined || email !== null){
-      data.addUser(email, req, res)
-      .then(auth.authenticate(req, res));
+      data
+        .addUser(email, req, res)
+        .then(auth.authenticate(req, res));
     }
   }
   catch(err){
@@ -72,14 +71,15 @@ app.post("/chats", (req, res) => {
     res.json([]);
   }
   else{
-    data.getMessages(user, room)
-    .then(data => {
-      res.json(data);
-    })
-    .catch(err => {
-      console.log("Post /chats error", err);
-      res.json([]);
-    });
+    data
+      .getMessages(user, room)
+      .then(data => {
+        res.json(data);
+      })
+      .catch(err => {
+        console.log("Post /chats: error", err);
+        res.json([]);
+      });
   }
   
 });
@@ -100,53 +100,47 @@ io.on('connection', (socket) => {
 
   // join a room
   socket.on("join", ({username, room}) => {
-    const user = data.join(socket.id, username, room);
-    
-    // console.log(user);
+    data.join(socket.id, username, room);
     socket.join(room);
   });
 
   // send a message to a room
-  // add it to the local repo (will be changed to db)
   // broadcast the message to everyone but the sender
+  // and add it to the database
   socket.on('message', (message) => {
     const user = data.current(socket.id);
-    console.log(message);
-    console.log("from", user);
-    console.log("To", user.room);
+    const sender = message.from;
+    const text = message.message;
+    const date = message.date;
+    const room = message.room;
+    const receivers = message.receivers;
 
-    socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
-
-    data.sendMessage(message.from, user.room, message.message, message.date);
-
+    data.sendMessage(sender, room, receivers, text, date);
+    socket.broadcast.to(user.username).emit("message", {sender, text, date});
   });
 
   // add a new chat
-  // broadcast to everyone the fact that a chat 
-  // has been created
+  // broadcast to the receiver 
+  // add it to the databse
   socket.on("new chat", (chat) =>{
     const receiver = chat.chat;
     const sender = chat.sender;
     const date = chat.date;
-    console.log("-----", receiver, sender, date)
 
     data.createChat(sender, receiver, date)
-
     io.emit("new chat", {chatName: receiver});
   });
 
   // add a new group chat
-  // broadcast to everyone the fact that a chat 
-  // has been created
+  // broadcast to the receivers
+  // add it to the database
   socket.on("new group", (chat) =>{
     const name = chat.chat;
     const receivers = chat.receivers;
     const sender = chat.sender;
     const date = chat.date;
-    console.log("-----", receivers, sender, date)
 
     data.createGroup(sender, name, receivers, date)
-
     io.emit("new group", {chatName: name});
   });
   

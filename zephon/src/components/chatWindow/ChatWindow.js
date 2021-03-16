@@ -25,8 +25,6 @@ const ChatWindow = () => {
   const participants = useSelector(state => state.chat.participants);
 
   const [isDisabled, setIsDisabled] = useState(true);
-  // const [currentPK, setCurrentPK] = useState(null); 
-  // const [recipientPK, setRecipientPK] = useState(null); 
   const [participantsPK, setParticipantsPK] = useState(null)
 
   useEffect(() =>{
@@ -40,9 +38,6 @@ const ChatWindow = () => {
   useEffect(() =>{
     if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
-      // getPublicKey(email, token, setCurrentPK);
-      const currentParticipants = participants.filter(e => e !== email);
-      console.log("Chat window participants", participants, currentParticipants)
       getPublicKey(participants, token, setParticipantsPK);
 
     }
@@ -54,11 +49,10 @@ const ChatWindow = () => {
     if(message) {
       const date = new Date();
       const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
-      // console.log("Recipients", recipientPK)
+
       token.authEncrypt(message, participantsPK)
         .then(enc => {
-          socket.emit('message', {message: enc, from: email, date});
-          console.log("Chat window", {message: enc, from: email, date})
+          socket.emit('message', {message: enc, from: email, date, receivers: participants});
           dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
         })
         .catch(err => console.log(err));

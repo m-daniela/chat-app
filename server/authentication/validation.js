@@ -12,7 +12,6 @@ const pseudoDecodeToken = (token) => usersStorage.get(token);
 const pseudoVerifyToken = (token) => usersStorage.has(token);
 
 const requireAuthHeader = (req, res, next) => {
-  console.log(req.headers)
   // 'Check if request is authorized with token from POST /authorize'
   if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer '))) {
     res.statusMessage = "No Authorization header";

@@ -67,6 +67,9 @@ button.side_item{
 }
 .empty{
   @include centered;
+  h2{
+    text-align: center;
+  }
 }
 .message_input{
   width: 100%;

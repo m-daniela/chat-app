@@ -59,7 +59,6 @@ const Message = ({message, pks}) => {
 
 const MessageList = ({pks}) => {
   const messages = useSelector(state => state.chat.messages);
-  console.log("Message list", messages)
 
   useEffect(() => {
     const container = document.querySelector(".message_list");

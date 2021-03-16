@@ -98,3 +98,4 @@ example5@mail.com
 		- messages
 		+ participants (better as an array, probably, with everyone)
 
+sendMessage(sender, name, receivers, text, date)
