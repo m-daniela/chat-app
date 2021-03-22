@@ -1,8 +1,9 @@
 
-- [Introduction](#introduction)
-- [Basic concepts](#basic-concepts)
-	- [Symmetric key enc](#symmetric-key-enc)
-	- [Public key enc](#public-key-enc)
+- [1. Introduction](#1-introduction)
+	- [The application](#the-application)
+- [2. Basic concepts](#2-basic-concepts)
+	- [Symmetric key enccryption](#symmetric-key-enccryption)
+	- [Public key enccryption](#public-key-enccryption)
 	- [Authentication](#authentication)
 	- [Digital signatures](#digital-signatures)
 	- [End to end encryption](#end-to-end-encryption)
@@ -12,16 +13,22 @@
 		- [Man-in-the-middle attacks](#man-in-the-middle-attacks)
 		- [Endpoint security](#endpoint-security)
 		- [Backdoors](#backdoors)
-- [Used technologies](#used-technologies)
-- [Existing Technologies](#existing-technologies)
+- [3. Existing Technologies](#3-existing-technologies)
 	- [Signal protocol](#signal-protocol)
-		- [Diffie Hellamn and the rest](#diffie-hellamn-and-the-rest)
+		- [Diffie Hellamn](#diffie-hellamn)
+		- [Extended Triple Diffie Hellamn](#extended-triple-diffie-hellamn)
+		- [Double Ratchet](#double-ratchet)
+		- [EdDSA signature](#eddsa-signature)
 	- [MTProto](#mtproto)
 	- [Signcryption and iMessage](#signcryption-and-imessage)
 		- [Signcryption](#signcryption)
 	- [Letter Sealing](#letter-sealing)
 	- [Threema](#threema)
 	- [Group messaging](#group-messaging)
+- [4. Technologies used](#4-technologies-used)
+- [5. The application](#5-the-application)
+- [6. Conclusions](#6-conclusions)
+- [7. References](#7-references)
 - [Terms and algorithms + other stuff](#terms-and-algorithms--other-stuff)
 	- [Message authentication code](#message-authentication-code)
 	- [Crypto nonce](#crypto-nonce)
@@ -38,27 +45,85 @@
 	- [OAEP - optimal asym enc padding](#oaep---optimal-asym-enc-padding)
 	- [Zero-knowledge proof](#zero-knowledge-proof)
 	- [Proof of work](#proof-of-work)
+	- [AKE](#ake)
+	- [Curve448](#curve448)
+	- [Deniable encryption](#deniable-encryption)
+	- [Federeation](#federeation)
 	- [Other websites](#other-websites)
-- [Conclusions](#conclusions)
-- [lab 1](#lab-1)
-- [lab 2](#lab-2)
-- [Working features](#working-features)
-- [To fix/ do](#to-fix-do)
-- [Fixed](#fixed)
 
 
-# Introduction
+# 1. Introduction
+- what is this about? - end to end encryption in messaging apps
+- why do we need this/ why is this important? - protect the privacy of the messages that you are sending and receiving from possible eavesdroppers on the line
+- how did this evolve during the time? - from normal sms with no encryption (not even in transit) to strong encryption and everything else
+- what do I want to achieve with this paper and the application? 
 
-# Basic concepts
+---
+
+- as online communication gained more popularity, using instant messaging applications has become a standard in our quotidian lives
+- therefore, the need for assurance that there is no third party spying on our conversations, either the government, the service provider or a person with malicious intent, grew even more, especially in states where free speech is threatened
+- end-to-end encryption is used to protect the privacy of the messages sent between two or more participants, as they are in transit or at rest, with the intendend recipients being the only ones that can decrypt and read the messages
+- thus, the third parties interested in intercepting the information sent are unable to see the actual plaintext
+- messaging apps using end-to-end encryption have been around since 2012, with iPhone's native messaging app iMessage[1] and then Signal[4], previously known as TextSecure and RedPhone, developed in 2013
+- but this practice was popularized by WhatsApp in 2016[2], after they announced that the users' messages will have the end-to-end encryption enabled by default for all of their chats from now on, and Facebook's testing of secret chats in the application, in the same year[3]
+- both are using the Signal protocol in the background, which came with a few novelties in the field, such as the Double Ratchet Algorithm[5]
+- various other apps became more popular in the past years after they received endorsement from different public figures (Snowden, Elon[9] - Signal, Telegram - ??), or are used in a more restricted area (Line - mostly Asian user base)
+- some of these are implementing their own encryption schemes and protocols, but they are mostly relying on Elliptic Curve cryptography, especially the Curve25519 variant of the Diffie-Hellman key exchange and SHA 256 for hashing ++
+- a more in depth analysis of the protocols used by some popular applications will be discussed in [Section 3](#3-existing-technologies), as well as their security issues or proposed improvements
+- the main cryptographic concepts on which these are based will be briefly presented in [Section 2](#2-basic-concepts), details added accordingly for each protocol extending them
+
+- the underlying encryption scemes implemented by the protocols are as follows:
+- signal uses x3dh, extended version of ecdh, along with the double ratchet algorithm
+- as signature scheme, the eddsa tries to combine the curves (signal/ xesda)
+- imessage comes up with a type of signcryption, sign then encrypt method, trying to optimize the two processes
+- telegram's mtproto 2.0 uses ecdh  for key generation, sha 256 as hashing function and aes for encryption
+
+
+## The application
+
+- the app created is a web messaging application which provides end-to-end encryption for both private and group chats
+- in order to illustrate the risks of using chat applications without end-to-end encryption, the user can switch between the encrypted and non-encrypted versions
+- the implementation and the used frameworks and libraries are discussed at large in [Section 4](#4-technologies-used) and [Section 5](#5-the-application)
+
+
+
+References
+
+[1]: source for the first time iMessage got the encryption
+
+[2]: [Whatsapp whitepaper](https://scontent.whatsapp.net/v/t39.8562-34/122249142_469857720642275_2152527586907531259_n.pdf/WA_Security_WhitePaper.pdf?ccb=1-3&_nc_sid=2fbf2a&_nc_ohc=pLKbcESAck8AX95AjA-&_nc_ht=scontent.whatsapp.net&oh=73fbf3d0da3f6cae0b216e22b95cbd8b&oe=6079F899)
+
+[3]: [Messenger Starts Testing End-to-End Encryption with Secret Conversations](https://about.fb.com/news/2016/07/messenger-starts-testing-end-to-end-encryption-with-secret-conversations/)
+
+[4]: something about the Signal protocol and when did it appear
+
+[5]: Trevor Perrin - *[The XEdDSA and VXEdDSA Signature Schemes](https://www.signal.org/docs/specifications/xeddsa/xeddsa.pdf)*, 20.10.2016
+
+[6]: Trevor Perrin, Moxie Marlinspike - *[The X3DH Key Agreement Protocol](https://www.signal.org/docs/specifications/x3dh/x3dh.pdf)*, 04.11.2016
+
+[7]: Trevor Perrin, Moxie Marlinspike - *[Double Ratchet Algorithm](https://www.signal.org/docs/specifications/doubleratchet/doubleratchet.pdf)*, 20.11.2016
+
+[8]: Moxie Marlinspike, Trevor Perrin - *[The Sesame Algorithm:  Session Management forAsynchronous Message Encryption](https://www.signal.org/docs/specifications/sesame/sesame.pdf)*, 14.04.2017
+
+[9]: *[Elon Musk, endorsing Signal @ Twitter](https://twitter.com/elonmusk/status/1347165127036977153)*
+
+# 2. Basic concepts
 - [might be useful for this section](https://cryptobook.nakov.com/)
+- definitions and small descriptions of various base concepts that will be used throughout the thesis
+- expanded later
 
-## Symmetric key enc
+
+## Symmetric key enccryption
 - HOAC 33
 - https://en.wikipedia.org/wiki/Symmetric-key_algorithm
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
+- enccryption scheme where the same key is used for both encryption and decryption
+- security issues if it is intercepted (sent through an insecure channel)
 
 
-## Public key enc
+- Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
+
+## Public key enccryption
 - HOAC 43
 - https://en.wikipedia.org/wiki/Public-key_cryptography
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
@@ -73,6 +138,13 @@
 - https://www.idc-online.com/technical_references/pdfs/data_communications/ZERO%20KNOWLEDGE.pdf - ZEROKNOWLEDGEPASSWORDAUTHENTICATION PROTOCOL
 
 
+Authentication is the process of proving the identity of an entity, called claimant, to a verifier, and preventing impersonations. It might be done using certain credentials (a password) or with a digital certificate (in case of websites). 
+Consider the different parties A, B and C. The following objectives are included:
+1. A successfully authenticates to B, then B will complete the protocol by accepting A’s identity.
+2. After an identity exchange of B with A, B cannot impersonate A to the third party C.
+3. The probability of C to impersonate A is negligible.
+4. The previous points remain true even if there where a polynomially large number of authentications between A and B or that C have participated in previous protocol executions with A or B. 
+
 ## Digital signatures
 - intro - hoac 40
 - digital signatures (ch 11) - hoac 441 
@@ -81,6 +153,17 @@
 - https://www.docusign.com/how-it-works/electronic-signature/digital-signature/digital-signature-faq
 - https://cybersecurity.att.com/blogs/security-essentials/digital-signatures-101-a-powerful-and-underused-cybersecurity-ally /////
 
+
+Digital signatures are equivalent to handwritten signatures and are a means of verifying the authenticity of messages or documents, by providing the entity a way to bind its identity to a piece of information, making it dependent on a secret known by the sender and the content of the message. A valid digital signature is supposed to assure the recipient that the sender is authenticated and that the data was not altered in transit, becoming a way to detect forgery or tampering. 
+They must be verifiable and they can also provide non-repudiation, which means that the signer cannot successfully claim that they did not sign the message.
+The algorithm
+The digital signature scheme is similar to public key encryption, and consists of the following algorithms:
+Key generation: A public and a private key are generated. The private one is kept secret, while the other one is publicly available.
+Signing procedure: The signature is produced using the private key of the signer and the message.
+Signature verification procedure: From the public key of the sender, the message and the signature, the authenticity of the message can be either accepted or rejected. 
+Also, the following properties must be satisfied by the signing and verification transformations:
+1. A signature of a party on a message is valid if and only if the verification function returns true.
+2. It is computationally infeasible for any entity other than A to find a signature for any message from A such that the verification function returns true. 
 
 ## End to end encryption
 - [Wiki](https://en.wikipedia.org/wiki/End-to-end_encryption)
@@ -98,6 +181,12 @@
 
 - https://infosec-handbook.eu/blog/limits-e2ee/ to read
 
+End-to-end encryption is a communication system in which the messages can be read only by those participating in the conversation. The data is encrypted by the sender, at the endpoint, using the public key of the receiver and the only way to decrypt it is by using the recipient’s private key. This ensures that the data cannot be read or modified by the service provider or any third party involved, hackers, Gov etc. because they don’t have access to the private keys. 
+The need for this method arises from the fact that many email or messaging applications use third parties to store the data. As it is “in transit", it is encrypted (ex: tls), but when it reaches the server, it can be decrypted and so it is put at risk because the server or a third party is able to read or alter the data before it is send forward to the intended recipient.  
+The algorithm
+End-to-end encryption involves public and private keys. The private key is held by the end users and will be later used to decrypt the on coming messages, thus it should not be accessible to anyone else. The public key of the recipient is publicly available and the sender uses it in order to encrypt a message for the recipient. 
+
+
 ## How it works, MAC
 - [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
 
@@ -107,30 +196,30 @@
 - details are usually present in the general sources
 
 ### Metadata about the users
+- an important issue regarding the limitations of end-to-end encryption is the fact that matadata is available to the server and it can be read and collected to be used for advertising etc. 
+- so the server knows to whom did you talk to, at what hour, for how long, from where etc. 
+- an example would be the update of terms and services of WhatsApp[] at the end of 2020, which resulted in a massive shift of the users to Signal or Telegram 
+- proposed ways of handling this and collecting as little metadata as possible about the users are going to be later addressed in the next section
 
 
 ### Man-in-the-middle attacks
 
-
+This type of attacks require that the attacker injects themselves between the two endpoints and impersonates one or more of the participating parties. The sender will unknowingly use the public key of the attacker and they are able to decrypt and read or tamper with the messages before sending them forward. 
+This can be avoided if the identities of the participants are verified.
 
 ### Endpoint security
 
+The messages are only protected from possible eavesdroppers on the communication channel or while the data is at rest, but the endpoints are still vulnerable. After decryption, the messages in plaintext are available to anyone who has access to the endpoint device, so they can be accessed using other methods (ex. device theft, social engineering, hacking the device). 
 
 ### Backdoors
 
-
-# Used technologies
-- React
-- node.js
-- Redux toolkit
-- Virgil security 
-	- [browser code](https://github.com/VirgilSecurity/virgil-e3kit-js/tree/master/packages/e3kit-browser)
-	- [docs](https://developer.virgilsecurity.com/docs/e3kit/)
-- socket.io
-- Firebase
+The application providers might include, intentionally or not, ways to access the data by bypassing the encryption, called backdoors. - surveillance etc.
+An example of a backdoor is the iPhone’s iMessage. The messaging application is end-to-end encrypted, but the cloud storage system, iCloud, saved the private keys used to decrypt the messages as well.
 
 
-# Existing Technologies
+# 3. Existing Technologies
+- about the technologies used in some of the popular end-to-end encrypted apps and a brief description of how they work
+
 
 ## Signal protocol
 - [Signal protocol - wiki](https://en.wikipedia.org/wiki/Signal_Protocol)
@@ -139,10 +228,10 @@
 - [A Formal Security Analysis of the Signal Messaging Protoco](https://eprint.iacr.org/2016/1013.pdf)
 - [Hecar Lexicon: What Is the Signal Encryption Protocol?](https://www.wired.com/story/signal-encryption-protocol-hacker-lexicon/)
 - https://en.wikipedia.org/wiki/Montgomery_curve
-- [A Formal Security Analysis of the Signal Messaging Protocol](./Notes/PDF/Papers/../../../PDF/Papers/Signal/16.%2019.%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf) - notes on how the protocol works
+- [A Formal Security Analysis of the Signal Messaging Protocol](./PDF/Papers/Signal/16.%2019.%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf) - notes on how the protocol works
 
 
-- apps: Signal, Whatsapp, Facebook Messenger
+- apps: Signal, Whatsapp, Facebook Messenger, Wire
 - combines 
   - double ratchet algo
   - prekey bundle
@@ -152,7 +241,42 @@
   - AES-256
   - HMAC-SHA256
 
-### Diffie Hellamn and the rest
+- [20. Cohn-Gordon2020_Article_AFormalSecurityAnalysisOfTheSi](./PDF/Papers/Signal/20.%20Cohn-Gordon2020_Article_AFormalSecurityAnalysisOfTheSi.pdf) - for security analysis too
+- [20. Signal Protocol - Makalah-Kripto-2020-06.pdf](./Pdf/papers/signal/20.%20Signal%20Protocol%20-%20Makalah-Kripto-2020-06.pdf)*
+- ratcheting, forward secrecy
+- X3DH
+- **EXTRA** - OTR was the first security protocol for instant messaging and after each message round trip?, the users established a new ephemeral Diffie-Hellman shared secret => ratcheting because you couldn't decrypt past messages
+- **EXTRA** - widespread adoption of secure instant messaging protocols started with iMessage
+- 3 stages:
+	- initial key exchange with X3DH - long term, mid term and ephemeral DH keys to produce a shared secret root value
+	- async ratchet - users alternate in sending the new ephemeral keys with prev generated root keys to generate forward secret chaining keys
+	- sym ratchet - use key derivation functions to ratchet forward chaining keys to create sym enc keys
+- => each message is encrypted with a new message key
+- the ping pong pattern of new epehemaral keys inject auto entropy
+- TextSecure - used Double ratche, called Axolotl ratchet at that time => RedPhone => Signal
+- over 10 diff types of keys and a chain of updated keys
+
+- async transmission protocol which requires pre-send batches of ephemeral public keys
+- when a sender wants to send the messages, they get the keys and performs an AKE like protocol using the long term and ephemeral keys tp compute the message encryption key 
+- the message keys depend on previous computations of the keys
+
+
+- registration - users register their identity w/ a key distribution server and upload the long, mid term and eph keys
+- session setup - get the public keys of the recv and establish initial enc keys (x3dh)
+- sync messaging (asym ratchet updates) - sender exchanges their public keys with the recv and generate a shared secret => start chains of message keys, fresh ephemeral keys
+- async messaging (sym ratchet) - a new sym message key is derived from the previous state, if no new message was sent by the recv, keys derived from the previous ephemeral dh public key of the sender
+
+
+- the following are present there *
+- uses X25519 or X448 ECDH
+- key derivation functions: HMAC SHA256, HKDF SHA256
+- AEAD - encrypt then MAC scheme: AES256 in CBC, PKCS#5 padding, MAC is HMAC sha 256
+- xeddsa signature scheme - x25519 or x448
+- the rest is highlighted in the other version of the paper
+
+
+
+### Diffie Hellamn
 - https://www.cs.jhu.edu/~rubin/courses/sp03/papers/diffie.hellman.pdf
 - [Diffie-Helman key exchange (colors)](https://www.youtube.com/watch?v=NmM9HA2MQGI)
 - [Diffie-Helman key exchange (maths)](https://www.youtube.com/watch?v=Yjrfm_oRO0w)
@@ -164,7 +288,7 @@
 
 
 
-**Extended Triple Diffie Hellamn**
+### Extended Triple Diffie Hellamn
 - [x3dh](./PDF/Signal/x3dh.pdf)
 - key agreement protocol, it establishes a shared secret key between two parties who mutually auth each other based on public keys 
 - forward secrecy and crypto deniability
@@ -193,7 +317,7 @@
 - after the one-time prekey is sent, it should be deleted
 - the signature verification occurs
 - if the bundle doesn't contain the one-time prekey, the sender will compute an ephemeral key pair with their public key
-- \<insert key computations\>
+-  key computations here
 - after the SK is computed, the sender deletes the ephemeral private key and the DH outputs 
 - computes associated data AD (maybe the metadata? since there might be certificates, usernames etc)
 - the initial message (from the sender) contains:
@@ -215,81 +339,71 @@
 
 **Security considerations**
 - authentication
-	- the parties may compare their id public keys 
-	- if the auth is not performed, there is no guarantee that they are who they claim to be (mitm attacks possible LATER)
+	- the parties may compare their id public keys (ex QR code scanning, compare pk fingerprints)
+	- if the auth is not performed, there is no guarantee that they are who they claim to be (mitm attacks possible then)
 
 - protocol replay
-	- if there is no one-time prekey from the sender, the message can be replayed to the recv and it might seem that the sender sent it more times ? and the same secret key might be derived
-	- avoid 
-		- in a post-x3dh protocol - new enc key for the sender from a new random input
-		- blacklist of observed messages
+	- if there is no one-time prekey from the sender, the message can be replayed to the recv and it might seem that the sender sent it more times and the same secret key might be derived
+	- to avoid 
+		- in a post-x3dh protocol - new enc key for the sender from a new random input (ex Diffie Hellman based ratcheting protocol)
+		- blacklist observed messages
 		- replace old signed prekeys earlier
-- replay and key reuse
-	- any post-x3dh must randomize the encryption key before bob sends the data (ex: dh base ratcheting protocol etc.)
-	- if not => key reuse, which is not good
+
+
 - deniability
-	- the protocol doesn't give the parties a publishable cryptographic proof of the contents of their comm or the fact that they communicated 
+	- no proof that that of the contents or that the communication took place
 	- [OBS - deniable encryption describes encryption techniques where the existence of an encrypted file or message is deniable in the sense that an adversary cannot prove that the plaintext data exists](https://en.wikipedia.org/wiki/Deniable_encryption)
-	- MORE DETAILS HERE
+	- if one of the participants is collaborating with a third party, then proof of their communication can be provided
+
+
 - signatures
 	- if there is no signature verification - the server could provide forged prekeys => key compromise
-	- MORE DETAILS HERE
+
+
 - key compromise
-	- compromise of private keys => disastrous, cuould lead to impersonation or affect the security of secret key values
+	- compromise of private keys => could lead to impersonation or affect the security of secret key values
 	- mitigation (a kind of) - use of ephemeral keys and prekeys
-	- some compromise scenarios:	
-		- 
-		- 
-		- 
+	- some compromise scenarios (pg 9)
+
+
 - server trust
-	- communication failure
-	- if the communicating parties are authenticated, the server might refuse to hand out one-time prekeys and cause the forward secrecy of the secret key to depend on the signed prekey's lifetime
-	- if one party attempts to drain the one-time prekeys of the other's, the server should prevent this (ex: rate limits on fetching the prekey bundles)
+	- malicious server could cause communication failure, refuse to deliver messages
+	- if the parties are auth, the server might refuse to send the one time prekeys and then the forward secrecy of the secret key depends on the signed prekey's lifetime
+	- if one party attempts to drain the one-time prekeys of the other party, the server should prevent this (ex: rate limits on fetching the prekey bundles) - affects the forward secrecy
+
+
 - identity binding
 	- auth doesn't prevent identity misbinding/ unknown key share attacks
-	- an attacker impersonates a party by presenting their prekey bundle as someone else's
+	- an attacker could impersonate a party by presenting their prekey bundle as someone else's
 	- making it harder for the attacker to lie about their identity: add more identifying info in the associated data, hash more identifying info etc. 
-	- if they are still able to lie, that's bad
-
-### Signal generalities
-- [20. Cohn-Gordon2020_Article_AFormalSecurityAnalysisOfTheSi](./PDF/Papers/Signal/20.%20Cohn-Gordon2020_Article_AFormalSecurityAnalysisOfTheSi.pdf) which is [this one]()
-- ratcheting, forward secrecy
-- X3DH
-- **EXTRA** - OTR was the first security protocol for instant messaging and after each message round trip?, the users established a new ephemeral Diffie-Hellman shared secret => ratcheting because you couldn't decrypt past messages
-- **EXTRA** - widespread adoption of secure instant messaging protocols started with iMessage
-- 3 stages:
-	- initial key exchange with X3DH - long term, mid term and ephemeral DH keys to produce a shared secret root value
-	- async ratchet - users alternate in sending the new ephemeral keys with prev generated root keys to generate forward secret chaining keys
-	- sym ratchet - use key derivation functions to ratchet forward chaining keys to create sym enc keys
-- => each message is encrypted with a new message key
-- the ping pong pattern of new epehemaral keys inject auto entropy
-- TextSecure - used Double ratche, called Axolotl ratchet at that time => RedPhone => Signal
-- over 10 diff types of keys and a chain of updated keys
-
-- async transmission protocol which requires pre-send batches of ephemeral public keys
-- when a sender wants to send the messages, they get the keys and performs an AKE like protocol using the long term and ephemeral keys tp compute the message encryption key 
-- the message keys depend on previous computations of the keys
 
 
-- registration - users register their identity w/ a key distribution server and upload the long, mid term and eph keys
-- session setup - get the public keys of the recv and establish initial enc keys (x3dh)
-- sync messaging (asym ratchet updates) - sender exchanges their public keys with the recv and generate a shared secret => start chains of message keys, fresh ephemeral keys
-- async messaging (sym ratchet) - a new sym message key is derived from the previous state, if no new message was sent by the recv, keys derived from the previous ephemeral dh public key of the sender
+### Double Ratchet
+- [double ratchet](./pdf/signal/doubleratchet.pdf)
+- after the key exchange, the parties are using the Double ratchet algorithm to send and receive messages
+- keys are derived for eveyr double ratchet message
+- uses KDF chains
+- kdf 
+  - a crypto function that takes a secret random KDF key and input data and the output should be indistiguishable from random
+  - the function should still be able to provide a random output, even if the key is known
+- kdf chain - when a part of the function output is used as output key, and another part is used to replace the kdf key and used for another input
+- properties:	
+  - resilience
+  - forward security
+  - break-in recovery
+- a double ratche session between two parties has a key for 3 chains:
+  - root chain
+  - sending chain
+  - receiving chain
+- on message exchange, the parteis exchange new DH pks and the output secrets become the inputs to the root chain
+- output keys from the root chains become new kdf keys for sending and recv chains
+- the sending and recv chains advance as each message is sent and recv (symmetric key ratchet)
 
 
-- uses X25519 or X448
-- key derivation functions: HMAC SHA256, HKDF SHA256
-- AEAD - encrypt then MAC scheme: AES256 in CBC, PKCS#5 padding, MAC is HMAC sha 256
-- signature scheme based on ed25519
-- the rest is highlighted in the other version of the paper
-
-
-
-- [20. Signal Protocol - Makalah-Kripto-2020-06.pdf](./Pdf/papers/signal/20.%20Signal%20Protocol%20-%20Makalah-Kripto-2020-06.pdf)
-- generate keys and send the bundle
-- X25519, X448 ECDH
-- xed-dsa signature scheme - x25519 or x448
-- wrote before about the exchange
+### EdDSA signature
+- [xeddsa](./PDF/Signal/xeddsa.pdf)
+- enables use of a single key pair for ECDH signatures
+- signatures are defined on [twisted Edwards curves](https://en.wikipedia.org/wiki/Twisted_Edwards_curve)
 
 
 
@@ -303,6 +417,7 @@
 
 - apps: Telegram
 - section from the [docs](https://core.telegram.org/api/end-to-end)
+- upgraded from MTProto 1.0, vulnerabilities analyzed later
 - the MTProto 2.0 uses 
 	- SHA 256
 	- padding
@@ -351,7 +466,7 @@
 - private keys are saved in the device's keychain (API for passwords, keys and other sensitive credentials)
 - public keys are sent to IDS
 
-- [How iMessage sends and receives messages securely - also saved](https://support.apple.com/fr-fr/guide/security/sec70e68c949/web)
+- [How iMessage sends and receives messages securely](https://support.apple.com/fr-fr/guide/security/sec70e68c949/web)
 - methodology - Data Protection
 - sender retrieves the public keys and APNs addresses for all associated devices of the receiver
 - the message is individually encrypted for each device
@@ -418,12 +533,48 @@
 	- epehmeral ECDH client handshake generated
 	- etc.
 - server:
-	- 
-	- 
+	- temp transport key and initialization vector using server's static ECDH key and client's initial eph key
+	- decrypt recv app data and get public key
+	- generate eph key pair and nonce
+	- derive forward sec transport key and init vect
+	- gen sign and handshake state using server's static key
+	- encrypt app data
+	- send to client: server public key, server nonce, server's static signing key, enc data 
 - client finish:
-	- 
+	- handshake signature verif
+	- if verified, continue with getting the forward secrecy keys
+	- enc using the keys
 
 - data is encrypted with 128 bit key using AES GCM [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) cipher
+
+pg 11
+
+- [LINE enc](./pdf/papers/line/20.%20LINE%20Encryption%20Report%20-%20linecorp-com-en-security-encryption-2020h1.pdf)
+- tls + letter sealing
+- text and voice/ video
+- e2ee for: if supported?
+  - private chats
+  - groups
+  - location messages? for both above
+  - audio calls - private
+  - video calls - private
+- have their own https api? Line Event delivery GatewaY
+- optional in 2015 and by default in 2016, but all the participants in the supported message types must have letter sealing enabled to work
+- metadata and other things that are only tls enc:
+  - website prev function
+  - spam report - the message that was reported
+  - media file
+  - stickers
+  - open chat
+  - group calls
+  - meeting
+  - social plugin
+- forward secrecy supported by only a few comm channels
+  - supported in case of line server key compromise (client-server)?
+  - in case of per device private key compromise
+
+
+
 
 ## Threema
 - [open source](https://github.com/threema-ch/threema-web)
@@ -432,6 +583,7 @@
 - [the thing used for encryption](https://nacl.cr.yp.to/)
 
 - [From the official faq page](https://threema.ch/en/faq/why_secure)
+- app remote protocol for app and web client data exchange https://threema-ch.github.io/app-remote-protocol/
 - Swiss, 2012
 - uses 2 diff encryption layers
 	- end-to-end 
@@ -476,6 +628,24 @@
 - [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
 - [2020 - Challenges in E2E Encrypted Group Messaging](./PDF/Papers/20.%20Challenges%20in%20E2E%20Encrypted%20Group%20Messaging%20-%20GroupMessagingReport.pdf)
 
+
+# 4. Technologies used
+- React
+- node.js
+- Redux toolkit
+- Virgil security 
+	- [browser code](https://github.com/VirgilSecurity/virgil-e3kit-js/tree/master/packages/e3kit-browser)
+	- [docs](https://developer.virgilsecurity.com/docs/e3kit/)
+- socket.io
+- Firebase
+
+
+# 5. The application
+
+# 6. Conclusions
+
+# 7. References
+- []: 
 
 
 # Terms and algorithms + other stuff
@@ -597,6 +767,10 @@
 - [wiki](https://en.wikipedia.org/wiki/Deniable_encryption)
 - adversary cannot prove that the plaintext from an enc msg exists
 
+## Federeation
+- [wiki](https://en.wikipedia.org/wiki/Federation_(information_technology))
+- group of computing or network providers agreeing upon standards of operation in a collective fashion.
+
 
 ## Other websites
 - https://www.securemessagingapps.com/
@@ -604,5 +778,5 @@
 
 
 
-# Conclusions
+
 
