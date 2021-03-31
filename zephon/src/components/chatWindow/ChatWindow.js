@@ -2,7 +2,7 @@ import React, {useEffect, useContext, useState} from 'react'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import Header from '../common/Header'
-import { getPublicKey } from '../services/encryption';
+import { encryptMessage, getPublicKey } from '../services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../context/SocketContext'
 import { addMessage } from '../reducers/redux'
@@ -24,22 +24,26 @@ const ChatWindow = () => {
   const current = useSelector(state => state.selected);
   const participants = useSelector(state => state.chat.participants);
 
+
   const [isDisabled, setIsDisabled] = useState(true);
   const [participantsPK, setParticipantsPK] = useState(null)
 
   useEffect(() =>{
+    console.log("--------------------------", current)
     socket.on("message", (message) =>{
-      if (message.sender === current){
+      console.log(message.room, current)
+      if (message.room === current || message.room === email){
+        console.log("bv")
         dispatch(addMessage(message));
       }
     });
-  }, [dispatch, current, socket]);
+  }, [current]);
 
   useEffect(() =>{
     if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
-      getPublicKey(participants, token, setParticipantsPK);
-
+      // getPublicKey(participants, token, setParticipantsPK);
+      
     }
     else setIsDisabled(true);
     // eslint-disable-next-line
@@ -50,9 +54,10 @@ const ChatWindow = () => {
       const date = new Date();
       const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
 
-      token.authEncrypt(message, participantsPK)
+      // token.authEncrypt(message, participantsPK)
+      encryptMessage(participants, token, message)
         .then(enc => {
-          socket.emit('message', {message: enc, from: email, date, receivers: participants});
+          socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
           dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
         })
         .catch(err => console.log(err));
@@ -68,7 +73,7 @@ const ChatWindow = () => {
               <p>Please choose a chat to see magical stuff</p>
             </div> : 
             <>
-              <MessageList pks={participantsPK}/>
+              <MessageList />
               <MessageInput addMessage={addNewMessage} />
             </>}
       </div>

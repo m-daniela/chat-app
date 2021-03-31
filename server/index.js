@@ -116,7 +116,18 @@ io.on('connection', (socket) => {
     const receivers = message.receivers;
 
     data.sendMessage(sender, room, receivers, text, date);
-    socket.broadcast.to(user.username).emit("message", {sender, text, date});
+    console.log("Broadcast", user.username, room)
+    socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
+    // socket.to(room).emit("message", {sender, text, date});
+
+    // const user = data.current(socket.id);
+    // console.log(message);
+    // console.log("from", user);
+    // console.log("To", user.room);
+
+    // socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
+
+    // data.sendMessage(message.from, user.room, message.message, message.date);
   });
 
   // add a new chat

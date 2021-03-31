@@ -2,8 +2,13 @@
 - [1. Introduction](#1-introduction)
 	- [The application](#the-application)
 - [2. Basic concepts](#2-basic-concepts)
+	- [MACs](#macs)
+	- [PRFs](#prfs)
+	- [HMAC](#hmac)
+	- [Auth encryption](#auth-encryption)
+	- [Auth enc with assoc data](#auth-enc-with-assoc-data)
 	- [Symmetric key enccryption](#symmetric-key-enccryption)
-	- [Public key enccryption](#public-key-enccryption)
+	- [Public key encryption](#public-key-encryption)
 	- [Authentication](#authentication)
 	- [Digital signatures](#digital-signatures)
 	- [End to end encryption](#end-to-end-encryption)
@@ -13,6 +18,8 @@
 		- [Man-in-the-middle attacks](#man-in-the-middle-attacks)
 		- [Endpoint security](#endpoint-security)
 		- [Backdoors](#backdoors)
+	- [Classical Diffie Hellamn](#classical-diffie-hellamn)
+	- [Elliptic curves cryptography](#elliptic-curves-cryptography)
 - [3. Existing Technologies](#3-existing-technologies)
 	- [Signal protocol](#signal-protocol)
 		- [Diffie Hellamn](#diffie-hellamn)
@@ -25,6 +32,7 @@
 	- [Letter Sealing](#letter-sealing)
 	- [Threema](#threema)
 	- [Group messaging](#group-messaging)
+	- [About MLS?](#about-mls)
 - [4. Technologies used](#4-technologies-used)
 - [5. The application](#5-the-application)
 - [6. Conclusions](#6-conclusions)
@@ -49,6 +57,7 @@
 	- [Curve448](#curve448)
 	- [Deniable encryption](#deniable-encryption)
 	- [Federeation](#federeation)
+	- [Fan-out](#fan-out)
 	- [Other websites](#other-websites)
 
 
@@ -110,8 +119,62 @@ References
 # 2. Basic concepts
 - [might be useful for this section](https://cryptobook.nakov.com/)
 - definitions and small descriptions of various base concepts that will be used throughout the thesis
-- expanded later
+- more explanations later
 
+
+## MACs
+- some other info from [Serious crypto](link), pg 179
+- keyed hasing functions (hashing func with secret keys) => message auth codes (MAC) and pseudorandom func (PRF)
+- macs - protects the identity and auth by creating a value (tag) from the message and the key
+- if you know the macs key, you can confirm that a message was not modified in transit => integrity and auth
+- often combined with a cipher => preserving message's confidentiality, integrity, auth
+- ex: ssh, tls, ip security generate a mac for each packet sent
+- forgery - create a tag when you don't know the key
+- attack vectors:
+  - known-message attack - tags and data collected by an eavesdropper
+  - chosen message attack - the attacker chooses the messages to be auth
+  - replay attacks - capture a message and resent it to the receiver, pretending to be the sender - mitigation by numbering the messages?
+
+## PRFs
+- pseudorandom functions/ 181
+- "should be indistiguishable from a random function"
+- takes in a message and e key and the output should seem random => unpredictable values
+- not meant to be used on their own
+- key derivation schemes use this to generate crypto keys from a master key or password 
+- ident keys use this to generate a response from a random challenge? - ex a server sends a random challenge message and the recv should prove with this that it knows the key
+- tls - prf to generate key material from a master secret and session specific random values
+- stronger than macs and any secure prf is also a secure mac
+
+## HMAC
+- pg 184
+- hash based mac
+- build a mac from a hash function
+- produces a secure prf if the underlying hash is collision resistant or if the hash's compression function is a prf
+- SOME OTHER INFO ABOUT ATTACKS AND HOW TO BREAK CBC-MACS AND HOW TO FIX THEM/ 186
+
+
+## Auth encryption
+- 200
+- [wiki](https://en.wikipedia.org/wiki/Authenticated_encryption)
+- AE or AEAD (auth enc with assoc data) - assure confidentiality and auth
+- produce the tag and encrypt the data => combination of cipher and mac
+- about AES GCM also
+- combinations:
+  - encrypt and mac - ciphertext and tag are generated from the plaintext
+  - mac then encrypt
+  - encrypt then mac
+- auth ciphers - alternative to the cipher and mac combinations => like normal ciphers but return an auth tag with the ciphertext
+
+
+## Auth enc with assoc data
+- 204
+- data processed by an auth cipher, but not encrypted => data is auth but in plaintext
+- ex: if you want to send a header and a payload, you enc the payload, but keep the header (assoc data) unencrypted so it can be processed, but you still want to auth it
+- takes in the key, plaintext and the assoc data and returns the ciphertext, unenc assoc data, the auth tag
+- if assoc data is empty => normal auth cipher
+- if plaintext is empty => mac
+- you should avoid predictability of enc schemes using a nonce
+- more on security and AES GCM from 206
 
 ## Symmetric key enccryption
 - HOAC 33
@@ -123,7 +186,7 @@ References
 
 - Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
 
-## Public key enccryption
+## Public key encryption
 - HOAC 43
 - https://en.wikipedia.org/wiki/Public-key_cryptography
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
@@ -198,8 +261,10 @@ End-to-end encryption involves public and private keys. The private key is held 
 ### Metadata about the users
 - an important issue regarding the limitations of end-to-end encryption is the fact that matadata is available to the server and it can be read and collected to be used for advertising etc. 
 - so the server knows to whom did you talk to, at what hour, for how long, from where etc. 
-- an example would be the update of terms and services of WhatsApp[] at the end of 2020, which resulted in a massive shift of the users to Signal or Telegram 
-- proposed ways of handling this and collecting as little metadata as possible about the users are going to be later addressed in the next section
+- an example would be the update of terms and services of [WhatsApp](https://www.whatsapp.com/legal/updates/privacy-policy/?lang=en), now owned by facebook, at the end of 2020, which resulted in a massive shift of the users to Signal or Telegram (some blog post here)
+- information that is collected includes, besides hardware and model information, browser information, mobile network, connection info, location information (for location related features) 
+- proposed ways of handling this and collecting as little metadata as possible about the users are going to be later addressed in the next sections
+
 
 
 ### Man-in-the-middle attacks
@@ -215,6 +280,27 @@ The messages are only protected from possible eavesdroppers on the communication
 
 The application providers might include, intentionally or not, ways to access the data by bypassing the encryption, called backdoors. - surveillance etc.
 An example of a backdoor is the iPhone’s iMessage. The messaging application is end-to-end encrypted, but the cloud storage system, iCloud, saved the private keys used to decrypt the messages as well.
+
+## Classical Diffie Hellamn
+- serious crypto/ 268
+- Diffie Hellamn (1976) is a protocol that allows the participants to share a secret between them, with the exchanged information being public
+- the secret could be turned into a secure channel for transmitting symmetric keys, for ex
+- the mathematical function involves a big prime number p and a base number/ generator g (public part) and a number a from the Zp* set, chosen by each participant (private part)
+- for example, for two participants, we have the numbers a and b
+- then each of the participants computes A = g^a mod p, B = g^b mod p and makes these computations publicly available
+- the other participant takes this result and raises it to their private number and this will be the shared secret, so: (g^a mod p)^b = (g^b mod p)^a = g^ab mod p
+- even if this computation seems easy, its security resides on the discrete logarithmic problem, which means that you need to recover a from g^a mod p
+- this is possible, but takes a long time if the values are chosen correctly
+- attack models / 275
+
+
+## Elliptic curves cryptography
+- serious crypto/ pg 288 and the presentation saved somewhere
+- they are curves which are also groups, so they keep the group axioms
+- the group law is constructed geometrically
+- elliptic curve discrete logarithm problem
+- combined with DH => what we use now
+- [Edwards ec](https://www.youtube.com/watch?v=Yn1kD1rNmns)
 
 
 # 3. Existing Technologies
@@ -622,11 +708,81 @@ pg 11
 	- sends MAC, cipertext and nonce to recv
 	- decrypt and verify authenticity by reversing the steps
 
+- [Security audit](./PDF/Papers/Threema/20.%20security_audit_report_threema_2020.pdf)
+- security audit in oct 2020, conducted by cure53
+- shows no high security vulnerabilities, only minor or general flaws
+
 
 ## Group messaging
 
 - [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
+- info is available in [this blog post](./pdf/Papers/Groups/signal-org-blog-private-groups-.pdf) too
+- some of the previously mentioned apps are implementing the same ee2e protocol for one-to-one ahts, but, when talking about the group conversations, the approapches are different, or they don't support this feature at all
+- Telegram, for example, doesn't have ee2e for group chats, for security reasons (here we will have some stories about this. I saw this in the whitepaper or another paper)
+- so it relies only on the transport layer security, as well as Facebook messenger, the content of the messages being available to the server
+- if you want to have e2ee in group conversations, you may want to keep forward secrecy, post-compromise security, deniability (if possible)
+- bigger groups => gets harder to manage the keys (it is hard in the first place, since you need to do certain things for each participant)
+- there are 3 ways in which you can handle this:
+  - pair-wise - the sender takes the secret key of each of the receiver, encrypts the message and sends it forward to the intended recipient (behaves like normal one to one chats); all the properties of the simple chats are preserved and the groups could be practically invisible for the server
+  - encrypted message keys - the sender should choose a new random key for each message with which they would encrypt the message and send only a copy to the recipients. The encrypted message keys are then send out to each of the recipients, in order to decrypt the message; the properties are still kept, but the server is aware of the fact that there is a group 
+  - shared group-keys - a group key-exchange should be made (both static and ephemeral public keys from each member); while this would significantly lower the complexity of sending messages, the key exchange complexity could grow, especially when you want to keep forward secrecy and post-compromise security, as the keys must be changed regularly; the server, again, is aware of the group structure
+- metadata could be collected, again
+- one way to obstruct metadada collection by third parties is to use TLS to secure the comm between the user and client
+- the server still needs to know where to send a message
+- inside the app:
+  - if you can use only email or an username, yo could gain anonomity, but the app would still be aware of your social graph (you will need to find and communicate with the other users anyway)
+  - if you have contacts list - use a hash, but this is still not enough, because someone can obtain the tuples of username and hash
+  - **SGX** 
+    - [wiki](https://en.wikipedia.org/wiki/Software_Guard_Extensions)
+    - [some more data on this (saved locally)](https://www.blackhat.com/docs/us-16/materials/us-16-Aumasson-SGX-Secure-Enclaves-In-Practice-Security-And-Crypto-Review.pdf)
+    - intel
+    - set of security related instruction codes that are built into some intel cpus
+    - have private regions (enclaves) whose contents are protected and unable to be read or saved by any process (including those with higher priv) outside the enclave
+    - encryption of some parts of the memory, actually
+
+**app comparison**
+- signal
+- double ratchet procedure for authenticated key-exchange: long term + short term keys from each participant => shared key
+- key used in a key deriv ratchet protocol => ephemeral session keys
+- forward secrecy and post-compromise security achieved
+- ake takes long term enc keys => deniability
+- initiator sends, in a pair-wise fashion, a fresh keys to each participant
+- group session key is derived from the shared group key, using double ratchet and the group keys are updated on each newly added participant 
+- online-offline key exchange - static keys are given by the server, but the ephemeral key exchanges are dealt with by having all users frequently upload one-time prekeys to the server, so the inline party can perform the key exchange
+- safety numbers or qr code for auth
+- SGX - metadata is stored encrypted on the server
+
+- wapp
+- similar, using pair-wise channels
+- but the server has access to the medatada
+
+- imessage
+- public/ private key pair for encryption and signature, and the public keys are saved on the server
+- only static public keys are used => no forward sececry, post-compromise security
+- pair-wise and ineffiecient, but groups are not used that much, since it was initially created to replace sms
+- no way to auth the users
+
+- wire
+- double ratchet for session keys for pair-wise comm and channels for group conversations
+- auth with safety numbers
+
+
+- threema
+- public keys published to the server and these are used for encr and sign => no forward sececry, post-compromise security
+- shared secret keys ofer deniability
+- group communication with pair-wise channes, but multimedia is encrypted using the message key method
+- may offer anonimity - username, phone number or email to create an account
+- auth with safety numbers
+
+
 - [2020 - Challenges in E2E Encrypted Group Messaging](./PDF/Papers/20.%20Challenges%20in%20E2E%20Encrypted%20Group%20Messaging%20-%20GroupMessagingReport.pdf)
+- gives definitions about group anonimity features, such as internal group anonimity and external group anonimity and propose the Anonymous Async Ratchet Tree protocol
+- the properties of forward secrecy and post-compromise security should be kept
+
+## About MLS?
+- [CONCLUSIONS SECTION - 2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
+
+- messaging layer security - initiative from The Internet Engineering Task Force - protocol for group messaging with the best security properties and and more efficient key exchanges (log communication cost, using bin trees)
 
 
 # 4. Technologies used
@@ -771,6 +927,9 @@ pg 11
 - [wiki](https://en.wikipedia.org/wiki/Federation_(information_technology))
 - group of computing or network providers agreeing upon standards of operation in a collective fashion.
 
+## Fan-out
+- [wiki](https://en.wikipedia.org/wiki/Fan-out_(software))
+- messaging pattern used to model an information exchange that implies the delivery (or spreading) of a message to one or multiple destinations possibly in parallel, and not halting the process that executes the messaging to wait for any response to that message.
 
 ## Other websites
 - https://www.securemessagingapps.com/

@@ -67,3 +67,44 @@ export const getPublicKey = (email, eThree, setPublicKey) => {
         .catch(err => console.log(err));
 }
 
+export const encryptMessage = async (participants, eThree, message) =>{
+
+    try{
+        const pks = await eThree.findUsers(participants);
+        const enc = await eThree.authEncrypt(message, pks);
+        return enc;
+    }
+    catch (e) {
+        console.log(e);
+        return "";
+    }
+
+}
+
+export const getDecryptedMessages = async (participants, eThree, messages) =>{
+
+    try{
+        const pks = await eThree.findUsers(participants);
+        
+        const newMessages = [];
+        for (const message of messages){
+            if (message.sender === "sys"){
+                newMessages.push(message)
+            } else{
+                const text = await eThree.authDecrypt(message.text, pks[message.sender]);
+                const newMessage = {
+                    sender: message.sender, 
+                    date: message.date,
+                    text,
+                };
+                newMessages.push(newMessage);
+            }
+        }
+        return newMessages;
+    }
+    catch (e) {
+        console.log(e);
+        return [];
+    }
+
+}

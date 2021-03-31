@@ -128,15 +128,26 @@ const createChatDatabase = async (sender, receiver, participants, message) =>{
 // - receivers - all the participants in the chat
 // - date - date of the sent message
 const sendMessage = async (sender, name, receivers, text, date) => {
+  
   const message = {
     sender,
     text, 
     date: convertToTimestamp(date),
   }
 
-  for (const receiver of receivers){
-    sendMessageDatabase(name, receiver, message);
+  if (receivers.length === 2){
+    const [recv1, recv2] = [...receivers];
+    console.log("grr", recv1, recv2, receivers)
+
+    sendMessageDatabase(recv1, recv2, message);
+    sendMessageDatabase(recv2, recv1, message);
   }
+  else{
+    for (const receiver of receivers){
+      sendMessageDatabase(name, receiver, message);
+    }
+  }
+  
 
 }
 
