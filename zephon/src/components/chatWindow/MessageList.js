@@ -11,38 +11,12 @@ Message List and Message
 
 const Message = ({message}) => {
   const email = useSelector(state => state.user.email);
-  const {token} = useContext(E3Context);
-
-  // const [decryptedMessage, setMessage] = useState("Decrypting...");
   const [author, setAuthor] = useState("other");
 
-  // clean this part
   useEffect(() => {
     if (message.sender === email){
       setAuthor("current");
     }
-    // if (message.sender !== "sys"){
-    //   if (pks !== null && email === message.sender) {
-    //     setAuthor("current");
-    //     token.authDecrypt(message.text, pks[email])
-    //       .then(decrypted => {
-    //         setMessage(decrypted);
-    //       })
-    //       .catch(err => console.log(err));
-    //   }
-    //   else{
-    //     if (pks !== null){
-    //       token.authDecrypt(message.text, pks[message.sender])
-    //         .then(decrypted => {
-    //           setMessage(decrypted);
-    //         })
-    //         .catch(err => console.log(err));
-    //       }
-    //   }
-    // }
-    // else{
-    //   setMessage(message.text);
-    // }
   // eslint-disable-next-line
   }, []);
   

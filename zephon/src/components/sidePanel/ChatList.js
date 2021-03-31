@@ -127,9 +127,16 @@ const ChatList = () => {
 
     return (
         <div className="chat_list">
-            {addChat ? <NewChat close={setAddChat}/> : <button className="side_item" onClick={addNewChat}>Add new chat</button>}
+            {/* {addChat ? <NewChat close={setAddChat}/> : <button className="side_item" onClick={addNewChat}>Add new chat</button>}
             {addGroup ? <NewGroupChat close={setAddGroup}/> : <button className="side_item" onClick={addNewGroup}>Add new group</button>}
-            {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
+            {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)} */}
+            {!addChat ? <>
+                <button className="side_item" onClick={addNewChat}>Add new chat</button>
+                {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
+                </>
+                :
+                <NewChat close={setAddChat}/>
+            }
         </div>
     )
 }

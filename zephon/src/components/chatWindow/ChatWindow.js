@@ -2,7 +2,7 @@ import React, {useEffect, useContext, useState} from 'react'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import Header from '../common/Header'
-import { encryptMessage, getPublicKey } from '../services/encryption';
+import { encryptMessage} from '../services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../context/SocketContext'
 import { addMessage } from '../reducers/redux'
@@ -24,26 +24,24 @@ const ChatWindow = () => {
   const current = useSelector(state => state.selected);
   const participants = useSelector(state => state.chat.participants);
 
-
   const [isDisabled, setIsDisabled] = useState(true);
-  const [participantsPK, setParticipantsPK] = useState(null)
+
+  console.log("Chat window", email)
 
   useEffect(() =>{
     console.log("--------------------------", current)
     socket.on("message", (message) =>{
       console.log(message.room, current)
-      if (message.room === current || message.room === email){
+      if (message.sender === current){
         console.log("bv")
         dispatch(addMessage(message));
       }
     });
-  }, [current]);
+  }, [current, dispatch, socket]);
 
   useEffect(() =>{
     if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
-      // getPublicKey(participants, token, setParticipantsPK);
-      
     }
     else setIsDisabled(true);
     // eslint-disable-next-line
@@ -54,7 +52,6 @@ const ChatWindow = () => {
       const date = new Date();
       const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
 
-      // token.authEncrypt(message, participantsPK)
       encryptMessage(participants, token, message)
         .then(enc => {
           socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});

@@ -108,26 +108,29 @@ io.on('connection', (socket) => {
   // broadcast the message to everyone but the sender
   // and add it to the database
   socket.on('message', (message) => {
-    const user = data.current(socket.id);
-    const sender = message.from;
-    const text = message.message;
-    const date = message.date;
-    const room = message.room;
-    const receivers = message.receivers;
-
-    data.sendMessage(sender, room, receivers, text, date);
-    console.log("Broadcast", user.username, room)
-    socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
-    // socket.to(room).emit("message", {sender, text, date});
-
     // const user = data.current(socket.id);
-    // console.log(message);
-    // console.log("from", user);
-    // console.log("To", user.room);
+    // const sender = message.from;
+    // const text = message.message;
+    // const date = message.date;
+    // const room = message.room;
+    // const receivers = message.receivers;
 
-    // socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
+    // data.sendMessage(sender, room, receivers, text, date);
+    // console.log("Broadcast", user.username, room)
+    // socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
+    // socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
+    // io.to(room).emit("message", {room, sender, text, date});
 
-    // data.sendMessage(message.from, user.room, message.message, message.date);
+    const user = data.current(socket.id);
+    const receivers = message.receivers;
+    console.log(message);
+    console.log("from", user);
+    console.log("To", user.room);
+    console.log("Tooo", receivers);
+
+    socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
+
+    data.sendMessage(message.from, user.room, receivers, message.message, message.date);
   });
 
   // add a new chat
