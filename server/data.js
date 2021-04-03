@@ -2,8 +2,9 @@
 // database interaction
 
 var admin = require("firebase-admin");
-var serviceAccount = require("../../key.json");
+var serviceAccount = require("./key.json");
 
+// change
 const { cts } = require("./constants");
 
 admin.initializeApp({
@@ -137,7 +138,7 @@ const sendMessage = async (sender, name, receivers, text, date) => {
 
   if (receivers.length === 2){
     const [recv1, recv2] = [...receivers];
-    console.log("grr", recv1, recv2, receivers)
+    console.log("Send messages: ", recv1, recv2, receivers)
 
     sendMessageDatabase(recv1, recv2, message);
     sendMessageDatabase(recv2, recv1, message);

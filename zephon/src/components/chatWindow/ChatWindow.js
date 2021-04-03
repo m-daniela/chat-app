@@ -26,14 +26,11 @@ const ChatWindow = () => {
 
   const [isDisabled, setIsDisabled] = useState(true);
 
-  console.log("Chat window", email)
-
   useEffect(() =>{
-    console.log("--------------------------", current)
     socket.on("message", (message) =>{
+      console.log("You get here on message")
       console.log(message.room, current)
       if (message.sender === current){
-        console.log("bv")
         dispatch(addMessage(message));
       }
     });
@@ -56,6 +53,7 @@ const ChatWindow = () => {
         .then(enc => {
           socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
           dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+          console.log("After add message dispatch")
         })
         .catch(err => console.log(err));
     }

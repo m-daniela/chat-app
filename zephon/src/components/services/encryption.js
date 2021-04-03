@@ -91,13 +91,18 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
             if (message.sender === "sys"){
                 newMessages.push(message)
             } else{
-                const text = await eThree.authDecrypt(message.text, pks[message.sender]);
-                const newMessage = {
-                    sender: message.sender, 
-                    date: message.date,
-                    text,
-                };
-                newMessages.push(newMessage);
+                try{
+                    const text = await eThree.authDecrypt(message.text, pks[message.sender]);
+                    const newMessage = {
+                        sender: message.sender, 
+                        date: message.date,
+                        text,
+                    };
+                    newMessages.push(newMessage);
+                } catch(err){
+                    console.log("Why is this happening now")
+                }
+                
             }
         }
         return newMessages;

@@ -15,6 +15,9 @@ const MessageInput = ({addMessage}) => {
 
   return (
     <form className="message_input" onSubmit={e => onSendMessage(e)}>
+      {/* <label>
+        <input type="file"/>
+      </label> */}
       <input type="text"
         onChange={e => onChangeInput(e.target.value)}
         placeholder={"Your message..."}
