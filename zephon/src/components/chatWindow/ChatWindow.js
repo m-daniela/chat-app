@@ -5,7 +5,7 @@ import Header from '../common/Header'
 import { encryptMessage} from '../services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../context/SocketContext'
-import { addMessage } from '../reducers/redux'
+import { addMessage, getMessagesThunk } from '../reducers/redux'
 import { E3Context } from '../context/E3Context';
 import firebase from "firebase";
 
@@ -31,7 +31,8 @@ const ChatWindow = () => {
       console.log("You get here on message")
       console.log(message.room, current)
       if (message.sender === current){
-        dispatch(addMessage(message));
+        // dispatch(addMessage(message));
+        dispatch(getMessagesThunk({email, current}));
       }
     });
   }, [current, dispatch, socket]);

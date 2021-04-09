@@ -203,10 +203,13 @@ const getMessages = async (user, conversation) =>{
   const rawMessages = await conversationDB
     .collection(cts.messages)
     .orderBy("date")
+    // .limit(10)
     .get();
 
   rawMessages.forEach(snapshot =>{
-    messages.push(snapshot.data());
+    const message = snapshot.data();
+    message["id"] = snapshot.id;
+    messages.push(message);
   });
 
   const participants = await db
@@ -221,6 +224,20 @@ const getMessages = async (user, conversation) =>{
   return {messages, participants: participants.data().participants};
 }
 
+// delete a message for the given chat and user
+// TODO: add a return thing so it can be checked
+const deleteMessage = async (user, chat, messageId) =>{
+  console.log("are we here?", user, chat, messageId)
+  const res = await db
+    .collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .doc(chat)
+    .collection(cts.messages)
+    .doc(messageId)
+    .delete();
+  console.log("asdfuio", res);
+}
 
 const join = (chatid, username, room) =>{
     const user = {chatid, username, room};
@@ -240,5 +257,6 @@ module.exports = {
   createGroup,
   sendMessage, 
   getMessages, 
+  deleteMessage,
   getConversations,
 };

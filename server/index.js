@@ -84,6 +84,19 @@ app.post("/chats", (req, res) => {
   
 });
 
+app.post("/message", (req, res)=>{
+  console.log("Server  POST /message");
+
+  const id = req.body.messageId;
+  const user = req.body.user;
+  const chat = req.body.chat;
+
+  data.deleteMessage(user, chat, id)
+    .then(data => res.json([]))
+    .catch(err => res.json(["123"]))
+
+});
+
 const server = app.listen(port, () => {
   console.log('listening on *:5000');
 });

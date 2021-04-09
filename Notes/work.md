@@ -2,24 +2,25 @@
 - [1. Introduction](#1-introduction)
 	- [The application](#the-application)
 - [2. Basic concepts](#2-basic-concepts)
-	- [MACs](#macs)
-	- [PRFs](#prfs)
+	- [Symmetric key encryption](#symmetric-key-encryption)
+	- [AES](#aes)
+	- [Public key encryption](#public-key-encryption)
+		- [Attacks](#attacks)
+	- [Authentication](#authentication)
+		- [Message authentication codes](#message-authentication-codes)
+		- [PRFs](#prfs)
 	- [HMAC](#hmac)
 	- [Auth encryption](#auth-encryption)
 	- [Auth enc with assoc data](#auth-enc-with-assoc-data)
-	- [Symmetric key enccryption](#symmetric-key-enccryption)
-	- [Public key encryption](#public-key-encryption)
-	- [Authentication](#authentication)
 	- [Digital signatures](#digital-signatures)
 	- [End to end encryption](#end-to-end-encryption)
-	- [How it works, MAC](#how-it-works-mac)
 	- [Limitations](#limitations)
 		- [Metadata about the users](#metadata-about-the-users)
 		- [Man-in-the-middle attacks](#man-in-the-middle-attacks)
 		- [Endpoint security](#endpoint-security)
-		- [Backdoors](#backdoors)
+		- [Backdoors and general backlash?](#backdoors-and-general-backlash)
 	- [Classical Diffie Hellamn](#classical-diffie-hellamn)
-	- [Elliptic curves cryptography](#elliptic-curves-cryptography)
+	- [Elliptic curve cryptography](#elliptic-curve-cryptography)
 - [3. Existing Technologies](#3-existing-technologies)
 	- [Signal protocol](#signal-protocol)
 		- [Diffie Hellamn](#diffie-hellamn)
@@ -33,8 +34,11 @@
 	- [Threema](#threema)
 	- [Group messaging](#group-messaging)
 	- [About MLS?](#about-mls)
+		- [MLS](#mls)
 - [4. Technologies used](#4-technologies-used)
 - [5. The application](#5-the-application)
+	- [Layout](#layout)
+	- [???](#)
 - [6. Conclusions](#6-conclusions)
 - [7. References](#7-references)
 - [Terms and algorithms + other stuff](#terms-and-algorithms--other-stuff)
@@ -45,7 +49,7 @@
 	- [Integrated enc scheme](#integrated-enc-scheme)
 	- [Curve25519](#curve25519)
 	- [NIST curves](#nist-curves)
-	- [AES](#aes)
+	- [AES](#aes-1)
 	- [AES GCM](#aes-gcm)
 	- [SHA](#sha)
 	- [SHA 1](#sha-1)
@@ -122,74 +126,82 @@ References
 - more explanations later
 
 
-## MACs
-- some other info from [Serious crypto](link), pg 179
-- keyed hasing functions (hashing func with secret keys) => message auth codes (MAC) and pseudorandom func (PRF)
-- macs - protects the identity and auth by creating a value (tag) from the message and the key
-- if you know the macs key, you can confirm that a message was not modified in transit => integrity and auth
-- often combined with a cipher => preserving message's confidentiality, integrity, auth
-- ex: ssh, tls, ip security generate a mac for each packet sent
-- forgery - create a tag when you don't know the key
-- attack vectors:
-  - known-message attack - tags and data collected by an eavesdropper
-  - chosen message attack - the attacker chooses the messages to be auth
-  - replay attacks - capture a message and resent it to the receiver, pretending to be the sender - mitigation by numbering the messages?
 
-## PRFs
-- pseudorandom functions/ 181
-- "should be indistiguishable from a random function"
-- takes in a message and e key and the output should seem random => unpredictable values
-- not meant to be used on their own
-- key derivation schemes use this to generate crypto keys from a master key or password 
-- ident keys use this to generate a response from a random challenge? - ex a server sends a random challenge message and the recv should prove with this that it knows the key
-- tls - prf to generate key material from a master secret and session specific random values
-- stronger than macs and any secure prf is also a secure mac
-
-## HMAC
-- pg 184
-- hash based mac
-- build a mac from a hash function
-- produces a secure prf if the underlying hash is collision resistant or if the hash's compression function is a prf
-- SOME OTHER INFO ABOUT ATTACKS AND HOW TO BREAK CBC-MACS AND HOW TO FIX THEM/ 186
-
-
-## Auth encryption
-- 200
-- [wiki](https://en.wikipedia.org/wiki/Authenticated_encryption)
-- AE or AEAD (auth enc with assoc data) - assure confidentiality and auth
-- produce the tag and encrypt the data => combination of cipher and mac
-- about AES GCM also
-- combinations:
-  - encrypt and mac - ciphertext and tag are generated from the plaintext
-  - mac then encrypt
-  - encrypt then mac
-- auth ciphers - alternative to the cipher and mac combinations => like normal ciphers but return an auth tag with the ciphertext
-
-
-## Auth enc with assoc data
-- 204
-- data processed by an auth cipher, but not encrypted => data is auth but in plaintext
-- ex: if you want to send a header and a payload, you enc the payload, but keep the header (assoc data) unencrypted so it can be processed, but you still want to auth it
-- takes in the key, plaintext and the assoc data and returns the ciphertext, unenc assoc data, the auth tag
-- if assoc data is empty => normal auth cipher
-- if plaintext is empty => mac
-- you should avoid predictability of enc schemes using a nonce
-- more on security and AES GCM from 206
-
-## Symmetric key enccryption
+## Symmetric key encryption
 - HOAC 33
 - https://en.wikipedia.org/wiki/Symmetric-key_algorithm
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
-- enccryption scheme where the same key is used for both encryption and decryption
-- security issues if it is intercepted (sent through an insecure channel)
+- [aes](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
 
 
-- Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
+- Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. An advantage of this type of ciphers is that they are more efficient in terms of software and hardware. 
+- image/ formula?
+- One such cryptographic algorithm used by some end-to-end encryption protocols is AES (Advanced Encryption Standard) [aes]
+
+## AES
+- contemporary crypto/ 282
+- NIST paper
+- It is a symmetric block cipher, based on a substitution-permutation network, which uses keys of length 128, 192 or 256 bits to process data in blocks of 128 bits, introduced by NIST in 2001. 
+- the operations are performed on a state array, which is a two-dimensional array of bytes, having the block length div by 32, Nb (Nb = 128 / 32 = 4) rows and columns and the cells contain 1 byte of the block
+- the key length is computed in the same way, so it would have length Nk 4, 6, 8, depending on number of columns in the cipher key (from 128, 192, 256 bits)
+- the state array can be interpreted as a state array of 32 bit words
+- operations over a finite field
+  - addition - xor
+  - multiplication - multiplication of the polynomials mod irreducible polynomial x^8 + x^4 + x^3 + x + 1 
+- round keys are values derived from the cipher key and are applied to the state
+- these values are fixed: Nr = 10, Nk = 4; Nr = 12, Nk = 6; Nr = 14, Nk = 8
+- the round function is composed of:
+  - byte subst using a subst table (S-box)
+  - shift the rows of the state by different offsets
+  - mix data in each column
+  - add round key to state
+- after an initial round key addition, the round function is implemented Nr - 1 times
+- the inverse cipher (decryption) is following the previous steps but in reverse order
+
+Round Key - Round  keys  are  values  derived  from  the  Cipher  Key  using  the  Key  Expansion  routine;  they  are  applied  to  the  State  in  the  Cipher  and  Inverse Cipher. 
+Key expansion - Routine used to generate a series of Round Keys from the Cipher Key
+
+[aes]: NIST, [Announcing the ADVANCED ENCRYPTION STANDARD (AES)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf)
+
 
 ## Public key encryption
-- HOAC 43
+- HOAC 43, 301
 - https://en.wikipedia.org/wiki/Public-key_cryptography
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
+- enc function - trapdoor function with the nec info being the decryption key
+
+- Public-key encryption, or asymmetric encryption, is an encryption scheme which uses a public and a private key pair for each user. The public key is known and can be publicly distributed, so sending it through an insecure channel is not an issue anymore, but the private key must be kept secret by the user. 
+- To encrypt a message, the sender uses the public key of the receiver, which can be decrypted only using the recipient's private key. 
+- The security of this encryption scheme resides on the property of the key pair that while knowing the encryption key, it must be computationally infeasible to obtain the plaintext message from a random ciphertext, thus obtaining the decryption key. ?
+- Public key encryption is less efficient than symmetric key encryption, so it can be used as a secure channel for key exchange or for encrypting smaller data sets. 
+- Examples of asymmmetric key algorithms, commonly used in popular end-to-end protocols, are the Diffie-Hellman key echange protocol and Elliptic curve based cryptography.
+
+### Attacks
+
+**Impersonation**
+- There still remains room for an impersonation attack. This means that an adversary can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key.
+- In this way, the adversary can decrypt the message, read and/ or alter it before encrypting it with B's key and sending it forward. 
+- This kind of attack can be mitigated using authentication, so guaranteeing that the recipient is the intended one. 
+
+**Chosen plaintext**
+- [wiki](https://en.wikipedia.org/wiki/Chosen-plaintext_attack)
+- [wiki, semantic security](https://en.wikipedia.org/wiki/Semantic_security)
+- The adversary chooses arbitrary plaintext and then is given the corresponding ciphertext and the intention is to reduce the security of the encryption scheme. 
+- There are two forms, of this attack:
+  - batch attack - when the adversary knows the plaintext before seeing the ciphertext
+  - adatptive - when the attacker can request other ciphertexts after seeing some ciphertexts of corresponding plaintext
+- This vulnerability can be fixed by providing semantic security, meaning that the adversary should not be able to derive anything but negligible information about a plaintext message, given the ciphertext and the public key. This property is also called indistiguishability under chosen plaintext attack. 
+
+**Chosen ciphertext**
+- [wiki](https://en.wikipedia.org/wiki/Chosen-ciphertext_attack)
+- This type of attack consists of an adversay that has access to decryptions of chosen ciphertexts and the intention is to obtain the private key.
+- This type of attacks can be split in two categories:
+  - indifferent or lunchtime attacks - the attacker receives the decryptions of any chosen ciphertext. These must be chosen before receiving the target ciphertext ???
+  - adaptive attacks - the attacker has access to the victim's **decryption machine**, and may request decryptions of related ciphertext, but not the target ciphertext, based on the previously received plaintext
+- To avoid such attacks, the cryptosystem should not provide any decryption oracles, for example.
+
+- This algorithm is usually used for digital signatures. ?
+
 
 
 ## Authentication
@@ -201,16 +213,121 @@ References
 - https://www.idc-online.com/technical_references/pdfs/data_communications/ZERO%20KNOWLEDGE.pdf - ZEROKNOWLEDGEPASSWORDAUTHENTICATION PROTOCOL
 
 
-Authentication is the process of proving the identity of an entity, called claimant, to a verifier, and preventing impersonations. It might be done using certain credentials (a password) or with a digital certificate (in case of websites). 
-Consider the different parties A, B and C. The following objectives are included:
+
+
+- Authentication is the process of proving the identity of an entity, called claimant, to a verifier, and preventing impersonations. It might be done using certain credentials (a password) or with a digital certificate (in case of websites). 
+- Data origin authentication or message authentication techniques assures one party of the identity of the sender.
+- Usually, the message has additional information attached so the receiver can determine it. 
+The following objectives are included for the three different parties A, B, C
 1. A successfully authenticates to B, then B will complete the protocol by accepting A’s identity.
 2. After an identity exchange of B with A, B cannot impersonate A to the third party C.
 3. The probability of C to impersonate A is negligible.
 4. The previous points remain true even if there where a polynomially large number of authentications between A and B or that C have participated in previous protocol executions with A or B. 
 
+
+- A difference between entity authentication and message authentication is that the latter does not provide timeliness guarantees regarding when the message was created, while entity authentication does the verification in real-time, during the execution of the verification protocol. ?
+- Also, the message authentication provides a meaningful message, whereas the other type only assures that the claimant is right? 
+
+### Message authentication codes
+- some other info from Serious crypto pg 179
+- contemporary crypto/ 318
+
+- [MLS](PDF/Papers/20. Evaluation of the MessagingLayer Security Protocol - FULLTEXT01.pdf)
+- hash function - function that transforms data of an arbitrary size to a fixed size hash value, and it can be used for data verification, signatures etc. 
+- it should not produce collisions, that is having the same hash for two different sets of data
+
+- keyed hashing functions (hashing func with secret keys) => message auth codes (MAC) and pseudorandom func (PRF)
+
+- macs protect the identity and auth by creating a value (authentication tag) from the message and the key
+- authentication tags, computed and verified with a secret key. They depend on the authenticated message and the secret key, which is known to the communicating parties
+- if you know the macs key, you can confirm that a message was not modified in transit => integrity and auth
+- often combined with a cipher => preserving message's confidentiality, integrity, auth
+- ex: ssh, tls, ip security generate a mac for each packet sent
+- forgery - create a tag when you don't know the key
+- attack vectors:
+  - known-message attack - tags and data collected by an eavesdropper
+  - chosen message attack - the attacker chooses the messages to be auth and if the attacker is able to adaptively choose other messages and their corresponding MACs, it is an adaptive chosen-message attack
+  - replay attacks - capture a message and resent it to the receiver, pretending to be the sender - mitigation by numbering the messages?
+
+- There are two types of technologies used for messsage authentication:
+  - digital signatures + public key crypto => the private key being the one generating the digital signature and the public one is the used for verification
+  - message authentication codes (MACs) + secret key crypto? 
+
+- A further comparison can be made with digital signatures:
+  - digital signatures may be used to provide nonrepudiation
+  - MACs can be verified only by those who know or obtain the secret key, whereas the digital signatures can be verified by anyone
+
+
+
+- It can be concluded that if the adversary can determine the secret key, the system is totally broken. If the MAC of a meaningful message was determined, then the MAC is selectively forged, and if the message is not meaningful, the MAC is existentially forged. ? rephrase
+- A way to lower the possibility of guessing a MAC (which is always possible?) is to increase the tag length and a message authentication system is secure if the attacker can only guess the MAC in order to forge it. 
+- Another issue is whether the attacker can verify the guessed MAC and this gives us two new categories: verifiable and non-verifiable MACs.
+- Non-verifiable MACs are more secure, since it's not possible to find the correct one using brute-force. 
+
+
+
+### PRFs
+- pseudorandom functions sc/ 181
+- contemporary crypto/ 327
+- "should be indistiguishable from a random function"
+- takes in a message and e key and the output should seem random => unpredictable values
+- called xor macs
+- not meant to be used on their own
+- key derivation schemes use this to generate crypto keys from a master key or password 
+- ident keys use this to generate a response from a random challenge? - ex a server sends a random challenge message and the recv should prove with this that it knows the key
+- tls - prf to generate key material from a master secret and session specific random values
+- stronger than macs and any secure prf is also a secure mac
+
+- f:X -> Y pseudorandom if it is randomly chosen from the set of all mappings from X to Y
+- message authentication using families of finite prfs proposed in 1995
+- I don't think I really need these things
+
+
+## HMAC
+- sc pg 184
+- hash based mac
+- build a mac from a hash function
+- produces a secure prf if the underlying hash is collision resistant or if the hash's compression function is a prf
+- SOME OTHER INFO ABOUT ATTACKS AND HOW TO BREAK CBC-MACS AND HOW TO FIX THEM/ 186
+
+- contemporary crypto/ 323
+- authenticity and integrity
+- more efficient when you want to auth the messages
+- three types? or at least that many are proposed in the book
+
+
+
+
+## Auth encryption
+- sc 200
+- [wiki](https://en.wikipedia.org/wiki/Authenticated_encryption)
+- AE or AEAD (auth enc with assoc data) - assure confidentiality and auth
+- produce the tag and encrypt the data => combination of cipher and mac
+- about AES GCM also
+- combinations:
+  - encrypt and mac - ciphertext and tag are generated from the plaintext
+  - mac then encrypt
+  - encrypt then mac
+- auth ciphers - alternative to the cipher and mac combinations => like normal ciphers but return an auth tag with the ciphertext
+
+- contemporary crypto/ 451 - entity encryption
+
+
+## Auth enc with assoc data
+- sc 204
+- data processed by an auth cipher, but not encrypted => data is auth but in plaintext
+- ex: if you want to send a header and a payload, you enc the payload, but keep the header (assoc data) unencrypted so it can be processed, but you still want to auth it
+- takes in the key, plaintext and the assoc data and returns the ciphertext, unenc assoc data, the auth tag
+- if assoc data is empty => normal auth cipher
+- if plaintext is empty => mac
+- you should avoid predictability of enc schemes using a nonce
+- more on security and AES GCM from 206
+
+
 ## Digital signatures
 - intro - hoac 40
 - digital signatures (ch 11) - hoac 441 
+- contemporary crypto/ 396
 - https://en.wikipedia.org/wiki/Digital_signature
 - https://blog.pandadoc.com/what-is-a-digital-signature-and-how-does-it-work/
 - https://www.docusign.com/how-it-works/electronic-signature/digital-signature/digital-signature-faq
@@ -244,24 +361,26 @@ Also, the following properties must be satisfied by the signing and verification
 
 - https://infosec-handbook.eu/blog/limits-e2ee/ to read
 
-End-to-end encryption is a communication system in which the messages can be read only by those participating in the conversation. The data is encrypted by the sender, at the endpoint, using the public key of the receiver and the only way to decrypt it is by using the recipient’s private key. This ensures that the data cannot be read or modified by the service provider or any third party involved, hackers, Gov etc. because they don’t have access to the private keys. 
-The need for this method arises from the fact that many email or messaging applications use third parties to store the data. As it is “in transit", it is encrypted (ex: tls), but when it reaches the server, it can be decrypted and so it is put at risk because the server or a third party is able to read or alter the data before it is send forward to the intended recipient.  
-The algorithm
-End-to-end encryption involves public and private keys. The private key is held by the end users and will be later used to decrypt the on coming messages, thus it should not be accessible to anyone else. The public key of the recipient is publicly available and the sender uses it in order to encrypt a message for the recipient. 
+- End-to-end encryption is a communication system in which the messages can be read only by those participating in the conversation and allowing them to securely communicate through an unsecured channel. 
+- The data is encrypted by the sender, at the endpoint, using the public key of the receiver and the only way to decrypt it is by using the recipient’s private key. 
+- This ensures that the data cannot be read or modified by the service provider or any third party involved because they don’t have access to the private keys. 
+- The need for this method arises from the fact that many email and messaging applications use third parties to store the data and it is protected only "in transit" (ex: TLS), but when it reaches the server, it can be decrypted and read and/ or tampered with before redirecting it to the recipient
+- Thus, the privacy of data and the user is put at risk, since the contents can be used and interpreted by anyone with access to the server
 
 
-## How it works, MAC
-- [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/)
 
+- maybe write about the algorithm? how each implements this is already specified for the apps
+- [Protonmail e2ee](https://protonmail.com/blog/what-is-end-to-end-encryption/) ??
+- End-to-end encryption involves public and private keys. The private key is held by the end users and will be later used to decrypt the on coming messages, thus it should not be accessible to anyone else. The public key of the recipient is publicly available and the sender uses it in order to encrypt a message for the recipient. 
  
 
 ## Limitations
 - details are usually present in the general sources
 
 ### Metadata about the users
-- an important issue regarding the limitations of end-to-end encryption is the fact that matadata is available to the server and it can be read and collected to be used for advertising etc. 
+- an important drawback of end-to-end encryption is the fact that matadata is available to the server and it can be read and collected to be used for advertising etc. 
 - so the server knows to whom did you talk to, at what hour, for how long, from where etc. 
-- an example would be the update of terms and services of [WhatsApp](https://www.whatsapp.com/legal/updates/privacy-policy/?lang=en), now owned by facebook, at the end of 2020, which resulted in a massive shift of the users to Signal or Telegram (some blog post here)
+- an example would be the update of terms and services of [WhatsApp](https://www.whatsapp.com/legal/updates/privacy-policy/?lang=en), now owned by Facebook, at the end of 2020, which resulted in a massive shift of the users to Signal or Telegram (some blog post here)
 - information that is collected includes, besides hardware and model information, browser information, mobile network, connection info, location information (for location related features) 
 - proposed ways of handling this and collecting as little metadata as possible about the users are going to be later addressed in the next sections
 
@@ -270,16 +389,23 @@ End-to-end encryption involves public and private keys. The private key is held 
 ### Man-in-the-middle attacks
 
 This type of attacks require that the attacker injects themselves between the two endpoints and impersonates one or more of the participating parties. The sender will unknowingly use the public key of the attacker and they are able to decrypt and read or tamper with the messages before sending them forward. 
-This can be avoided if the identities of the participants are verified.
+This can be avoided if the participants' identities are verified and some applications provide authentication via QR code scanning or using safety numbers. 
 
 ### Endpoint security
 
 The messages are only protected from possible eavesdroppers on the communication channel or while the data is at rest, but the endpoints are still vulnerable. After decryption, the messages in plaintext are available to anyone who has access to the endpoint device, so they can be accessed using other methods (ex. device theft, social engineering, hacking the device). 
 
-### Backdoors
+### Backdoors and general backlash?
 
-The application providers might include, intentionally or not, ways to access the data by bypassing the encryption, called backdoors. - surveillance etc.
-An example of a backdoor is the iPhone’s iMessage. The messaging application is end-to-end encrypted, but the cloud storage system, iCloud, saved the private keys used to decrypt the messages as well.
+- The application providers might include, intentionally or not, ways to access the data by bypassing the encryption, called backdoors. - surveillance etc.
+- authorities don't like end-to-end encryption and want to soften the security or gain access in some way because criminals can abuse the privacy advantages given by it? 
+- https://www.boxcryptor.com/en/blog/post/e2ee-weakening-eu/?utm_medium=post&utm_source=newsletter&utm_campaign=en.newsletter.b2bb2c.awareness.politics&utm_content=e2ee.weakening
+- https://www.politico.eu/wp-content/uploads/2020/09/SKM_C45820090717470-1_new.pdf
+- https://data.consilium.europa.eu/doc/document/ST-12863-2020-INIT/en/pdf
+
+
+
+- An example of a backdoor is the iPhone’s iMessage. The messaging application is end-to-end encrypted, but the cloud storage system, iCloud, saved the private keys used to decrypt the messages as well. ??? not sure, might be a fake claim
 
 ## Classical Diffie Hellamn
 - serious crypto/ 268
@@ -289,17 +415,44 @@ An example of a backdoor is the iPhone’s iMessage. The messaging application i
 - for example, for two participants, we have the numbers a and b
 - then each of the participants computes A = g^a mod p, B = g^b mod p and makes these computations publicly available
 - the other participant takes this result and raises it to their private number and this will be the shared secret, so: (g^a mod p)^b = (g^b mod p)^a = g^ab mod p
-- even if this computation seems easy, its security resides on the discrete logarithmic problem, which means that you need to recover a from g^a mod p
-- this is possible, but takes a long time if the values are chosen correctly
-- attack models / 275
+- even if this computation seems easy, its security resides on the discrete logarithmic problem, which means that you need to recover a from g^a mod p; this is possible, but takes a long time if the values are chosen correctly
 
 
-## Elliptic curves cryptography
+- this algorithm is designed for secure key agreement protocols => a shared secret between two or more parties, which is turned into session key(s)
+- the session keys are symmetric keys used to encrypt and authenticate data during the duration of the session
+  
+- attack models, as named and defined in the book at / 275
+  - the eavesdropper - attacker observers the message exchange and can record, modify, drop, inject messages; to protect against, the protocol should not leak info
+  - the data leak - the attacker has access to some of the session keys and temp secrets (from one or more exec of the protocol), but not the long term secrets
+  - the breach - the attacker knows the long term key of one or more parties
+- some security goals
+  - authentication - auth key agreement - both parties auth
+  - key control - 
+  - *forward secrecy* - if the session is compromised, the keys used in the past cannot be compromised
+  - resistance to key-compromise impersonation - happens when the long-term key is compromised
+
+
+  - *backward secrecy* - if a session is compromised, the following communication is not compromised if at least one uncompromised message is sent between the parties
+
+
+
+extra - non-dh key exchange: 3g and 4g communications with sim cards
+
+
+## Elliptic curve cryptography
 - serious crypto/ pg 288 and the presentation saved somewhere
 - they are curves which are also groups, so they keep the group axioms
-- the group law is constructed geometrically
-- elliptic curve discrete logarithm problem
-- combined with DH => what we use now
+- they can also be defined over finite fields and the law is constructed geometrically, the points on the curve with equation y^2 = x^3 + ax + b (Weierstrass curve) - but can have differrent forms
+- the operations are addition and multiplication ++
+- security relies on elliptic curve discrete logarithm problem ++
+- combined with DH => DH key agreement over elliptic curves
+  - digital signatures (ECDSA)
+  - encryption
+- NIST curves: standardized curves and one that is throughoughly used is Curve25519 and has the equation y^2 = x^3 + 486662x^2 + x, which works with numbers mod 2^{255} - 19 (256 bit prime number) 
+
+
+
+
 - [Edwards ec](https://www.youtube.com/watch?v=Yn1kD1rNmns)
 
 
@@ -734,13 +887,13 @@ pg 11
   - if you have contacts list - use a hash, but this is still not enough, because someone can obtain the tuples of username and hash
   - **SGX** 
     - [wiki](https://en.wikipedia.org/wiki/Software_Guard_Extensions)
-    - [some more data on this (saved locally)](https://www.blackhat.com/docs/us-16/materials/us-16-Aumasson-SGX-Secure-Enclaves-In-Practice-Security-And-Crypto-Review.pdf)
+    - [some more on this](https://www.blackhat.com/docs/us-16/materials/us-16-Aumasson-SGX-Secure-Enclaves-In-Practice-Security-And-Crypto-Review.pdf)
     - intel
     - set of security related instruction codes that are built into some intel cpus
     - have private regions (enclaves) whose contents are protected and unable to be read or saved by any process (including those with higher priv) outside the enclave
     - encryption of some parts of the memory, actually
 
-**app comparison**
+**App comparison**
 - signal
 - double ratchet procedure for authenticated key-exchange: long term + short term keys from each participant => shared key
 - key used in a key deriv ratchet protocol => ephemeral session keys
@@ -784,6 +937,66 @@ pg 11
 
 - messaging layer security - initiative from The Internet Engineering Task Force - protocol for group messaging with the best security properties and and more efficient key exchanges (log communication cost, using bin trees)
 
+- [MLS](PDF/Papers/20. Evaluation of the MessagingLayer Security Protocol - FULLTEXT01.pdf)
+- [draft?](https://github.com/mlswg/mls-protocol/blob/master/draft-ietf-mls-protocol.md)
+- [all drafts](https://datatracker.ietf.org/doc/draft-ietf-mls-protocol/)
+
+**Async ratcheting trees**
+- allow async communication where none of the parties need to be online at the same time
+- keeps backward secrecy
+- the idea is to generate a group key, encrypt the message once and send it to the group participants (maybe in a server-side fan-out fashion)
+- a binary tree is created, where the member device is a leaf node => O(log(N)), N nr of participants
+- the parent nodes are generated using Diffie Hellman operations between the teo children and the intermediate nodes are subgroups => each device might be a member of log(N) subgroups 
+- the ones in the subgroups can use the key pair to encrypt and decrypt the messages 
+- when a user changes their key or a new user is added, then a new leaf is added to the tree and the updates go up the tree => the root key is changed on each update
+- this means that all the nodes know the private key of the parent, but not of the other nodes
+- a node is removed => the path from the root to the removed leaf is blanked and a new shared group secret is computed
+
+**TreeKEM**
+- developed based on ART ideas
+- users arranged in left-balanced trees
+- the parent key is computed by hashing the key of the last modified node
+- the nodes know the private key of the parent node, then the updater needs to encrypt O(log(N)) messages and each node receives a mesage with a secret
+++ add and remove operations
+
+### MLS
+- WIP but would support 2 - 50.000 users
+- initially based on ART, but the current versions (as of 2020) are based on TreeKEM
+- a few initial implementations available (pg 11)
+- hash function for parent nodes replaced with a key deriv function
+- the messages are encrypted once and broadcasted as the group operations 
+- it is assumed that participant has the public keys of all the nodes in the tree, and the private keys for those in the subgroup/ copath (siblings to each node in the path)
+- tree verification by recursive hashing
+  - hash value of each node is based on the info about the current node (leaves) or the hashes of the children (non-leaves)
+  - running transcript hash value - created using the group ops leading to the current state - each step is a combination of the prev transcript hash function and the current op
+- keys and nonces are updated every time the state changes, using a number of key schedules
+- the server should provide
+  - authentication service - connect identity to one or more keys (long term identifier, key that can be used to auth protocol messages) 
+  - delivery service - delivers messages in an async fashion and they are stored until the recipient becomes available; the clients publish a set of initial keys/ keying material, which is used only once; the users can be auth using the auth service
+
+**Group operations**
+- 4 types of operations can be performed: welcome, add, remove, update (these are functions)
+
+- group addition
+- users publish the initialization keys to the delivery server and other clients can request these keys to create a group
+- the requestee gets the initialization keys of the chosen participants and create a new group state 
+- then they will send the a welcome and then an add message to all of these participants consecutively, updating the group state after each addition
+- if the a new participant is added, the process is repeated and the add message is broadcast to the rest of the group and the new member will perform an update after they were invited (recommended)
+
+- updating
+- changes the participant's leaf secret and the direct path from the leaf => bacward secrecy on the participant's leaf secret
+- updates depend on the application
+
+- deleting
+- a member sends the removal request with the index in the tree and the direct path from the leaf to the root is blanked and the tree is truncated at the rightmost blank leaf
+
+
+**Initial implementations**
+- MLS++ Cisco - https://github.com/cisco/mlspp
+- Molasses, Trail of bits - https://github.com/trailofbits/molasses
+- Melissa, Wire - https://github.com/wireapp/melissa
+
+
 
 # 4. Technologies used
 - React
@@ -794,9 +1007,29 @@ pg 11
 	- [docs](https://developer.virgilsecurity.com/docs/e3kit/)
 - socket.io
 - Firebase
+- Docker
 
 
 # 5. The application
+
+The functionalities provided by the application are as follows:
+- Login/ Signup - the user can login to an existing account or create a new account with the email and a password, upon opening the application, and is redirected to the main application window.
+- Logout - the user is send back to the login page.
+- Display chats - the conversations of the logged user are displayed automatically, if any.
+- Select chat and send messages and attachments - once a chat is selected, the user can send messages to the recipient(s) and also see the previous messages sent and received
+- Add chat - a private or a group chat can be added. Here, the user can select whether they want it encrypted or not
+- Delete chat - each chat will have a delete button, which erases it from the database and it won't appear in the user's list anymore, but will still be visible for the recipient. In case of a group, a message will be displayed that the user left the chat
+- Delete message - each message will have a delete button and will be removed from the user's message list. It will be still visible for the recipient. 
+
+## Layout
+The user is greeted with a login page. From this, they can create a new account or login, using an email and a password. 
+On the left side, the list of conversations for that account (it is empty if a new account was created) will appear, as well as buttons to add a new private or group chat. Clicking one of the buttons will open a form over the chat list and, for the private chat, will ask for the email of the recipient and to choose if you want the chat unencrypted (encryption is selected by default) and for the group, there will be an additional input for the chat name and an button saying "add another participant". 
+The right side contains settings, the email of the user, information about the selected conversation etc. and the logout button. The logout button will redirect the user to the login page. 
+After choosing one of the listed chats (or after adding one), the user is prompted with a chat box and can send messages to the selected recipient. If the user wants to add an attachment, a the file explorer will open and the user will be able to choose the desired file. 
+Both the conversations and the messages can be deleted by clicking on the "x" icon next to each and then confirming the removal from the dialog box.  
+
+## ???
+The application is a full stack web application, where the frontend is created with React, the backend with Node.js and the database and authentication logic are hosted by Firebase. For the real-time property of the messaging app, the front and the back are communicating using Socket.io, which is a package created over websockets. 
 
 # 6. Conclusions
 

@@ -116,6 +116,10 @@ const chatSlice = createSlice({
     initialState: initialStateChat,
     reducers: {
         addMessage: (state, action) => {state.messages.push(action.payload)},
+        deleteMessage: (state, action) => {
+            const newMessages = state.messages.filter(element => element.id !== action.payload);
+            state.messages = newMessages;
+        },
         clearChat: {
             reducer: (state, action) => action.payload,
             prepare: () => {return {payload: initialStateChat}}
@@ -139,6 +143,7 @@ export const {
 
 export const {
     addMessage,
+    deleteMessage,
     clearChat
 } = chatSlice.actions;
 

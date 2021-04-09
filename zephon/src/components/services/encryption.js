@@ -94,6 +94,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                 try{
                     const text = await eThree.authDecrypt(message.text, pks[message.sender]);
                     const newMessage = {
+                        id: message.id,
                         sender: message.sender, 
                         date: message.date,
                         text,

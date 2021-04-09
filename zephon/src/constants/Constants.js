@@ -5,6 +5,7 @@ import firebase from "firebase";
 export const port = 5000;
 export const baseUrl = `http://localhost:${port}/`;
 export const chatsUrl = `${baseUrl}chats`;
+export const deleteMessageUrl = `${baseUrl}message`;
 export const authUrl = `${baseUrl}auth`;
 export const jwtUrl = `${baseUrl}virgil-jwt`;
 
@@ -38,6 +39,6 @@ export const getDate = (format) => {
   const month = today.getMonth();
   const year = today.getFullYear();
 
-  return `${addZero(hour)}:${addZero(minutes)} ${addZero(day)}/${addZero(month)}/${year}`;
+  return `${addZero(hour)}:${addZero(minutes)} ${addZero(day)}/${addZero(month + 1)}/${year}`;
 }
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useContext} from 'react'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getDate } from '../../constants/Constants';
 import { E3Context } from '../context/E3Context';
 import { getDecryptedMessages } from '../services/encryption';
+import { deleteMessage } from '../reducers/redux'
+import { deleteMessageChat } from '../../data/ServerCalls';
 
 /*
 Message List and Message
@@ -10,8 +12,19 @@ Message List and Message
 */
 
 const Message = ({message}) => {
+  const dispatch = useDispatch();
   const email = useSelector(state => state.user.email);
+  const current = useSelector(state => state.selected);
   const [author, setAuthor] = useState("other");
+
+  const deleteUserMessage = () =>{
+    const choice = window.confirm("Are you sure?");
+    if(choice){
+      deleteMessageChat(email, current, message.id)
+        .then(_ => dispatch(deleteMessage(message.id)))
+        .catch(err => console.log(err))
+    }
+  }
 
   useEffect(() => {
     if (message.sender === email){
@@ -22,8 +35,10 @@ const Message = ({message}) => {
   
   return (
         <div className={`message ${author}`}>
+          
           <div className="sender">
             {message.sender}
+            <button onClick={() => deleteUserMessage()}>X</button>
           </div>
           <div className="text">
             {message.text}
@@ -31,6 +46,7 @@ const Message = ({message}) => {
           <div className="date">
             {getDate(message.date)}
           </div>
+          
         </div>
   )
 }
@@ -56,7 +72,7 @@ const MessageList = () => {
   return (
     <div className="message_list">
       {
-        newMessages.map(elem => <Message key={Math.random() * 10000} message={elem}/>)
+        newMessages.map(elem => <Message key={elem.id} message={elem}/>)
       }
     </div>
   )

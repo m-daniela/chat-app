@@ -1,4 +1,4 @@
-import { baseUrl, chatsUrl} from "../constants/Constants";
+import { baseUrl, chatsUrl, deleteMessageUrl} from "../constants/Constants";
 import axios from "axios";
 
 
@@ -24,4 +24,8 @@ export const getChats = (user) => {
             console.log("Get chats", err);
             return [];
         });
+}
+
+export const deleteMessageChat = (user, chat, messageId) =>{
+    return axios.post(deleteMessageUrl, {user, chat, messageId});
 }
