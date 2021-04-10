@@ -97,6 +97,18 @@ app.post("/message", (req, res)=>{
 
 });
 
+app.post("/chat", (req, res)=>{
+  console.log("Server  POST /chat");
+
+  const user = req.body.user;
+  const chat = req.body.chat;
+
+  data.deleteConversation(user, chat)
+    .then(data => res.json([]))
+    .catch(err => res.json(["123"]))
+
+});
+
 const server = app.listen(port, () => {
   console.log('listening on *:5000');
 });
@@ -144,6 +156,16 @@ io.on('connection', (socket) => {
     // socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
 
     // data.sendMessage(message.from, user.room, receivers, message.message, message.date);
+  });
+
+  // broadcast the fact that a user
+  // has left the group chat
+  socket.on('user left', ({username, room}) => {
+
+    console.log("Broadcast", username, room)
+    // socket.broadcast.to(room).emit("message", {room, sender, text, date});
+    socket.broadcast.to(room).emit("user left", {username});
+    
   });
 
   // add a new chat

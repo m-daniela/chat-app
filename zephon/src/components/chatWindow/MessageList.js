@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { getDate } from '../../constants/Constants';
+import { confirmDialog, getDate } from '../../constants/Constants';
 import { E3Context } from '../context/E3Context';
 import { getDecryptedMessages } from '../services/encryption';
 import { deleteMessage } from '../reducers/redux'
@@ -18,7 +18,7 @@ const Message = ({message}) => {
   const [author, setAuthor] = useState("other");
 
   const deleteUserMessage = () =>{
-    const choice = window.confirm("Are you sure?");
+    const choice = confirmDialog("this message");
     if(choice){
       deleteMessageChat(email, current, message.id)
         .then(_ => dispatch(deleteMessage(message.id)))

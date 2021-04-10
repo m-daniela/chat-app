@@ -38,6 +38,12 @@ const ChatWindow = () => {
   }, [current, dispatch, socket]);
 
   useEffect(() =>{
+    socket.on("user left", ({username}) =>{
+      console.log("User left", username)
+    });
+  }, [socket]);
+
+  useEffect(() =>{
     if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
     }

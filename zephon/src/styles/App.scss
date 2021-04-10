@@ -29,16 +29,32 @@ button.side_item{
   text-align: left;
 }
 
-.side_item{
-  @include vertical_align();
+.side_container{
   padding: 10px 20px;
   margin-bottom: 10px;
-  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 
   &:hover{
     opacity: 0.6;
     cursor: pointer;
   }
+
+  & :nth-child(2):hover{
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+.side_item{
+  @include vertical_align();
+  border: none;
+
+  // &:hover{
+  //   opacity: 0.6;
+  //   cursor: pointer;
+  // }
 
   span{
     font-size: 0.8em;

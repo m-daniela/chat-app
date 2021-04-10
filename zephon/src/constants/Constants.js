@@ -6,8 +6,13 @@ export const port = 5000;
 export const baseUrl = `http://localhost:${port}/`;
 export const chatsUrl = `${baseUrl}chats`;
 export const deleteMessageUrl = `${baseUrl}message`;
+export const deleteChatUrl = `${baseUrl}chat`;
 export const authUrl = `${baseUrl}auth`;
 export const jwtUrl = `${baseUrl}virgil-jwt`;
+
+export const confirmDialog = (message) =>{
+  return window.confirm(`Are you sure you want to delete ${message}?`);
+}
 
 const addZero = (number) => {
   return number < 10 ? `0${number}` : number;

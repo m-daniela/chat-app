@@ -82,6 +82,10 @@ const conversationsSlice = createSlice({
     initialState: initialConversationsState,
     reducers: {
         addConversation: (state, action) => {state.push(action.payload)},
+        deleteConversation: (state, action) =>state.filter(element => element !== action.payload),
+        //     const newConversations = 
+        //     state = newConversations;
+        // },
         clearConversations: {
             reducer: (state, action) => action.payload,
             prepare: () => {return {payload: initialConversationsState}}
@@ -138,6 +142,7 @@ export const {
 
 export const {
     addConversation,
+    deleteConversation,
     clearConversations
 } = conversationsSlice.actions;
 

@@ -110,6 +110,7 @@ const createChatDatabase = async (sender, receiver, participants, message) =>{
       .doc(sender)
       .collection(cts.conversations)
       .doc(receiver);
+    console.log("----", conversation)
     await conversation.set({participants});
     await conversation
       .collection(cts.messages)
@@ -236,7 +237,53 @@ const deleteMessage = async (user, chat, messageId) =>{
     .collection(cts.messages)
     .doc(messageId)
     .delete();
-  console.log("asdfuio", res);
+  console.log("Message deleted");
+}
+
+// delete a conversation
+// you need to delete all the message documents
+// otherwise, they will stay there
+// user - email of the user that deletes the chat
+// chat - chat name
+const deleteConversation = async (user, chat) =>{
+  const batch = db.batch();
+  // working version but it keeps the messages
+  // const conversation = await db
+  //   .collection(cts.users)
+  //   .doc(user)
+  //   .collection(cts.conversations)
+  //   .doc(chat)
+  //   .delete();
+
+  // delete the messages
+  // const messages = await db
+  //   .collection(cts.users)
+  //   .doc(user)
+  //   .collection(cts.conversations)
+  //   .doc(chat)
+  //   .collection(cts.messages)
+  //   .get();
+
+  // messages.forEach(snapshot => {
+  //   snapshot.ref.delete();
+  // });
+
+
+  const conversation = await db
+    .collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .doc(chat);
+    
+  const messages = await conversation.collection(cts.messages).get();
+
+  messages.forEach(snapshot => {
+    snapshot.ref.delete();
+  });
+
+  await conversation.delete();
+
+  console.log("Delete conversation: conversation deleted");
 }
 
 const join = (chatid, username, room) =>{
@@ -259,4 +306,5 @@ module.exports = {
   getMessages, 
   deleteMessage,
   getConversations,
+  deleteConversation,
 };

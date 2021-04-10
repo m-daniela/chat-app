@@ -1,7 +1,9 @@
 import React, {useContext} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { confirmDialog } from '../../constants/Constants';
+import { deleteConversationUser } from '../../data/ServerCalls';
 import { SocketContext } from '../context/SocketContext';
-import { changeConversation, getMessagesThunk } from '../reducers/redux';
+import { changeConversation, deleteConversation, getMessagesThunk } from '../reducers/redux';
 
 /* 
 - chat item on the left
@@ -18,10 +20,29 @@ const SideItem = ({name}) => {
         socket.emit("join", ({username: email, room: name}));
     }
 
+    const handleDelete = ()=>{
+        const choice = confirmDialog(`chat ${name}`);
+        if (choice){
+            console.log("adding deletion logic")
+            deleteConversationUser(email, name)
+                .then(_ => {
+                    dispatch(changeConversation(""));
+                    dispatch(deleteConversation(name));
+                    socket.emit("user left", ({username: email, room: name}));
+                })
+                .catch(err => console.log(err));
+        }
+
+    }
+
     return (
-        <div className="side_item" onClick={() => handleClick()}>
-            {name}
-            <span>Status maybe</span>
+        <div className="side_container">
+            <div className="side_item" onClick={() => handleClick()}>
+                {name}
+                <span>Status maybe</span>
+                
+            </div>
+            <button onClick={() => handleDelete()}>X</button>
         </div>
     )
 }

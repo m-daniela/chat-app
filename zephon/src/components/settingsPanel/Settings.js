@@ -20,8 +20,8 @@ const Settings = () => {
     return (
         <div className="settings_panel">
             <Header title={"Privacy Settings"}/>
-            <span className="side_item" >{email}</span>
-            <span className="side_item" onClick={handleLogout}>Log out</span>
+            <span className="side_container" >{email}</span>
+            <span className="side_container" onClick={handleLogout}>Log out</span>
         </div>
     )
 }
