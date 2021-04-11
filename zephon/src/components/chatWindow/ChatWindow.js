@@ -59,10 +59,13 @@ const ChatWindow = () => {
 
       encryptMessage(participants, token, message)
         .then(enc => {
+          // this is, of course, not ok because the id is not present
+          // and the message will not be deleted
+          // will modify this later 
           socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
-          // dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
-          console.log(current)
-          dispatch(getMessagesThunk({email, conversation: current}));
+          dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+
+          // dispatch(getMessagesThunk({email, conversation: current}));
 
           console.log("After add message dispatch")
         })
