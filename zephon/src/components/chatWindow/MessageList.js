@@ -5,6 +5,8 @@ import { E3Context } from '../context/E3Context';
 import { getDecryptedMessages } from '../services/encryption';
 import { deleteMessage } from '../reducers/redux'
 import { deleteMessageChat } from '../../data/ServerCalls';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+
 
 /*
 Message List and Message
@@ -37,8 +39,8 @@ const Message = ({message}) => {
         <div className={`message ${author}`}>
           
           <div className="sender">
-            {message.sender}
-            <button onClick={() => deleteUserMessage()}>X</button>
+            <span>{message.sender}</span>
+            <button onClick={() => deleteUserMessage()}><CloseOutlinedIcon fontSize="small"/></button>
           </div>
           <div className="text">
             {message.text}

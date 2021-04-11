@@ -35,6 +35,7 @@ const ChatWindow = () => {
         dispatch(getMessagesThunk({email, current}));
       }
     });
+    // eslint-disable-next-line
   }, [current, dispatch, socket]);
 
   useEffect(() =>{
@@ -59,7 +60,10 @@ const ChatWindow = () => {
       encryptMessage(participants, token, message)
         .then(enc => {
           socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
-          dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+          // dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+          console.log(current)
+          dispatch(getMessagesThunk({email, conversation: current}));
+
           console.log("After add message dispatch")
         })
         .catch(err => console.log(err));

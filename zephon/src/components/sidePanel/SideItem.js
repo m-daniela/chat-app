@@ -4,6 +4,9 @@ import { confirmDialog } from '../../constants/Constants';
 import { deleteConversationUser } from '../../data/ServerCalls';
 import { SocketContext } from '../context/SocketContext';
 import { changeConversation, deleteConversation, getMessagesThunk } from '../reducers/redux';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+
+
 
 /* 
 - chat item on the left
@@ -42,7 +45,7 @@ const SideItem = ({name}) => {
                 <span>Status maybe</span>
                 
             </div>
-            <button onClick={() => handleDelete()}>X</button>
+            <button onClick={() => handleDelete()}><CloseOutlinedIcon fontSize="small"/></button>
         </div>
     )
 }

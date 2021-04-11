@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SocketContext } from '../context/SocketContext';
 import { addConversation } from '../reducers/redux';
 import SideItem from './SideItem';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 
 
 /*
@@ -89,6 +91,8 @@ const ChatList = () => {
 
     useEffect(() =>{
         socket.on("new chat", (newChat) => {
+            // not the best choice - this will add the chat with the same name
+            // same for the group
             dispatch(addConversation(newChat.chatName));
         });
         // eslint-disable-next-line
@@ -123,9 +127,9 @@ const ChatList = () => {
                 :
                 <NewChat close={setAddChat}/>
             } */}
-            <div className="side_container">
-                <button onClick={toggleChat}>{addChat ? "Close" : "+ Chat"}</button>
-                <button onClick={toggleGroup}>{addGroup ? "Close" : "+ Group"}</button>
+            <div className="side_container buttons">
+                <button onClick={toggleChat}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Chat</>}</button>
+                <button onClick={toggleGroup}>{addGroup ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Group</>}</button>
             </div>
             {!addChat && !addGroup ? 
                 <>

@@ -6,9 +6,11 @@ import { clearChat, clearConversations, clearSelected, logout } from '../reducer
 
 const Settings = () => {
     const email = useSelector(state => state.user.email);
+    const participants = useSelector(state => state.chat.participants);
     const dispatch = useDispatch();
     const {clear} = useContext(E3Context);
 
+    console.log(participants)
     const handleLogout = () =>{
         dispatch(logout());
         dispatch(clearConversations());
@@ -21,7 +23,11 @@ const Settings = () => {
         <div className="settings_panel">
             <Header title={"Privacy Settings"}/>
             <span className="side_container" >{email}</span>
-            <span className="side_container" onClick={handleLogout}>Log out</span>
+            <div className="side_container participants">
+                {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
+                {participants?.map(element => <span key={element}>{element === email ? "You" : element}</span>)}
+            </div>
+            <span className="side_container side_item" onClick={handleLogout}>Log out</span>
         </div>
     )
 }
