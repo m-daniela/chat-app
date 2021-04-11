@@ -1,4 +1,6 @@
 import React, {useState} from 'react'
+import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
+import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
 
 const MessageInput = ({addMessage}) => {
   const [message, setMessage] = useState("");
@@ -15,11 +17,15 @@ const MessageInput = ({addMessage}) => {
 
   return (
     <form className="message_input" onSubmit={e => onSendMessage(e)}>
+      <label>
+        <AttachFileOutlinedIcon/>
+        <input type="file"/>
+      </label>
       <input type="text"
         onChange={e => onChangeInput(e.target.value)}
         placeholder={"Your message..."}
         value={message}/>
-      <button type="submit">Send</button>
+      <button type="submit"><SendOutlinedIcon/></button>
     </form>
   )
 }

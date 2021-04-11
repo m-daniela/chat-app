@@ -1,75 +1,80 @@
 import React, { useEffect, useState, useContext} from 'react'
-import { useSelector } from 'react-redux';
-import { getDate } from '../../constants/Constants';
+import { useSelector, useDispatch } from 'react-redux';
+import { confirmDialog, getDate } from '../../constants/Constants';
 import { E3Context } from '../context/E3Context';
+import { getDecryptedMessages } from '../services/encryption';
+import { deleteMessage } from '../reducers/redux'
+import { deleteMessageChat } from '../../data/ServerCalls';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+
 
 /*
 Message List and Message
 - decryption happens in Message, using the keys
 */
 
-const Message = ({message, pks}) => {
+const Message = ({message}) => {
+  const dispatch = useDispatch();
   const email = useSelector(state => state.user.email);
-  const {token} = useContext(E3Context);
-
-  const [decryptedMessage, setMessage] = useState("Decrypting...");
+  const current = useSelector(state => state.selected);
   const [author, setAuthor] = useState("other");
 
-  // clean this part
-  useEffect(() => {
-    if (message.sender !== "sys"){
-      if (pks !== null && email === message.sender) {
-        setAuthor("current");
-        token.authDecrypt(message.text, pks[email])
-          .then(decrypted => {
-            setMessage(decrypted);
-          })
-          .catch(err => console.log(err));
-      }
-      else{
-        if (pks !== null){
-          token.authDecrypt(message.text, pks[message.sender])
-            .then(decrypted => {
-              setMessage(decrypted);
-            })
-            .catch(err => console.log(err));
-          }
-      }
+  const deleteUserMessage = () =>{
+    const choice = confirmDialog("this message");
+    if(choice){
+      deleteMessageChat(email, current, message.id)
+        .then(_ => dispatch(deleteMessage(message.id)))
+        .catch(err => console.log(err))
     }
-    else{
-      setMessage(message.text);
+  }
+
+  useEffect(() => {
+    if (message.sender === email){
+      setAuthor("current");
     }
   // eslint-disable-next-line
   }, []);
   
   return (
         <div className={`message ${author}`}>
+          
           <div className="sender">
-            {message.sender}
+            <span>{message.sender}</span>
+            <button onClick={() => deleteUserMessage()}><CloseOutlinedIcon fontSize="small"/></button>
           </div>
           <div className="text">
-            {decryptedMessage}
+            {message.text}
           </div>
           <div className="date">
             {getDate(message.date)}
           </div>
+          
         </div>
   )
 }
 
-const MessageList = ({pks}) => {
+const MessageList = () => {
   const messages = useSelector(state => state.chat.messages);
+  const {token} = useContext(E3Context);
+  const participants = useSelector(state => state.chat.participants);
+  const [newMessages, setNewMessages] = useState([])
+
+  useEffect(() => {
+    getDecryptedMessages(participants, token, messages)
+      .then(msg => setNewMessages(msg))
+      .catch(err => console.log(err));
+    // eslint-disable-next-line
+  }, [messages])
 
   useEffect(() => {
     const container = document.querySelector(".message_list");
     container.scrollTop = container.scrollHeight;
-    
-  }, [messages]);
+  }, [newMessages]);
   
   return (
     <div className="message_list">
       {
-        messages?.map(elem => <Message key={Math.random() * 10000} pks={pks} message={elem}/>)
+        newMessages.map(elem => <Message key={elem.id} message={elem}/>)
       }
     </div>
   )

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SocketContext } from '../context/SocketContext';
 import { addConversation } from '../reducers/redux';
 import SideItem from './SideItem';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 
 
 /*
@@ -25,22 +27,15 @@ const NewChat = ({close}) =>{
     }
 
     return (
-        <>
-            <button 
-                className="side_item" 
-                onClick={() => close(false)}>
-                    Cancel
-            </button>
-            <form 
-                className="search_input" 
-                onSubmit={(e) => searchUser(e)}>
-                <label>
-                    Username or email
-                    <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)}/>
-                </label>
-                <button type="submit">Add</button>
-            </form>
-        </>
+        <form 
+            className="search_input" 
+            onSubmit={(e) => searchUser(e)}>
+            <label>
+                Username or email
+                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)}/>
+            </label>
+            <button type="submit">Add</button>
+        </form>
     );
 }
 
@@ -67,27 +62,20 @@ const NewGroupChat = ({close}) =>{
     }
 
     return (
-        <>
-            <button 
-                className="side_item" 
-                onClick={() => close(false)}>
-                    Cancel
-            </button>
-            <form 
-                className="search_input" 
-                onSubmit={(e) => searchUser(e)}>
-                <label>
-                    Chat name
-                    <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)}/>
-                </label>
-                <label>
-                    Username or email
-                    <input type="text" value={current} onChange={(e) => setCurrent(e.target.value)}/>
-                </label>
-                <button onClick={(e) => addMoreUsers(e)}>Add another email</button>
-                <button type="submit">Add</button>
-            </form>
-        </>
+        <form 
+            className="search_input" 
+            onSubmit={(e) => searchUser(e)}>
+            <label>
+                Chat name
+                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)}/>
+            </label>
+            <label>
+                Username or email
+                <input type="text" value={current} onChange={(e) => setCurrent(e.target.value)}/>
+            </label>
+            <button onClick={(e) => addMoreUsers(e)}>Add another email</button>
+            <button type="submit">Add</button>
+        </form>
     );
 }
 
@@ -103,6 +91,8 @@ const ChatList = () => {
 
     useEffect(() =>{
         socket.on("new chat", (newChat) => {
+            // not the best choice - this will add the chat with the same name
+            // same for the group
             dispatch(addConversation(newChat.chatName));
         });
         // eslint-disable-next-line
@@ -115,21 +105,55 @@ const ChatList = () => {
         // eslint-disable-next-line
     }, [socket]);
 
-    const addNewChat = () =>{
-        setAddChat(true);
+    const toggleChat = () =>{
+        setAddChat(!addChat);
         setAddGroup(false);
     }
 
-    const addNewGroup = () =>{
+    const toggleGroup = () =>{
         setAddChat(false);
-        setAddGroup(true);
+        setAddGroup(!addGroup);
     }
 
     return (
         <div className="chat_list">
-            {addChat ? <NewChat close={setAddChat}/> : <button className="side_item" onClick={addNewChat}>Add new chat</button>}
+            {/* {addChat ? <NewChat close={setAddChat}/> : <button className="side_item" onClick={addNewChat}>Add new chat</button>}
             {addGroup ? <NewGroupChat close={setAddGroup}/> : <button className="side_item" onClick={addNewGroup}>Add new group</button>}
-            {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
+            {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)} */}
+            {/* {!addChat ? <>
+                <button className="side_container" onClick={addNewChat}>Add chat</button>
+                {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
+                </>
+                :
+                <NewChat close={setAddChat}/>
+            } */}
+            <div className="side_container buttons">
+                <button onClick={toggleChat}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Chat</>}</button>
+                <button onClick={toggleGroup}>{addGroup ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Group</>}</button>
+            </div>
+            {!addChat && !addGroup ? 
+                <>
+                {conversations.map(elem => <SideItem key={Math.random() * 1000} name={elem}/>)}
+                </>
+                :
+                <></>}
+            {addChat ?
+                <NewChat close={setAddChat}/>
+                :
+                <></>
+            }
+            {addGroup ?
+                <NewGroupChat close={setAddGroup}/>
+                :
+                <></>
+            }
+            {/* {!addChat ? <>
+                <button className="side_container" onClick={toggleChat}>Add chat</button>
+                {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
+                </>
+                :
+                <NewChat close={setAddChat}/>
+            } */}
         </div>
     )
 }

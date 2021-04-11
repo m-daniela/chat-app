@@ -84,6 +84,31 @@ app.post("/chats", (req, res) => {
   
 });
 
+app.post("/message", (req, res)=>{
+  console.log("Server  POST /message");
+
+  const id = req.body.messageId;
+  const user = req.body.user;
+  const chat = req.body.chat;
+
+  data.deleteMessage(user, chat, id)
+    .then(data => res.json([]))
+    .catch(err => res.json(["123"]))
+
+});
+
+app.post("/chat", (req, res)=>{
+  console.log("Server  POST /chat");
+
+  const user = req.body.user;
+  const chat = req.body.chat;
+
+  data.deleteConversation(user, chat)
+    .then(data => res.json([]))
+    .catch(err => res.json(["123"]))
+
+});
+
 const server = app.listen(port, () => {
   console.log('listening on *:5000');
 });
@@ -116,7 +141,31 @@ io.on('connection', (socket) => {
     const receivers = message.receivers;
 
     data.sendMessage(sender, room, receivers, text, date);
-    socket.broadcast.to(user.username).emit("message", {sender, text, date});
+    console.log("Broadcast", user.username, room)
+    // socket.broadcast.to(room).emit("message", {room, sender, text, date});
+    socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
+    // io.to(room).emit("message", {room, sender, text, date});
+
+    // const user = data.current(socket.id);
+    // const receivers = message.receivers;
+    // console.log(message);
+    // console.log("from", user);
+    // console.log("To", user.room);
+    // console.log("Tooo", receivers);
+
+    // socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
+
+    // data.sendMessage(message.from, user.room, receivers, message.message, message.date);
+  });
+
+  // broadcast the fact that a user
+  // has left the group chat
+  socket.on('user left', ({username, room}) => {
+
+    console.log("Broadcast", username, room)
+    // socket.broadcast.to(room).emit("message", {room, sender, text, date});
+    socket.broadcast.to(room).emit("user left", {username});
+    
   });
 
   // add a new chat

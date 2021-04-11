@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+    backend:
+        env_file:
+            "./server/.env"
+        build:
+            context: ./server
+            dockerfile: ./Dockerfile
+        image: "node:14.15.0"
+        ports:
+            - 5000:5000
+    frontend:
+        env_file: 
+            "./zephon/.env"
+        build:
+            context: ./zephon
+            dockerfile: ./Dockerfile
+        # image: "node:14.15.0"
+        ports:
+            - 3000:3000
+        depends_on:
+            - backend
+        # links:
+        #     - "backend"

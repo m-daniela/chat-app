@@ -2,8 +2,9 @@
 // database interaction
 
 var admin = require("firebase-admin");
-var serviceAccount = require("../../key.json");
+var serviceAccount = require("./key.json");
 
+// change
 const { cts } = require("./constants");
 
 admin.initializeApp({
@@ -109,6 +110,7 @@ const createChatDatabase = async (sender, receiver, participants, message) =>{
       .doc(sender)
       .collection(cts.conversations)
       .doc(receiver);
+    console.log("----", conversation)
     await conversation.set({participants});
     await conversation
       .collection(cts.messages)
@@ -128,15 +130,26 @@ const createChatDatabase = async (sender, receiver, participants, message) =>{
 // - receivers - all the participants in the chat
 // - date - date of the sent message
 const sendMessage = async (sender, name, receivers, text, date) => {
+  
   const message = {
     sender,
     text, 
     date: convertToTimestamp(date),
   }
 
-  for (const receiver of receivers){
-    sendMessageDatabase(name, receiver, message);
+  if (receivers.length === 2){
+    const [recv1, recv2] = [...receivers];
+    console.log("Send messages: ", recv1, recv2, receivers)
+
+    sendMessageDatabase(recv1, recv2, message);
+    sendMessageDatabase(recv2, recv1, message);
   }
+  else{
+    for (const receiver of receivers){
+      sendMessageDatabase(name, receiver, message);
+    }
+  }
+  
 
 }
 
@@ -191,10 +204,13 @@ const getMessages = async (user, conversation) =>{
   const rawMessages = await conversationDB
     .collection(cts.messages)
     .orderBy("date")
+    // .limit(10)
     .get();
 
   rawMessages.forEach(snapshot =>{
-    messages.push(snapshot.data());
+    const message = snapshot.data();
+    message["id"] = snapshot.id;
+    messages.push(message);
   });
 
   const participants = await db
@@ -209,6 +225,66 @@ const getMessages = async (user, conversation) =>{
   return {messages, participants: participants.data().participants};
 }
 
+// delete a message for the given chat and user
+// TODO: add a return thing so it can be checked
+const deleteMessage = async (user, chat, messageId) =>{
+  console.log("are we here?", user, chat, messageId)
+  const res = await db
+    .collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .doc(chat)
+    .collection(cts.messages)
+    .doc(messageId)
+    .delete();
+  console.log("Message deleted");
+}
+
+// delete a conversation
+// you need to delete all the message documents
+// otherwise, they will stay there
+// user - email of the user that deletes the chat
+// chat - chat name
+const deleteConversation = async (user, chat) =>{
+  const batch = db.batch();
+  // working version but it keeps the messages
+  // const conversation = await db
+  //   .collection(cts.users)
+  //   .doc(user)
+  //   .collection(cts.conversations)
+  //   .doc(chat)
+  //   .delete();
+
+  // delete the messages
+  // const messages = await db
+  //   .collection(cts.users)
+  //   .doc(user)
+  //   .collection(cts.conversations)
+  //   .doc(chat)
+  //   .collection(cts.messages)
+  //   .get();
+
+  // messages.forEach(snapshot => {
+  //   snapshot.ref.delete();
+  // });
+
+
+  const conversation = await db
+    .collection(cts.users)
+    .doc(user)
+    .collection(cts.conversations)
+    .doc(chat);
+    
+  const messages = await conversation.collection(cts.messages).get();
+
+  messages.forEach(snapshot => {
+    snapshot.ref.delete();
+  });
+
+  await conversation.delete();
+
+  console.log("Delete conversation: conversation deleted");
+}
 
 const join = (chatid, username, room) =>{
     const user = {chatid, username, room};
@@ -228,5 +304,7 @@ module.exports = {
   createGroup,
   sendMessage, 
   getMessages, 
+  deleteMessage,
   getConversations,
+  deleteConversation,
 };

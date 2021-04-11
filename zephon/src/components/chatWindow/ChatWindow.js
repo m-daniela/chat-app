@@ -2,10 +2,10 @@ import React, {useEffect, useContext, useState} from 'react'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import Header from '../common/Header'
-import { getPublicKey } from '../services/encryption';
+import { encryptMessage} from '../services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../context/SocketContext'
-import { addMessage } from '../reducers/redux'
+import { addMessage, getMessagesThunk } from '../reducers/redux'
 import { E3Context } from '../context/E3Context';
 import firebase from "firebase";
 
@@ -25,21 +25,28 @@ const ChatWindow = () => {
   const participants = useSelector(state => state.chat.participants);
 
   const [isDisabled, setIsDisabled] = useState(true);
-  const [participantsPK, setParticipantsPK] = useState(null)
 
   useEffect(() =>{
     socket.on("message", (message) =>{
+      console.log("You get here on message")
+      console.log(message.room, current)
       if (message.sender === current){
-        dispatch(addMessage(message));
+        // dispatch(addMessage(message));
+        dispatch(getMessagesThunk({email, current}));
       }
     });
-  }, [dispatch, current, socket]);
+    // eslint-disable-next-line
+  }, [current, dispatch, socket]);
+
+  useEffect(() =>{
+    socket.on("user left", ({username}) =>{
+      console.log("User left", username)
+    });
+  }, [socket]);
 
   useEffect(() =>{
     if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
-      getPublicKey(participants, token, setParticipantsPK);
-
     }
     else setIsDisabled(true);
     // eslint-disable-next-line
@@ -50,10 +57,14 @@ const ChatWindow = () => {
       const date = new Date();
       const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
 
-      token.authEncrypt(message, participantsPK)
+      encryptMessage(participants, token, message)
         .then(enc => {
-          socket.emit('message', {message: enc, from: email, date, receivers: participants});
-          dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+          socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
+          // dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+          console.log(current)
+          dispatch(getMessagesThunk({email, conversation: current}));
+
+          console.log("After add message dispatch")
         })
         .catch(err => console.log(err));
     }
@@ -68,7 +79,7 @@ const ChatWindow = () => {
               <p>Please choose a chat to see magical stuff</p>
             </div> : 
             <>
-              <MessageList pks={participantsPK}/>
+              <MessageList />
               <MessageInput addMessage={addNewMessage} />
             </>}
       </div>

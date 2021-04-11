@@ -22,7 +22,7 @@ export const ChatZone = () => {
           <SidePanel />
           <ChatWindow />
           <Settings />
-        </> : 
+        </> :  
         <Redirect to="/login"/>
       }
     </>
