@@ -8,6 +8,7 @@ import { SocketContext } from '../context/SocketContext'
 import { addMessage, getMessagesThunk } from '../reducers/redux'
 import { E3Context } from '../context/E3Context';
 import firebase from "firebase";
+import { addMessageServer } from '../../data/ServerCalls';
 
 
 /*
@@ -32,7 +33,8 @@ const ChatWindow = () => {
       console.log(message.room, current)
       if (message.sender === current){
         // dispatch(addMessage(message));
-        dispatch(getMessagesThunk({email, current}));
+        console.log(current)
+        dispatch(getMessagesThunk({email, conversation: current}));
       }
     });
     // eslint-disable-next-line
@@ -62,8 +64,19 @@ const ChatWindow = () => {
           // this is, of course, not ok because the id is not present
           // and the message will not be deleted
           // will modify this later 
-          socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
-          dispatch(addMessage({text: enc, sender: email, date: dateFirebase}));
+          // socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
+          
+          const msg = {message: enc, from: email, room: current, date, receivers: participants}
+
+          addMessageServer(msg)
+            .then(id => {
+              console.log(id)
+              dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
+              socket.emit('message', {id, text: enc, sender: email, date: dateFirebase, room: current});
+            })
+            .finally(_ => console.log("WHY DID YOU FUCKING BREAK aaaaargh"))
+          
+          
 
           // dispatch(getMessagesThunk({email, conversation: current}));
 

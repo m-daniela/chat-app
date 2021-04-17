@@ -101,7 +101,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                     };
                     newMessages.push(newMessage);
                 } catch(err){
-                    console.log("Why is this happening now")
+                    console.log("Why is this happening now", err)
                 }
                 
             }

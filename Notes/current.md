@@ -141,3 +141,219 @@ sendMessage(sender, name, receivers, text, date)
 - [5. The application](#5-the-application)
 - [6. Conclusions](#6-conclusions)
 - [7. References](#7-references)
+
+---
+
+Main thing
+- what schemes are used by each protocol
+- signal
+	- x3dh handshake
+	- curve 25519
+	- aes 256
+	- HMAC sha 256
+- mtproto
+	- sha 256
+	- 
+- signcryption
+	- ecsda
+	- rsa 1280 key, ec 256 bit key
+	- hmac sha 256
+	- aes
+- letter sealing
+	- ecdh
+	- ecsda
+	- aes gcm
+	- ec secp256k1
+- threema
+	- ecdh curve 25519
+	- xsalsa 20
+	- sha 256
+	- poly 1305
+- common parts
+- what is added by each protocol 
+
+1. Introduction
+
+2. Basic concepts
+- some diagrams can be added, from the book or wiki
+- Symmetric
+	- more details?
+- AES / ++ from the book
+	- details
+	- implementation
+	- vulnerabilities
+- PK
+	- maybe something about TLS and RSA?
+	- Attacks/
+		- Impersonation/
+		- Chosen plaintext/
+			- vulnerability mitigation /
+		- Chosen ciphertext/
+			- better definition
+			- mitigation
+- Authentication
+- Entity Auth
+- AE + AEAD
+- MAC
+	- more details?
+	- Attacks
+	- HMAC
+- PRF
+- Digital signatures
+- End to end encryption
+	- details
+	- the algorithm/how it works
+	- Limitations
+		- metadata
+		- MITM
+		- backdoors
+- Diffie Hellman
+- Elliptic curve crypto
+
+3. Existing tech
+- Signal
+	- ecdh
+	- double ratchet
+	- eddsa
+- MTProto
+- Signcryption
+- Letter sealing
+- Threema
+- Group messaging
+	- MLS 
+		- MORE DETAILS OMG I SHOULD READ THE DRAFTS AND CHECK THE IMPLEMENTATIONS 
+
+4. Tech used
+- React + redux toolkit
+- Nodejs
+- Socket.io
+- Firebase
+- Virgil Security
+- Docker
+
+5. Application
+- specs and features idk
+
+- login/ signup
+- logout
+- display chats
+- select chat and send messages
+- add chat
+- delete chats? 
+- delete messages?
+
+6. Conclusions
+
+7. References <3
+
+Different from last time:
+- "basic concepts" section, updates on:
+	- symmetric key
+	- public key
+	- auth
+	- AES
+	- Diffie Hellman
+	- Elliptic curves
+- "existing tech" section
+	- group messaging 
+- "application" section
+	- features and layout
+
+
+---
+
+
+- send the message id back somehow
+- send something back when you delete so that thing can be handled
+- learn to speak lol
+- change the default confirm window, maybe use a component
+
+- do the same things for the conversations /
+- change to another chat or initial page after you delete a chat/
+- implement the broadcast method that tells everyone you left/ - implemented but only writes to the console
+- delete the messages for the user that removes
+
+
+- the message loading was changed to the previous version of calling everything again from the db, on new message
+- I will keep this for now because fuck everything
+- maybe I'll add a limit and infinite scroll
+- and I will definetly need to fix the twitching issue
+
+BROADCAST WILL ONLY WORK FOR THE GROUPS
+
+FIREBASE DOESN'T DELETE THE DOCUMENTS IN THE COLLECTION
+
+
+- new
+- delete conversations 
+- broadcast "user left" message - console
+- add group functionality is back
+
+
+- https://developer.virgilsecurity.com/docs/e3kit/end-to-end-encryption/large-files-and-streams/
+- for the attachment fun
+- encryptSharedFile - new key pair to enc the file 
+- the encrypted file needs to be uploaded to remote storage and the link and the enc stream key need to be sent to the recipient
+
+- decryptSharedFile - for decryption
+
+https://material-ui.com/components/icons/#color
+https://material-ui.com/components/material-icons/
+
+icons
+import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
+
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
+
+import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
+
+import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
+
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+
+---
+
+12.04
+
+2. Basic concepts
+
+- sym/
+	- general details + def
+
+- pkc/
+	- attacks
+
+
+- authentication
+	- macs
+	- hmac
+	- prfs
+	- auth enc
+	- aead
+
+- digital sign/
+	- attacks
+	- general alg
+
+
+- e2ee/
+
+- aes/
+
+- dh/
+
+- eec/
+
+3. existing tech
+
+- signal
+
+- mtproto
+
+- signcryption
+
+- letter sealing
+
+- threema
+
+- group encryption

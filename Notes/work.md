@@ -1,68 +1,74 @@
 
 - [1. Introduction](#1-introduction)
-	- [The application](#the-application)
+  - [The application](#the-application)
 - [2. Basic concepts](#2-basic-concepts)
-	- [Symmetric key encryption](#symmetric-key-encryption)
-	- [AES](#aes)
-	- [Public key encryption](#public-key-encryption)
-		- [Attacks](#attacks)
-	- [Authentication](#authentication)
-		- [Message authentication codes](#message-authentication-codes)
-		- [PRFs](#prfs)
-	- [HMAC](#hmac)
-	- [Auth encryption](#auth-encryption)
-	- [Auth enc with assoc data](#auth-enc-with-assoc-data)
-	- [Digital signatures](#digital-signatures)
-	- [End to end encryption](#end-to-end-encryption)
-	- [Limitations](#limitations)
-		- [Metadata about the users](#metadata-about-the-users)
-		- [Man-in-the-middle attacks](#man-in-the-middle-attacks)
-		- [Endpoint security](#endpoint-security)
-		- [Backdoors and general backlash?](#backdoors-and-general-backlash)
-	- [Classical Diffie Hellamn](#classical-diffie-hellamn)
-	- [Elliptic curve cryptography](#elliptic-curve-cryptography)
+  - [Symmetric key encryption](#symmetric-key-encryption)
+  - [AES](#aes)
+  - [Public key encryption](#public-key-encryption)
+    - [Attacks](#attacks)
+  - [Authentication](#authentication)
+    - [Message authentication codes](#message-authentication-codes)
+    - [PRFs](#prfs)
+  - [HMAC](#hmac)
+  - [Auth encryption](#auth-encryption)
+  - [Auth enc with assoc data](#auth-enc-with-assoc-data)
+  - [Digital signatures](#digital-signatures)
+    - [Attacks](#attacks-1)
+  - [End to end encryption](#end-to-end-encryption)
+  - [Limitations](#limitations)
+    - [Metadata about the users](#metadata-about-the-users)
+    - [Man-in-the-middle attacks](#man-in-the-middle-attacks)
+    - [Endpoint security](#endpoint-security)
+    - [Backdoors and general backlash?](#backdoors-and-general-backlash)
+  - [Classical Diffie Hellamn](#classical-diffie-hellamn)
+  - [Elliptic curve cryptography](#elliptic-curve-cryptography)
 - [3. Existing Technologies](#3-existing-technologies)
-	- [Signal protocol](#signal-protocol)
-		- [Diffie Hellamn](#diffie-hellamn)
-		- [Extended Triple Diffie Hellamn](#extended-triple-diffie-hellamn)
-		- [Double Ratchet](#double-ratchet)
-		- [EdDSA signature](#eddsa-signature)
-	- [MTProto](#mtproto)
-	- [Signcryption and iMessage](#signcryption-and-imessage)
-		- [Signcryption](#signcryption)
-	- [Letter Sealing](#letter-sealing)
-	- [Threema](#threema)
-	- [Group messaging](#group-messaging)
-	- [About MLS?](#about-mls)
-		- [MLS](#mls)
+  - [Signal protocol](#signal-protocol)
+    - [Diffie Hellamn](#diffie-hellamn)
+    - [Extended Triple Diffie Hellamn](#extended-triple-diffie-hellamn)
+    - [Double Ratchet](#double-ratchet)
+    - [EdDSA signature](#eddsa-signature)
+  - [MTProto](#mtproto)
+    - [General description](#general-description)
+    - [Security analyses](#security-analyses)
+  - [Signcryption](#signcryption)
+    - [Signcryption](#signcryption-1)
+    - [Security analyses](#security-analyses-1)
+  - [Letter Sealing](#letter-sealing)
+  - [Threema](#threema)
+  - [Group messaging](#group-messaging)
+  - [About MLS?](#about-mls)
+    - [MLS](#mls)
 - [4. Technologies used](#4-technologies-used)
 - [5. The application](#5-the-application)
-	- [Layout](#layout)
-	- [???](#)
+  - [Layout](#layout)
+  - [???](#)
 - [6. Conclusions](#6-conclusions)
 - [7. References](#7-references)
 - [Terms and algorithms + other stuff](#terms-and-algorithms--other-stuff)
-	- [Message authentication code](#message-authentication-code)
-	- [Crypto nonce](#crypto-nonce)
-	- [Replay attacks](#replay-attacks)
-	- [Elliptic curve Diffie Hellman (ECDH)](#elliptic-curve-diffie-hellman-ecdh)
-	- [Integrated enc scheme](#integrated-enc-scheme)
-	- [Curve25519](#curve25519)
-	- [NIST curves](#nist-curves)
-	- [AES](#aes-1)
-	- [AES GCM](#aes-gcm)
-	- [SHA](#sha)
-	- [SHA 1](#sha-1)
-	- [SHA 2](#sha-2)
-	- [OAEP - optimal asym enc padding](#oaep---optimal-asym-enc-padding)
-	- [Zero-knowledge proof](#zero-knowledge-proof)
-	- [Proof of work](#proof-of-work)
-	- [AKE](#ake)
-	- [Curve448](#curve448)
-	- [Deniable encryption](#deniable-encryption)
-	- [Federeation](#federeation)
-	- [Fan-out](#fan-out)
-	- [Other websites](#other-websites)
+  - [Message authentication code](#message-authentication-code)
+  - [Crypto nonce](#crypto-nonce)
+  - [Padding oracle attacks](#padding-oracle-attacks)
+  - [Replay attacks](#replay-attacks)
+  - [Elliptic curve Diffie Hellman (ECDH)](#elliptic-curve-diffie-hellman-ecdh)
+  - [Integrated enc scheme](#integrated-enc-scheme)
+  - [Curve25519](#curve25519)
+  - [NIST curves](#nist-curves)
+  - [AES](#aes-1)
+  - [AES GCM](#aes-gcm)
+  - [IGE](#ige)
+  - [SHA](#sha)
+  - [SHA 1](#sha-1)
+  - [SHA 2](#sha-2)
+  - [OAEP - optimal asym enc padding](#oaep---optimal-asym-enc-padding)
+  - [Zero-knowledge proof](#zero-knowledge-proof)
+  - [Proof of work](#proof-of-work)
+  - [AKE](#ake)
+  - [Curve448](#curve448)
+  - [Deniable encryption](#deniable-encryption)
+  - [Federeation](#federeation)
+  - [Fan-out](#fan-out)
+  - [Other websites](#other-websites)
 
 
 # 1. Introduction
@@ -138,11 +144,24 @@ References
 - image/ formula?
 - One such cryptographic algorithm used by some end-to-end encryption protocols is AES (Advanced Encryption Standard) [aes]
 
+**Attacks**
+- https://www.ics.uci.edu/~stasio/ics8-w12/Week9%20-%20part%202%20-%20Symmetric%20Key%20Encryption.pdf
+- ciphertext only attack
+- known plaintext attack
+- chosen plaintext
+- chosen ciphetext
+- brute force - try all keys and determine if the decrypted text is a likely plaintext
+
+
+
 ## AES
 - contemporary crypto/ 282
 - NIST paper
+- diagrams for the algo https://proprivacy.com/guides/aes-encryption
 - It is a symmetric block cipher, based on a substitution-permutation network, which uses keys of length 128, 192 or 256 bits to process data in blocks of 128 bits, introduced by NIST in 2001. 
-- the operations are performed on a state array, which is a two-dimensional array of bytes, having the block length div by 32, Nb (Nb = 128 / 32 = 4) rows and columns and the cells contain 1 byte of the block
+- the operations are performed on a State array, which is a two-dimensional array of bytes, having the block length div by 32, Nb (Nb = 128 / 32 = 4) rows and columns and the cells contain 1 byte of the block
+- in the beginning, the input bytes are copied into the State and after the encryption/ decryption, the output bytes are copied again in the State, row by row (figure at pg 285)
+
 - the key length is computed in the same way, so it would have length Nk 4, 6, 8, depending on number of columns in the cipher key (from 128, 192, 256 bits)
 - the state array can be interpreted as a state array of 32 bit words
 - operations over a finite field
@@ -158,8 +177,37 @@ References
 - after an initial round key addition, the round function is implemented Nr - 1 times
 - the inverse cipher (decryption) is following the previous steps but in reverse order
 
-Round Key - Round  keys  are  values  derived  from  the  Cipher  Key  using  the  Key  Expansion  routine;  they  are  applied  to  the  State  in  the  Cipher  and  Inverse Cipher. 
-Key expansion - Routine used to generate a series of Round Keys from the Cipher Key
+- algo + sbox/ 287 and so on with the rest of the operations
+
+**Modus operandi**
+- won't write too much about these, maybe just the CTR mode
+- 296
+- electronic code book mode (ebc)
+  - plaintext m is split into t n-bit blocks and a pdding is added if there are not enough bits and encrypted
+  - prb: same ciphertext blocks everytime, same key, same message; no protection
+- cipherblock chaining mode (cbc)
+  - encr depends on the key, all prev message blocks and an initialization vector that is public => identical plaintext blocks are mapped to different ciphetext blocks
+  - prb: w/ the init vector, the ciphertext is 1 block longer; if an error occurs in one block, the error is propagated (ex transmission errors)
+- cipher feedback mode (cfb)
+  - turns block cipher into stream cipher by generating a seq of pseudorandom bits from the block cipher that are added mod 2 to the plaintext to produce the ciphertext bits
+  - good when you don't need large data transfers
+  - prb: performance; error propagation; can't precompute key stream because you need the ciphertext block
+- output feedback mode (ofb)
+  - similar to cfb
+  - no error propagation
+  - it is important to change the init vector regularly if you have the same key
+- counter mode (ctr)
+  - taken from serious crypto/ 111
+  - turns a block cipher into a stream cipher
+  - enc blocks composed of a counter and a nonce
+    - counter - integer that is incremented for each block - unique for each block
+    - nonce - number used only once, each message has a unique nonce
+  - enc: xor the plaintext and stream (obtained by "enc"? the nonce and the counter)
+
+**Attacks**
+- brute force + crytanalysis
+- side channel attacks - gain info about the implementation of the algo
+
 
 [aes]: NIST, [Announcing the ADVANCED ENCRYPTION STANDARD (AES)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf)
 
@@ -336,7 +384,25 @@ The following objectives are included for the three different parties A, B, C
 
 Digital signatures are equivalent to handwritten signatures and are a means of verifying the authenticity of messages or documents, by providing the entity a way to bind its identity to a piece of information, making it dependent on a secret known by the sender and the content of the message. A valid digital signature is supposed to assure the recipient that the sender is authenticated and that the data was not altered in transit, becoming a way to detect forgery or tampering. 
 They must be verifiable and they can also provide non-repudiation, which means that the signer cannot successfully claim that they did not sign the message.
-The algorithm
+
+- So, the digital signature must be correct (the valid signatures must be accepted) and secure (it is computationally infeasible to forge a signature without knowing the key). 
+
+### Attacks
+- cc/397
+- Regarding the security bit, there are two major attack vectors that are taken into account:
+  - key-only attack - when the attacker knows the signatory's verification key but has no information about the signed messages
+  - message attack - the attacker knows both the signatory's verification key and some information about the messages or is able to obtain it; this category can be further split into:
+    - knwon message - a certain number of messages and their corresponding signatures are known, but not chosen
+    - generic chosen message - the signatory's key knowledge is independent of the attacker's choice of messages (along with their corresponding digital signatures)
+    - directed chosen message - similar to the previous attack vector but this one is directed against a signatory's key
+    - adaptive chosen message - the attacker can obtain the digital signatures of a chosen list of messages and it depends on the signing key; the list of messages can be adaptively chosen during the attack (the attacker has access to the signature generation oracle => for every message, the attacker returns a valid signature)
+- maybe about the security breaks?
+  - total break - determine the key
+  - universal forgery - find similar signature algo
+  - selective forgery - forge digital signature for a particular message, chosen before
+  - existential forgery - forge digital signature for at least one random and not necessarily meaningful message
+
+**The general algorithm**
 The digital signature scheme is similar to public key encryption, and consists of the following algorithms:
 Key generation: A public and a private key are generated. The private one is kept secret, while the other one is publicly available.
 Signing procedure: The signature is produced using the private key of the signer and the message.
@@ -411,11 +477,17 @@ The messages are only protected from possible eavesdroppers on the communication
 - serious crypto/ 268
 - Diffie Hellamn (1976) is a protocol that allows the participants to share a secret between them, with the exchanged information being public
 - the secret could be turned into a secure channel for transmitting symmetric keys, for ex
+
+**The algorithm**
+
 - the mathematical function involves a big prime number p and a base number/ generator g (public part) and a number a from the Zp* set, chosen by each participant (private part)
 - for example, for two participants, we have the numbers a and b
 - then each of the participants computes A = g^a mod p, B = g^b mod p and makes these computations publicly available
 - the other participant takes this result and raises it to their private number and this will be the shared secret, so: (g^a mod p)^b = (g^b mod p)^a = g^ab mod p
-- even if this computation seems easy, its security resides on the discrete logarithmic problem, which means that you need to recover a from g^a mod p; this is possible, but takes a long time if the values are chosen correctly
+
+**Security**
+
+- the security of the Diffie Hellman protocol resides on the discrete logarithmic problem, which means that you need to recover a from g^a mod p; this is possible, but takes a long time if the values are chosen correctly
 
 
 - this algorithm is designed for secure key agreement protocols => a shared secret between two or more parties, which is turned into session key(s)
@@ -441,19 +513,46 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 
 ## Elliptic curve cryptography
 - serious crypto/ pg 288 and the presentation saved somewhere
+- the intro might be useful https://scholar.rose-hulman.edu/cgi/viewcontent.cgi?article=1101&context=rhumj
+- this definetly needs images
 - they are curves which are also groups, so they keep the group axioms
 - they can also be defined over finite fields and the law is constructed geometrically, the points on the curve with equation y^2 = x^3 + ax + b (Weierstrass curve) - but can have differrent forms
+- they are horizontally symmetric
 - the operations are addition and multiplication ++
-- security relies on elliptic curve discrete logarithm problem ++
+- general idea of addition (geometrically): ++ pictures
+	- fix the two points on the curve and draw a line through them until it intersects the curve again
+	- the sum of the two points is the reflection of the second/ third point
+	- if the points are the same, draw the tangent through that point until it intersects the curve again and the result is still the reflected point
+- multiplication: add a point to itself multiple times - this can be optimized using the double and add method 
+
+**The algorithm**
+- to exchange a shared secret over an insecure channel using this protocol, the algorithm is similar to the one of the classical Diffie Hellman protocol
+- the public variables are the base point P and the elliptic curve over a finite field E(P_q)
+- the participants need to choose a random integer k_a and k_b, which are their private keys and compute A = k_a * P and B = k_b * P respectively
+- they then exchange the results, A and B, and the shared secret is k_a * k_b * P = k_a (k_b * P) = k_b (k_a * P)
+
+
+**Security**
+
+- [details here + DH + ECC](./pdf/mit)
+- security relies on elliptic curve discrete logarithm problem
+- this is defined in a similar way, but instead of obtaining a power a from g^a, one needs to find a k, if exists, such that kP = Q, where P, Q are points on the elliptic curve over a finite field F_q, q = p^n, p prime
+- usually methods for solving this problem are slow, but there are certain types of curves that are vulnerable
+- types:
+  - baby step, giant step method - general
+  - MOV method - for elliptic curves over finite fields described as F^x _q^m, when m is small
+  - index calculus method
+
+
 - combined with DH => DH key agreement over elliptic curves
   - digital signatures (ECDSA)
   - encryption
 - NIST curves: standardized curves and one that is throughoughly used is Curve25519 and has the equation y^2 = x^3 + 486662x^2 + x, which works with numbers mod 2^{255} - 19 (256 bit prime number) 
 
 
-
-
 - [Edwards ec](https://www.youtube.com/watch?v=Yn1kD1rNmns)
+
+
 
 
 # 3. Existing Technologies
@@ -461,6 +560,9 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 
 
 ## Signal protocol
+- x3dh
+- double ratchet
+- ecdsa
 - [Signal protocol - wiki](https://en.wikipedia.org/wiki/Signal_Protocol)
 - [Signal docs](https://signal.org/docs/)
 - [The X3DH Key Agreement Protocol](https://signal.org/docs/specifications/x3dh/)
@@ -654,37 +756,161 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 - https://telegram.org/evolution
 
 
-- apps: Telegram
-- section from the [docs](https://core.telegram.org/api/end-to-end)
-- upgraded from MTProto 1.0, vulnerabilities analyzed later
+
+### General description
+- the protocol was created in 2013 for the Telegram messaging app, which was founded by Nikolai and Pavel Durov 
+
+
+- this part is mostly from the docs, this section from [here](./PDF/Papers/Telegram/core-telegram-org-mtproto.pdf)
+- from version 4.6 (dec 2017), the protocol was upgraded from MTProto 1.0 to MTProto 2.0 but the first version is still supported for backward compatibility
 - the MTProto 2.0 uses 
-	- SHA 256
+	- SHA 256 instead of SHA 1 
 	- padding
 	- the message key depends on the message and a portion of the secret chat key
-	- 12 - 1024 padding bytes used
-- key generation using Diffie Hellman (the rest of the section is basically the theory of the exchange)
-- initiator (sender) obtains the Diffie Hellman parameters (before each key generation, obviously): p prime, high order element g (a generator)
-- p should be a 2048 bit prime and if the sender doesn't generate a good random number, the server gets this task etc. 
-- sender executes request encryption and the receiver gets an update for all associated auth keys (devices), with data about the requestee
-- after the receiver accepts the request, the chat is created and the receiver also gets the fresh config params for Diffie Hellman => random 2048 bit number b generated
-- after the receiver gets g_a (the key sent from sender), if its length is smaller than 256 bytes, add 0 bytes as padding and the fingerprint has length 64 (for SHA1)
-- the fingerprint is used to check for bugs
-- key visualization uses the first 128 bits of the SHA1 original key (obtained at chat creation) + 160 bits from the SHA 256 key 
-- about the same procedure for the sender (?) and if the fingerprint are the same, you can start chatting, otherwise, discard the encryption process (?)
-- forward secrecy - clients reinitiate re-keying after 100 msg enc / decr or if it has been in usde for 1 week
-- the old keys are discarded
+	- 12 - 1024 padding bytes used instead of 1 - 15
 
 
-- group messages are not encrypted, encryption is not by default
+- the default provided are the unencrypted chats, or cloud chats, where the messages are encrypted only in transit
+- the end-to-end encrypted chats are called "secret chats", option which should be explicitly stated by the user, and the group messages are not encrypted at all
 
-## Signcryption and iMessage
+
+- has 3 components:
+  - high lvl component (API query language)
+  - cyrptographic layer
+  - transport component
+
+
+- High lvl component/ API query language
+- the session in which the client and the server communicate, which is attached to the application on the client device and a user ID, for authorization purposes
+
+
+- Authorization and encryption
+- before the message is sent, it is encrypted and an external header is added on top of it, with a 64 bit key identifier and a 128 bit key => user key and the message key return a 256 bit key and initialization vector which will be used to encrypt the message with AES 256 in infinite garble extension (IGE) mod /x
+- the initial part of the message contains data about the session, message ID, sequence number, server salt
+- the message key is the 128 middle bits of SHA 256 of the message body prepended by 32 bytes from the authorization key
+- the authorization key is 2048 bit key and is generated at first app run and is not changed (almost never) => no backward secrecy if the device is compromised
+- the creation takes place by exchanging Diffie Hellman keys with the server /x??
+- how they overcome this:
+  - session keys with Diffie Hellman key exchange
+  - protect the key on the device with a password
+  - encrypt cached data
+- if the time is not sync for both the client and the server, the server sends a message with the correct time and a 128 bit salt and some identifiers, which will be checked by the client; if a time correction was not performed, a new session will be generated 
+
+- Transport
+- the payload/ message is wrapped in a secondary header, defined by the appropriate MTProto transport protocol /x
+- a list with them here /4-5
+
+
+- some terminology and key details, from [here](./PDF/Papers/Telegram/core-telegram-org-mtproto-description.pdf)
+- the message is encrypted and an external header is added on top of it; it contains a 64bit auth key id and a 128 bit message key, defined as the 128 middle bits from the SHA 256 of the message body prepended by 32 bytes taken from the authorization key /x
+- the authorization key with the message form a 256 bit key and initialization vector that will be used to encrypt the message using AES 256 in infinite garble extension (IGE) mode /x
+- the initial part of the message contains information about the session, message ID, message length, sequence numbers and server salt
+
+- the authorization key is 2048 bit long and is created on user registration; it is exchanged between the client and the server using the Diffie Hellman protocol; these rarely change
+
+- the server key is also 2048 bit long and is a RSA key used to digitally sign the messages on registration and when the authorization key is created
+
+- the key identifier is used to show which key was used to encrypt a message; it is made up of the first lower-order of the 64 bits of the SHA1 hash of the authorization key; they are unique and if a collision happens, the authorization key is regenerated; this version of the hash algorithm is still used because the authorization key should be identified independently of the protocol /x
+
+- the session is identified by using a randomly generated (by the user) 64 bit number 
+
+- server salt is required to protect against replay attacks and time desync with the server /x; it is a random 64 number that is changed periodically; the change is requested by the server and all new messages should contain the new salt
+
+- message identifiers are also 64 bit numbers that uniquely identify the message in a session and must be approx equal to unixtime*2^32 so that the time it was created can be determined
+
+- the message key is the middle 128 bits of the sha 256 hash of the plaintext message and the message details, prepended by the 32 byte fragment from the authorization key; compared to MTProto 1.0, the last 128 buts of SHA 1 hash were taken into account and no padding and authorization key fragments were involved
+
+- internal cryptographic header - server salt and the session => 16 bytes header added before the message is encrypted
+
+- external cryptogarphic header - 24 bytes header added before the message encryption and it has the authentication key identifier and the message key 
+
+- the AES 256 key and the 256 bit initialization vector are computed from the authorization key and the message key
+
+
+**Secret chats**
+- section from the [docs](https://core.telegram.org/api/end-to-end)
+
+- the key generation and exchange are done using the Diffie Hellman protocol
+- the initiator of the request needs to obtain the prime p and generator from the server and check if p is 2048 bit number and is it a safe prime
+- private keys used are also 2048 bit long
+- the shared secret key's fingerprint, which is used for detecting bugs, is equal to the last 64 bits of the SHA 1 hash of the key
+
+- forward secrecy is kept by re-initiating the keys after it was used to encrypt or decrypt 100 messages or after a week, the old keys being discarded
+  
+- files are encrypted using one-time keys that are not related to the shared key
+- the AES key and the initialization vector are two random 256 numbers 
+- it is assumed that the address of the file is attached to the outside of the encrypted message using a file parameter and the key is send in th ebody of the parameter /x
+
+
+### Security analyses
+
+- [symbolic verification](./pdf/papers/telegram/20.%20Automated%20Symbolic%20Verification%20ofTelegram’s%20MTProto%202.0%20-%202012.03141.pdf)
+- code for the client and the protocol itself is open source, but not the servers
+- there are not enough security analyses on this protocol and was criticised for the choice of cryptographic primitives and the encryption mode
+
+**Previous issues found**
+- these issues were found for version 1.0
+- the padding was added after the encryption, so this could lead to chosen ciphertext attcks
+- no forward secrecy was provided
+- the message sequence numbers were managed by the server, so there was place for reply attacks
+- the server could perform a MITM attack on two parties because the Diffie Hellman exchange protocol was used before the participants were authenticated; the first 128 bits of the hash, using SHA 1, were used for the fingerprint and the server could perform a birthday attack to find the keys corresponding to this fingerprint; this was changed in 2.0 and the fingerprint is 288 bits long, containing parts from the SHA 256 key /x
+
+- the current version is considered to guarantee integrity of ciphertext, indistiguishability of chosen ciphertext and forward secrecy, as no attacks of these types are known
+
+**Study findings**
+- the study conducted finds that there are no logical flaws in the protocol, and possible vulnerabilities can arise from the cryptographic primiteves used, implementation flaws (not enough checks), side-channel exfiltration (time and traffic analysis) /x or incorrect user behaviour /x
+- also, the messages are kept secret after the re-keying process is completed, even if the authorization keys are compromised for both participants before the process
+- forward secrecy is also kept but if the attacker recovers the session key, the last 100 messages or the messages in the past week are compromised
+- if the parties have correctly validated the initial session keys, then the messages they exchange are authentic; otherwise, MITM attacks are possible, so the participants need to be aware of the correct way in which they perform the procedure
+- the server can send out weakened Diffie Hellman parameters such that the discrete logarithms become easier to compute, so the end user need to verify these parameters
+
+
+- [security analysis on mtproto 1.0](./pdf/papers/Telegram/17.%20Security%20Analysis%20of%20Telegram.pdf)
+- SOME OF THESE THINGS ARE DEPRECATED
+- the whole study shows that you could use the metadata to "guess" when the communication between two parties takes place
+- is considered to provide the best user experience because of its speed and functionality
+- the reason they gave for the fact that end-to-end encryption is not enabled by default is that the secret chats are bound to the device and that it is not possible to continue a conversation on devices where this feature is not enabled
+- the official clients are open source but have binaries without public codes
+- Telegram also provided a CLI lol 
+- cloud storage, so the server has access to all unencrypted messages and metadata
+- the paper classifies the issues as follows:
+  - non-technical concerns
+    - end-to-end encryption is not by default
+    - the protocol is "home grown"
+    - access to the contact list needs to be provided beforehand and the information is stored on the server
+  - technical 
+    - MITM attacks (2015), by generating Diffie Hellman secrets that provide the same authorization fingerprints with the same 128 bits as the ones of the users, so they can't detect the attack
+    - used a modified version of the Diffie Hellman protocol until 2014, where the key was XORed with a nonce, so the attacker could use different nonces and the users would have the same key which would be also known to the server /x
+    - SHA 1 instead of SHA 256, which is not collision resistant
+	- third parties could observe metadata aboud the users - an example of this is the avialability leak, meaning that the observer (someone who has their phone number) could see when the communication between two users might take place
+
+
+- [cca](./pdf/Papers/Telegram/15.%20On%20the%20CCA%20(in)security%20of%20MTProto%20-%202015-1177.pdf)
+- study on the fact that MTProto is not IND CCA secure and doesn't satisfy the authenticated encryption definitions, but this was fixed in version 2.0
+- the attack is only theoretical
+- the protocol uses a block cipher structure, so it has padding, but it is not checked for integrity, so one can create two different ciphertexts that decrypt to the same plaintext
+- the two attacks presented are 
+  - padding length extension, which means adding a random block at the end of the ciphertext; the padding is not checked by the authentication function; to mitigate this type of attacks, you need to check the length of the padding during dercyption
+  - last block substitution, or, in other words, replacing the last block with a random block; mitigation by adding the padding when computing the authentication tag, but this breaks backward compatibility 
+
+
+- [authentication problem](./pdf/papers/telegram/14.%20INT_Telegram_EN.pdf)
+- this is referenced https://www.cryptofails.com/post/70546720222/telegrams-cryptanalysis-contest
+- the possibility of a MITM attack is presented here aswell, with the fingerprints, but the atacker needs to make the victims install a malicious client or modify the installed one
+- also the use of IGE was criticised
+
+
+
+## Signcryption
 - [Official](https://support.apple.com/en-us/HT209110)
 - [E2ee official](https://support.apple.com/guide/security/encryption-and-data-protection-overview-sece3bee0835/1/web/1)
 
 - [Chosen Ciphertext Attacks on Apple iMessage](./PDF/Papers/iMessage/17.%20Chosen%20Ciphertext%20Attacks%20on%20Apple%20iMessage%20-%20imessage.pdf)
 
 
-- apps: iMessage
+- [more on signcryption (definitions) - 2002?](https://www.iacr.org/archive/eurocrypt2002/23320080/adr.pdf)
+
+- this protocol is used by iMessage
 
 **Apple iMessage**
 - [official docs (this section)](https://support.apple.com/en-us/HT209110) say that iMessage and FaceTime use end to end encryption, attachements are also encrypted (are uploaded and deleted after 30 days if the message was not sent)
@@ -694,6 +920,7 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 	- messages that can't be delivered - held for 30 days
 	- metadata about FaceTime calls, 30 days
 	- contacts, 30 days
+- encryption is enabled by default
 	
 **Apple security and encryption**
 - [Encryption and data protection, official (this section)](https://support.apple.com/guide/security/encryption-and-data-protection-overview-sece3bee0835/web)
@@ -709,19 +936,19 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 - methodology - Data Protection
 - sender retrieves the public keys and APNs addresses for all associated devices of the receiver
 - the message is individually encrypted for each device
-- sender generates a random 88 bit value as a HMAC SHA 256 key to construct a value derived from the sender and recv public keys and the plaintext
+- the sender generates a random 88 bit value that is used as a HMAC SHA 256 key to create a 40 bit value, from the sender and receiver's pubic keys and the plaintext; this value will be used to verify the integrity of the message, after decryption
 - 88 + 40 = 128 bit key, which encrypts the message using AES in CTR mode
-- 40 bit part used by the recv to verify the integrity of the decrypted message
 - AES key is encrypted using RSA-OAEP public keys of the recv device, but iOS 13 or later might use ECIES encryption
-- combination of the encr message and encr message key - hashed with SHA 1 and signed with ECSDA, using the private signing key
-- recv gets: encryted message text, encrypted message key, sender's digital signature
-- metadata (timestamp, APN routing info) is not encrypted
-- if message too long, attachement is encrypted using AES in CTR mode with a randomly generated 256 bit key
-- process repeated for each participant in a group
+
+- the messages then contain the encrypted message, encrypted message key and the sender's digital signature; metadata (timestamp, APN routing info) is not encrypted
+- the combination of the encrypted message and the encrypted key are hashed using SHA 1abd sugned with ECDSA
+
+- if message too long or has an attachement, it is encrypted using AES in CTR mode with a randomly generated 256 bit key and uploaded to the cloud; the receiver gets the AES key, the URI and a SHA 1 hash of the encrypted form?, encrypted
+  
+- this process repeated for each participant in case of group communications
 
 ### Signcryption
 - [Wiki](./PDF/Wiki/Signcryption.pdf)
-
 
 - introduced in 1997, along with an elliptic curve signcryption (saves 58% computational and 40% communication costs, compared to the classical signature-then-encryption schemes)
 - public key 
@@ -738,13 +965,105 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
     - public verifiability
     - forward secrecy and message confidentiality
 
+- [zheng](./pdf/papers/iMessage/Zheng1997_Chapter_DigitalSigncryptionOrHowToAchi.pdf)
+- this primitive was first introduced to reduce the cost of the signature and encryption operations, by combining them
+- the total cost can be considered the sum of costs of each operation and using this combined approach would reduce it with, as specified in the paper, 50% in computational cost and 85% in communication overhead, keeping the security definitions offered by the two operations, namely sending an authenticated and secure message
+- the primitive would contain a pair of signryption and unsigncryption aglorithms that are satisfying the conditions:
+  - unique unsigncryptability - the ciphertext run through the unsigncryption algorithm would return the message unambiguously /x
+  - security - the algorithms fullfil the properties of a secure encryption scheme and secure digital signature: confidentiality, unforgeability, non-repudiation, integrity
+  - efficiency - smaller cost on applying the scheme
+- this paper explores a version based on shortened ElGamal signatures and encryption
+
+
+
+- [security of signcryption](https://www.iacr.org/archive/eurocrypt2002/23320080/adr.pdf)
+- two definitions, depending on the adversary: outsider or insider
+- signcryption is defined for the public key setting, being the equivalent of authenticated encryption is in the symmetric encryption
+- the paper explores the applicability of this scheme in a setting with two users, but this can be generalized to multiple users
+- the scheme needs to fulfill the folowing conditions?:
+  - each user should publish their public key 
+  - the signcryption needs to contain the identities of the sender and the receiver
+  - each user should be protected from the other users /x
+- the scheme has three algorithms:
+  - generation, which returns the pair of keys: the private sign and decrypt key and the public verification key
+  - (randomized) signcryption, which takes as parameters the sender's secret key, the receiver's public key and the message /x
+  - (deterministic) designcryption or unsigncryption, takes as parameters the ciphertext, the receiver's secret key and the sender's public key
+
+**Security**
+- pg 8
+- outsider security - the adv knows the public keys and has access to the signcryption and unsigncryption oracles of the sender and the receiver, so it can do CPAs and CCAs; the scheme is outsider secure (indistiguishable against generalized CCA2) if it is outsider secure against adaptive chosen ciphertext attacks; OR it protects the privacy of the receiver when talking to the sender from outsider intruders who don'r knwo the secret key of the sender
+- insider security - the adversary is a user of the system so the sender has access to the secret key of the receiver and for encryption, the receiver has access to the decryption key because it contains the secret key of the sender; the scheme is insider secure against gcca2 or cma attacks on the privacy or authenticity property if the corresponding induced enc/ sign scheme is secure against the attack (IND gCCA2 - enc, UF-CMA - sign); OR one of the parties is the attacker, so the scheme protects the sender's authenticity against the receiver and the receiver's privacy against the sender
+
+- non-repudiation - singcryption only assures the receiver that the mesage was sent by the actual sender
+- comparison btw insider and outsider security:
+  - is for authentcity implies non-repudiation when the receiver reveals its secret decryption key or by zero-knowledge proof
+  - os - th ereceiver can generate valid signcryptions of messages that are not actually send by the sender, so non-repudiation can't be acheived
+- os might be enough for privacy and authenticity, but the is can be useful in case the secret key of the sender is stolen and we don't want the attacker to be able to understand previously or future recorder signcryption (some kind of forward and backward secrecy)
+
+
+
+**Definitions and notations - EXTRA**
+- indistinguishability - given a randomly selected public key, not probabilistic pol time (ppt) adv can distinguish between the encryptions of two chosen messages (by the adversary)
+  - based on the def above there are two stages - find and guess
+- CPA - chosen plaintext attack - the adv is not given other capabilities but to encrypt the messages with the encryption keu
+- CCA1 - lunch time attack, give the adv access to the decryption oracle and they can decrypt chosen ciphertexts
+- CCA2 - adaptive chosen ciphertext attack - access to the decryption oracles in the guess stage (def above) and has the restriction that the given ciphertext is different from the actual ciphertext the adv wants to decry[t]
+- secure against gCCA2 - generalized CCA2 security and the scheme is secure against this if there is an efficient decryption respecting relation R(e, e') => dec(e) = dec(e')
+
+
+- UF - existential unforgeability - negligible probabilityof generating a valid signature for a new message
+- NMA - no message attack - adversary has the verification key (public)
+- CMA - chosem message attack - adversary has access to the signing oracle and query it to obtain valid signatures
+- combined: UF-NMA, UF-CMA
+- sUF - strong unforgeability - adv should NOT be able to generate a singature for a new message and to generate a diff signature for a signed message -> makes sense for CMA, so you have sUF-CMA
+
+### Security analyses
+
 - [Security under Message-Derived Keys Signcryption in iMessage](./PDF/Papers/iMessage/20.%20Security%20under%20Message-Derived%20Keys%20Signcryption%20in%20iMessage%20-%202020-224.pdf)
 
 - iMessage uses signcryption to encrypt the messages
-- iMessage uses a scheme that involves symmetric encryption with the key derived from the message, as it is stated in the article
-- EMDK (encryption under message derived keys)
-- protocol was revised after [CVE 2016 1788](https://nvd.nist.gov/vuln/detail/CVE-2016-1788) was reported (addressed later) 
-- signcryption aims to provide privacy of the message and authenticity
+- iMessage uses a scheme that involves symmetric encryption with the key derived from the message
+- EMDK (encryption under message derived keys) is the scheme (as named in the article) that is the primitive used by this protocol
+
+- the protocol was vulnerable to chosen ciphertext attacks, [CVE 2016 1788](https://nvd.nist.gov/vuln/detail/CVE-2016-1788), and it was revised later
+- EXTRA - as is pointed out in the article, Msg1 is the version before the revision and Msg2 is the one after
+
+- the aim of signcryption is to provide privacy and authenticity of the message, so it can be percieved as the "asymmetric analogue of the symmetric authenticated encryption" /x
+
+- EXTRA
+- a formal definition was given by ADR (will be addressed) and they distinguish between outsider security - the adversary is not one of the users - and insider security - adversary is one of the users
+
+- the Msg1 scheme can be considered a simple (ADR) encrypt then sign method and they provide an attack vector, showing that it is not IND CCA (not insider secure); the Msg2 version protects against this type of attacks
+
+- the algorithm is multi-recipient, meaning that one can send messages to a receiver and they can access them on every device
+
+- as defined, the EMDK scheme takes in the message and returns a key and the ciphertext and to decrypt, the algorithm uses the key and the ciphertext; the key is sent using asymmetric encryption
+- two security requirements are defined: an adapted authenticated encryption requirement for the symmetric encryption and a form of robustness, wrong key detection method /x
+
+
+- [cca](./pdf/papers/iMessage/17.%20Chosen%20Ciphertext%20Attacks%20on%20Apple%20iMessage%20-%20imessage.pdf)
+- the analysis shows that practical adaptive chosen ciphertext vulnerabilities are present and that the attacker can retrospectively decrypt ciphertext (payloads and attachments) in a relatively short time (2^18 queries)
+- this type of attack operates on gzip compressed data and they call it "gzip format oracle attack"
+- about the conducted attacks: they provide attacks that are retrospective, meaning that the attacker needs one of the target devices to be online and has access to the ciphertexts
+
+- some limitations of the protocol
+  - key server and registration: the server (IDS) is operated by Apple, so if it is compromised, it can become the platform for MITM attacks /x; they don't provide a way for the uses to verify the authenticity of the keys
+  - no forward secrecy: the encryption keys are rarely changed and the protocol doesn't provide any forward secrecy mechanism
+  - replay and reflection attacks: no mechanism that prevents replay or reflection attacks, so the attacker can falsify conversations or, if they have access to the device, replay previously captured traffic and obtain the plaintext /x
+  - no certificate pinning on older versions: devices running older versions of iOS are still vulnerable to MITM attacks because of the lack of certificate pinning
+  - seemingly ad-hoc cryptographic scheme: combines RSA, AES and ECDSA 
+
+- and attacks on the encryption mechanism, in two stages:
+  - the encryption mechanism has weaknesses because, instead of using a MAC or AEAD modus operandi, it uses ECDSA to guarantee the authenticity /x of the ciphertext (symmetrically encrypted portion of the message payload /x), which is not sufficient because the attacker can change the signature from an account controlled by the them /x
+  - the attacker has the ability to modify the AES ciphertext and then can recover the plaintext from the decryption provided by the target device (CCA2)
+- these made the attack possible
+
+- gzip, version of DEFLATE compression, combines LZ77 and Huffman coding to compress common data types
+- the attacker intercepts the gzip compressed message encrypted with an unauth stream cipher and has access to the decryption oracle,
+
+- EXTRA: some references to the fact that the some states (USA mostly) wanted to have backdoors into the end-to-end encryption schemes of the app
+
+- [2020 paper](./pdf/papers/iMessage/20.%20p%20-%20Security%20under%20Message-Derived%20Keys%20Signcryption%20in%20iMessage%20-%202020-224.pdf)
 
 
 ## Letter Sealing
@@ -752,66 +1071,161 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 - https://help.line.me/line/?contentId=50001520
 
 
+- the app that implements this protocol is LINE
+- introduced in 2015, default from 2016 on new versions
 
+- [whitepaper](./pdf/papers/Line/19.%20r%20-%20LINE%20Encryption%20Overview%20-%20line-encryption-whitepaper-ver2.0.pdf)
 - https://d.line-scdn.net/stf/linecorp/en/csr/line-encryption-whitepaper-ver2.0.pdf
-- apps: Line
 - transport protocol: based on SPDY
 - handshake protocol based on 0-RTT
-- enc - elliptic curve crypto with secp256k1 curve for key exchange
+- the transport protocol uses secp256k1 curve for key exchange and server identity verification
 - symmetric encryption - AES + HKDF for key derivation
-- static keys - the private key is stored on the server??? and the public keys are embedded in the Line client apps
-- key pair for key exchange - ECDH
-- key pair for server identity verif - ECSDA
-- clients are preinitialized with static ECDH keys => clients can include encrypted app data in the beginning
+
+- static ECC key pairs and the private part is stored on the server and the public one on the device? (for TLS)
+- the key exchange is done using ECDH and the server identity verification with ECDSA
 
 
 - handshake protocol, you need to exchange some data first:
 - client: 
-	- generate ephemeral ECDH key + 16 byte client [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce)
-	- derive temp transport key and initialization vector (16bbytes long) using the server's static key and the ephemeral key generated before 
+	- generate ephemeral ECDH key + 16 byte client nonce
+	- derive temp transport key and initialization vector (16 bytes long) using the server's static key and the ephemeral key generated before 
 	- epehmeral ECDH client handshake generated
-	- etc.
+	- gen ephemeral ECDH client handshake key
+	- encrypt the application data with the epehemral key and initialization vector and send the static key, the public key, the nonce and the encrypted data to the server
 - server:
 	- temp transport key and initialization vector using server's static ECDH key and client's initial eph key
 	- decrypt recv app data and get public key
-	- generate eph key pair and nonce
+	- generate eph key pair and nonce - 16 bytes
 	- derive forward sec transport key and init vect
 	- gen sign and handshake state using server's static key
 	- encrypt app data
 	- send to client: server public key, server nonce, server's static signing key, enc data 
 - client finish:
 	- handshake signature verif
-	- if verified, continue with getting the forward secrecy keys
-	- enc using the keys
+	- if verified, get the forward secrecy key and initialization vector
+	- enc using the key and the initialization vector
 
-- data is encrypted with 128 bit key using AES GCM [AEAD](https://en.wikipedia.org/wiki/Authenticated_encryption) cipher
+- application data is encrypted with 128 bit key using AES GCM AEAD cipher
+- the server and the client generate a nonce, computed from a 64bit long sequence number and the initialization vector from the handshake
+- the encryption function takes as parameters the key, nonce and application data?
 
-pg 11
+**Message encryption**
+- only messages and metadata are encrypted
+- the protocol was updated to version 2 (after vulnerabilities were reported in 2018, discussed later) and it also adds integrity of the message metadata
+- version 2 is enabled by default unless one of the participants doesn't support it; in that case, the message is sent again using version 1
+- the primitives used (comparison between versions with /) are: (this is a table)
+  - for key exchange: ECDH over curve25519
+  - message encryption, data authentication: AES 256 in CBC/ GCM
+  - data authentication: AES-ECB withSHA256 MAC/ AES 256 in GCM
+  - SHA 256/ no message hash function?
+  - message data: encryption and integrity? - it refers to the fact that the mode is AEAD
+  - message metadata: not protected/ integrity?
+
+- message encryption protocols are different for each type of the provided environments (presented below)
+
+- private messaging
+- the key pair is generated at app launch or after the app is reinstalled and it is saved locally
+- the public key is registered on the server and it binds the user (using a key ID) to that public key
+- the shared secret is established using ECDH and the key can be verified
+- message encryption depends on the version supported by the user:
+  - version 1: using the key and the initialization vector, which are derived from the shared secret and a random 8 byte salt, withe message as parameters for the AES in CBC mode; a MAC is computed and the following data is sent to the receiver: version, content type, salt, ciphertext, MAC, sender ID, recipient ID; if the key pair is obsolete, the messages are requested to be resent; to decrypt, the receiver needs the init vector, key, the MAC of the ciphertext is compared with the value included and then it is decrypted
+  - version 2: key and random nonce derived from the shared secret and a 16 byte salt; the nonce is a 8byte per-chat counter with a 4 byte randomly generated value /x; the key and the nonce are used to encrypt the message using AES GCM; message data is encrypted and authenticated and the metadata (sender ID, receiver ID, version, content type) is added associated data; the authentication tag is 16 bytes long and is concatenated to the ciphertext; the receiver gets the decryption key and from the shared secret and the salt, decrypts the message and cehcks if the tag of the message matches the one computed
+
+- group messaging
+- the application generates a shared group key and the private keys for each participant, using their public keys
+- then calculates the symmetric keys from the current user's private key (the one who created the group?) and the public keys of the participants
+- the key derivation process is similar to the one for private chats
+- the shared key is encrypted and sent to the participants and the encrypted data is sent to the server, where it associates the group keys with the group and returns the shared key ID ????
+- when something changes between the group participants, a new shared key is generated
+- message encryption:
+  - version 1: the members need to otain the shared group key and decrypt it; the encryption key and initialization vector are derived from the shared key and the public key of the sender; the rest is similar with the version 1 private chats, but the key ID of the receiver is changed with the shared key of the group
+  - version 2: after the shared group key is obtained, the encryption key is composed of the shared group key and the public key; the rest is similar with the version 2 private chats 
+
+- for VOIP, the key exchange is done with ECDH over secp256r1
+- the caller and callee exchange pairs of ephemeral keys that will be used to generate a master secret /x and derive a VOIP session key and salt, along with a randomly generated unique call ID
+- the streams are encrypted with AES CM 128 HMAC SHA1 80 suite
+
+
 
 - [LINE enc](./pdf/papers/line/20.%20LINE%20Encryption%20Report%20-%20linecorp-com-en-security-encryption-2020h1.pdf)
-- tls + letter sealing
-- text and voice/ video
-- e2ee for: if supported?
+- provides end-to-end encryption when all of the participants have the Letter Sealing enabled in the following environments
   - private chats
-  - groups
-  - location messages? for both above
-  - audio calls - private
-  - video calls - private
-- have their own https api? Line Event delivery GatewaY
-- optional in 2015 and by default in 2016, but all the participants in the supported message types must have letter sealing enabled to work
-- metadata and other things that are only tls enc:
-  - website prev function
-  - spam report - the message that was reported
-  - media file
+  - 1-to-n chats
+  - group chats
+- this mode is enabled by default since 2016
+- the protocol ensures privacy for the following
+  - text messages and location in the previously specified environments
+  - private video and audio calls
+- there are a few cases when end-to-end encryption is broken:
+  - on website preview - when a user sends an URL, the page can be previewed in the chat room
+  - on spam reports - the messages are sent to the server
   - stickers
-  - open chat
+  - open chat?
   - group calls
-  - meeting
-  - social plugin
-- forward secrecy supported by only a few comm channels
-  - supported in case of line server key compromise (client-server)?
-  - in case of per device private key compromise
+  - LINE meetings, social plugin?
+- these are encrypted only using TLS - with LEGY*1 (Line Event-delivery Gateway, a custom built API) or HTTPS
+- forward secrecy is not by default and few channels support it, such as:
+  - client-server communication
+  - in case of key compromise
 
+
+**Security analyses**
+- [change from version 1 to version 2](./pdf/papers/Line/18.%20p%20-%20Breaking%20Message%20Integrity%20of%20an%20End-to-End%20Encryption%20Scheme%20of%20LINE%20-%202018-668.pdf)
+- the papers shows the following vulnerabilities:
+  - impersonation and forgery on group message encryption - a group member could derive the encryption key of another member without knowing the secret key of said member, so this could lead to impersonation; also, this attacker (which could be the server itself) can forge the messages if they bypass the client-to-server encryption
+  - malicious key exchange - a malicious user A can establish a malicious session with a user B in which the shared secret between them is the same as the one used between B and another user C, so A can impersonate both B and C in one of the following ways
+    - message from A to B is sent to C as if it was from B
+    - message from B to C is sent to B as it was sent from A
+  - forgery on authenticated encryption scheme - the attacker can forge a message and that will be considered valid (AES 256 and SHA 256 are combined in a non-standard way)
+
+- some definitions of the attacker are given:
+  - e2e adversary - bypasses the client-server encryption, so it has access to the messaging server, can intercept, read, modify the messages etc.
+  - malicious user - a legitimate user of the end-to-end encryption protocol that wants to manipulate the protocol maliciously
+  - malicious group member - legitimate member of a group with a shared key that want too to manipulate the protocol
+
+- if a malicious member has the shared group key, they can decrypt the messages
+
+
+**Impersonation and forgery attacks**
+- these attacks target a vulnerability in the key derivation phase, because the decryption key and initialization vector are derived from the group key and the sender's public information, so a malicious user can compute any other member's group key and the IV for the message
+
+- impersonation attack
+- take the public key of the victim, derive the key and the iv, generate the ciphertext and the message tag and choose the associated data such that it contains the victim's ID and then broadcast it to the group (the attacker can omit the victim) => the message encryption algorithm doesn't provide the authenticity of the message
+
+- forgery attack
+- intercept a packet from the victim, obtain the keys and salt from it and the server, decrypt and modify the message, generate a new ciphertext and tag and broadcast the new packet to all members except the victim, to which the original one is sent
+- this type of attack can be placed by an e2e adversary, since they can bypass the client-to-server transport encryption
+
+- mitigation: Sender keys used by the Signal protocol, pairwise key exchange
+
+**Malicious key exchange on private message encryption**
+- the problem is that there is no key confirmation during the exchange phase and the integrity of the associated data in a packet is not guaranteed (sender ID, recipient ID)
+- the authentication tag only takes in the ciphertext and the associated data is concatenated with the ciphertext and the tag
+
+- the presented attack is an unknown key share attack - the shared secret key is the same as one used in another session
+- if there already is a session between two users, A and B, and one of them trusts a malicious user, C, then C can attack the session between A and B, by establishing a fake session using the same key and IV as the one in that session
+- this can be done by registering the victim's public key as C's own public key on the server and to request a new session with the other party; C can now impersonate both participants
+- attack 1: impersonate B - send a message to A, which was initially sent from B to C, by impersonating B - can be done by a normal user
+- attack 2: implersonate A - send a message (modified) to B, originally from A, as a message from C ? - can be done if the attacker is an e2e adversary
+
+- mitigation: add a key confirmation phase, guarantee the integrity of the associated data by adding them to the hashing function SHA 256, when computing the authentication tag 
+
+**Security of the Message encryption scheme**
+- it is not a standard one
+- the adversary doesn't need to know the be trusted by the victims
+- encrypts a message with AES 256 CBC mode and then tag, computer using SHA 256 on the ciphertext, is encrypted with AES 256 EBC, making the tag computable without any secret info /x
+- also, in the CBC encryption, the same encryption key is used for the encryption and MAC
+- forgery attacks, this one consisting of an online and an offline phase; the idea is to compute the tag during the offline phase and get the data in the online phase (left around page 15)
+
+
+- [replay attacks](./pdf/papers/line/17.%20Analysis%20of%20end-to-end%20encryption%20in%20the%20LINE%20messaging%20application%20-%20foci17-paper-espinoza.pdf)
+- replay attack and lack of forwards secrecy, this assumes that the adversary has access to the server
+- for the replay attack, the adversary is the server and for the forward secrecy, they require that the private keys of the user are compromised
+- replay attack - the adversary can record messages and resend them later to one of the parties and seem to be sent legitimately - the adv can just replace the body of the message
+- to protect against replay attacks, one can use MACs which authenticate associated data
+- LINE only authenticates the message itself, not the associated data, so the replay attack is possible
+- another problems are that the same key is used for both the MAC and the message encryption and that sections, such as the encrypted message, MAC and salt could be obtained through reverse engineering
+- forward secrecy - it is only provided from client to server and for this attack the private keys of one of the parties is enough
 
 
 
@@ -821,12 +1235,81 @@ pg 11
 - [2020 audit](https://threema.ch/press-files/2_documentation/security_audit_report_threema_2020.pdf)
 - [the thing used for encryption](https://nacl.cr.yp.to/)
 
+
+- [2021 whitepaper](https://threema.ch/press-files/2_documentation/cryptography_whitepaper.pdf)
+- the applications are open source
+- uses 2 diff encryption layers
+  - end-to-end 
+  - transport layer, between the client and server
+- as cryptographic algorithms, the protocol uses:
+  - ECDH over curve 25519 for key exchange - asymm keys are 256 bits long
+  - XSalsa 20 for symmetric encryption - symm keys are derived from the private key of the sender and public key of the receiver + 192 bit nonce -> 256 bits long, as well as the random sym keys used for attachment encryption
+  - Poly1305 AES for authentication and integrity - MACs are 128 bits long
+- forward secrecy is provided on the transport layer
+- random padding (PKCS#7) is added before the messages are encrypted
+- the protocol offers repudiability
+- to avoid replay attacks, the nonces are saved
+- local data (caches, contact lists) is encrypted and stored 
+- the app allows users to sync their contacts list, and it is sent to the server after each email address or phone number was hashed with HMAC SHA 256; because the hashes of the phone numbers can be cracked using brute force attacks, they are discarded after the ID was obtained
+
+
+**End to end encryption**
+
+- the messages and attachments are end-to-end encrypted
+
+- key generation:
+- the keys are generated using Curve25519 (the private key includes entropy from the user) and the public key is sent to the server, where the new key is assigned with a Threema ID
+- to retrieve the public key, a user needs to query for the Threema ID, or hash of an email or phone number linked to the ID
+- this system allows more verification levels, the lowest one being the public key only, while the highest is with the phone number
+- additionally, the users can scan a QR code to personally verify the contacts
+- key fingerprints can be created to compare public keys; this is done by hashing the public key with SHA 256 and taking the first 16 bytes
+
+- message encryption
+- the encryption and authentication algorithm uses [NaCL library](https://nacl.cr.yp.to/) 
+- the shared secret is exchanged using ECDH over Curve25519 and hashed with HSalsa20, then the sender uses the XSalsa20 stream cipher with the shared secret and a random nonce to encrypt the message
+- the MAC is computed using Poly1305, where the MAC key is a part of the XSalsa20 key, and it is prepended to the ciphertext
+
+- groups
+- in case of groups, the server doesn't keep track of the group structures and the messages are individually encrypted and sent to each member
+
+- the app also provides key backup (pg 9)
+
+**Client-server protocol**
+- 3 servers are used
+
+- chat protocol
+- used to transfer the messages
+- uses a custom protocol with the NaCl library and provides:
+  - forward secrecy
+  - optimization for minimal overhead /x
+  - user authentication with th epublic key on connection setup /x
+
+- directory access 
+- used for user signup (creating the Threema ID, linking the email or the phone numbers), getting the public keys
+- it uses TLS
+
+- media access
+- used to temporarily store attachments
+- this data is encrypted with 256 bit symmetric key using Xsalsa20 and has an additional Poly1305 authenticator and uploaded to the server, where an ID is assigned
+- the id is returned to the user who then sends the id and the symmetric key to the recipient 
+- the receiver uses these to download and decrypt the attachment and when this is done, the server is signaled to delete the file
+- in case of groups, the data is kept on the server and is deleted after 14 days
+
+
+**Web clients**
+- in case of web clients, the apps communicate between platforms using WebRTC, the packets are end-to-end encrypted using NaCl the signaling with SaltyRTC protocol
+
+**VOIP**
+- audio and video calls are also encrypted
+
+**Threema Safe**
+- this is for backup
+
+
 - [From the official faq page](https://threema.ch/en/faq/why_secure)
 - app remote protocol for app and web client data exchange https://threema-ch.github.io/app-remote-protocol/
 - Swiss, 2012
-- uses 2 diff encryption layers
-	- end-to-end 
-	- transport layer lol 
+
 - Elliptic curve based (255 bits)
 - ECDH with curve25519
 - hash function + random nonce = 256 symmetric key for each message
@@ -861,9 +1344,26 @@ pg 11
 	- sends MAC, cipertext and nonce to recv
 	- decrypt and verify authenticity by reversing the steps
 
-- [Security audit](./PDF/Papers/Threema/20.%20security_audit_report_threema_2020.pdf)
-- security audit in oct 2020, conducted by cure53
-- shows no high security vulnerabilities, only minor or general flaws
+
+**Security analyses**
+
+- [security autdit 2019](./pdf/papers/Threema/security_audit_report_threema_2019.pdf)
+- the security audit found mostly minor vulnerabilities or informational and two medium risk ones:
+- these are for the Android app, files containing sensitive info (such as key.dat, which contains the private keys of the user) could be sent to another user 
+- logs with parts of the password for the backup feature, Threema Safe, were saved and could be accessed by an adversary 
+
+- some of the low risk vulnerabilities found are:
+- the screenshot saver feature could let you see, for example, the messages in the last open chat, if it was open on application exit, even if the app is protected with a PIN
+- messages could be sent using google assistant, even if the app is locked with a pin
+- for the iOS, there was missing public key pinning in the HTTPS request, which could allow MITM attacks
+
+- also, an overview of the permissions asked by the app is given and it is stated that these are either necessary or optional; hence, permissions such as access to the voice recording, phone state (for incoming calls) are requested on demand
+
+- [Security audit 2020](./PDF/Papers/Threema/20.%20security_audit_report_threema_2020.pdf)
+- the security audit on the mobile applications for Android and iOS, conducted by cure53 in 2020, shows no high security vulnerabilities, only minor or general flaws which are more related to the devices than to the application itself
+- such issues include the risks of using rooted/ jailbroken devices, since the user can escalate privileges and access files storing private keys and other data or, for Android, that the key used for encrypting and decrypting local data was stored in a file that can be accessed by an attacker with higher privileges if no passphrase is set 
+- there is also a screenshot saving feature when the user exists the app which was labeled as a vulnerability with medium security, since sensitive data (such as the messages from the last viewed chat, if it was still open when the user exit the app) can be exposed when a screenshot of the app is taken (this is still present from the last audit)
+
 
 
 ## Group messaging
@@ -1049,6 +1549,9 @@ The application is a full stack web application, where the frontend is created w
 - [wiki](https://en.wikipedia.org/wiki/Cryptographic_nonce)
 - random/ pesuod-random number that can be used just once in a crypto communication, in an auth protocol to ensure that old communications cannot be reused in replay attacks 
 
+## Padding oracle attacks
+A padding oracle is a system that behaves differently depending on whetherthe padding in a CBC-encrypted ciphertext is valid. You can see it as a blackbox or an API that returns either a success or an error value. A padding oraclecan be found in a service on a remote host sending error messages when itreceives  malformed  ciphertexts.  Given  a  padding  oracle,  padding  oracleattacks  record  which  inputs  have  a  valid  padding  and  which  don’t,  andexploit this information to decrypt chosen ciphertext values
+
 ## Replay attacks
 - [wiki](https://en.wikipedia.org/wiki/Replay_attack)
 - playback attacks
@@ -1102,7 +1605,11 @@ The application is a full stack web application, where the frontend is created w
 
 ## AES GCM
 - [GCM = Galois/ Counter Mode](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
-- [CTR mode = counter mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_(CTR)) - turns a block cipher into a stream cipher
+- [CTR mode = counter mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_(CTR)) - turns a block cipher into a stream cipher 
+
+## IGE
+- [ige](https://blog.susanka.eu/ige-block-cipher-mode/)
+- infinite garble extenstion mode is a block cipher mode with the property that the errors are propagated forward, or that if a block of the message was changed, this and each block afterwards will not decrypt correctly
 
 ## SHA 
 - [SHA - secure hash algos](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms)

@@ -71,6 +71,7 @@ app.post("/chats", (req, res) => {
     res.json([]);
   }
   else{
+    console.log("Kill me", user, room)
     data
       .getMessages(user, room)
       .then(data => {
@@ -84,8 +85,29 @@ app.post("/chats", (req, res) => {
   
 });
 
-app.post("/message", (req, res)=>{
-  console.log("Server  POST /message");
+app.post("/message", (req, res) =>{
+  console.log("Server POST /message");
+  const message = req.body.message;
+  data.sendMessage(message)
+    .then(data => {
+      // const newMessage = {
+      //   id: data,
+      //   room: message.room, 
+      //   sender: message.from, 
+      //   text: message.message, 
+      //   date: message.date,
+      // };
+      // socket.broadcast.to(message.from).emit("message", newMessage);
+      res.json(data);
+    })
+    .catch(err =>{
+      console.log("Server POST /message error", err);
+      res.json("");
+    })
+});
+
+app.post("/deleteMessage", (req, res)=>{
+  console.log("Server POST /deleteMessage");
 
   const id = req.body.messageId;
   const user = req.body.user;
@@ -134,16 +156,20 @@ io.on('connection', (socket) => {
   // and add it to the database
   socket.on('message', (message) => {
     const user = data.current(socket.id);
-    const sender = message.from;
-    const text = message.message;
-    const date = message.date;
-    const room = message.room;
-    const receivers = message.receivers;
+    console.log("Broadcast", user.username)
+    socket.broadcast.to(user.username).emit("message", message);
 
-    data.sendMessage(sender, room, receivers, text, date);
-    console.log("Broadcast", user.username, room)
-    // socket.broadcast.to(room).emit("message", {room, sender, text, date});
-    socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
+    // const user = data.current(socket.id);
+    // const sender = message.from;
+    // const text = message.message;
+    // const date = message.date;
+    // const room = message.room;
+    // const receivers = message.receivers;
+
+    // data.sendMessage2(sender, room, receivers, text, date);
+    // console.log("Broadcast", user.username, room)
+    // // socket.broadcast.to(room).emit("message", {room, sender, text, date});
+    // socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
     // io.to(room).emit("message", {room, sender, text, date});
 
     // const user = data.current(socket.id);

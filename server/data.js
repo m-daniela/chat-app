@@ -129,7 +129,35 @@ const createChatDatabase = async (sender, receiver, participants, message) =>{
 // receiver or the name of the group chat
 // - receivers - all the participants in the chat
 // - date - date of the sent message
-const sendMessage = async (sender, name, receivers, text, date) => {
+const sendMessage = async (message) => {
+  
+  const newMessage = {
+    sender: message.from,
+    text: message.message,
+    date: convertToTimestamp(message.date)
+  }
+
+  if (message.receivers.length === 2){
+    const [recv1, recv2] = [...message.receivers];
+    console.log("Send messages: ", recv1, recv2, message.receivers)
+
+    const messageId = await sendMessageDatabase(recv1, recv2, newMessage);
+    sendMessageWithIdDatabase(recv2, recv1, newMessage, messageId);
+    return messageId;
+  }
+  else{
+    const messageId = await sendMessageDatabase(message.room, message.receivers[0], newMessage);
+    for (const receiver of message.receivers.splice(1)){
+      sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
+    }
+    return messageId;
+  }
+  
+
+}
+
+
+const sendMessage2 = async (sender, room, receivers, text, date) => {
   
   const message = {
     sender,
@@ -146,7 +174,7 @@ const sendMessage = async (sender, name, receivers, text, date) => {
   }
   else{
     for (const receiver of receivers){
-      sendMessageDatabase(name, receiver, message);
+      sendMessageDatabase(room, receiver, message);
     }
   }
   
@@ -157,14 +185,35 @@ const sendMessage = async (sender, name, receivers, text, date) => {
 // name - name of the chat
 // receiver - name of the receiving user
 // message - the message object
-const sendMessageDatabase = async (name, receiver, message) =>{
+const sendMessageDatabase = async (room, receiver, message) =>{
+  try{
+    const ref = await db.collection(cts.users)
+      .doc(receiver)
+      .collection(cts.conversations)
+      .doc(room)
+      .collection(cts.messages)
+      .add(message);
+
+    console.log("Send message DB: Message saved");
+    return ref.id;
+  }
+  catch(err) {
+    console.log("Send message DB: ", err);
+    return "";
+  }
+}
+
+
+// does the same thing, but it already has an id
+const sendMessageWithIdDatabase = async (room, receiver, message, messageId) =>{
   try{
     await db.collection(cts.users)
       .doc(receiver)
       .collection(cts.conversations)
-      .doc(name)
+      .doc(room)
       .collection(cts.messages)
-      .add(message);
+      .doc(messageId)
+      .set(message);
 
     console.log("Send message DB: Message saved");
   }
@@ -172,7 +221,6 @@ const sendMessageDatabase = async (name, receiver, message) =>{
     console.log("Send message DB: ", err);
   }
 }
-
 
 // get all conversations of a user
 // - user - email of the user
@@ -303,6 +351,7 @@ module.exports = {
   createChat, 
   createGroup,
   sendMessage, 
+  sendMessage2, 
   getMessages, 
   deleteMessage,
   getConversations,
