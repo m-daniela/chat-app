@@ -21,7 +21,7 @@ const Settings = () => {
 
     return (
         <div className="settings_panel">
-            <Header title={"Privacy Settings"}/>
+            <Header title={"Settings"}/>
             <span className="side_container" >{email}</span>
             <div className="side_container participants">
                 {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}

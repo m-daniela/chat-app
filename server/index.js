@@ -71,7 +71,6 @@ app.post("/chats", (req, res) => {
     res.json([]);
   }
   else{
-    console.log("Kill me", user, room)
     data
       .getMessages(user, room)
       .then(data => {
@@ -90,14 +89,6 @@ app.post("/message", (req, res) =>{
   const message = req.body.message;
   data.sendMessage(message)
     .then(data => {
-      // const newMessage = {
-      //   id: data,
-      //   room: message.room, 
-      //   sender: message.from, 
-      //   text: message.message, 
-      //   date: message.date,
-      // };
-      // socket.broadcast.to(message.from).emit("message", newMessage);
       res.json(data);
     })
     .catch(err =>{
@@ -154,34 +145,15 @@ io.on('connection', (socket) => {
   // send a message to a room
   // broadcast the message to everyone but the sender
   // and add it to the database
-  socket.on('message', (message) => {
+  socket.on('message', ({message, type}) => {
     const user = data.current(socket.id);
-    console.log("Broadcast", user.username)
-    socket.broadcast.to(user.username).emit("message", message);
-
-    // const user = data.current(socket.id);
-    // const sender = message.from;
-    // const text = message.message;
-    // const date = message.date;
-    // const room = message.room;
-    // const receivers = message.receivers;
-
-    // data.sendMessage2(sender, room, receivers, text, date);
-    // console.log("Broadcast", user.username, room)
-    // // socket.broadcast.to(room).emit("message", {room, sender, text, date});
-    // socket.broadcast.to(user.username).emit("message", {room, sender, text, date});
-    // io.to(room).emit("message", {room, sender, text, date});
-
-    // const user = data.current(socket.id);
-    // const receivers = message.receivers;
-    // console.log(message);
-    // console.log("from", user);
-    // console.log("To", user.room);
-    // console.log("Tooo", receivers);
-
-    // socket.broadcast.to(user.username).emit("message", {sender: message.from, text: message.message, date: message.date});
-
-    // data.sendMessage(message.from, user.room, receivers, message.message, message.date);
+    console.log("Broadcast", user.username, type)
+    if (type === 2){
+      socket.broadcast.to(user.username).emit("message", message);
+    }
+    else{
+      socket.broadcast.to(message.room).emit("message", message);
+    }
   });
 
   // broadcast the fact that a user

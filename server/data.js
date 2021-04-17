@@ -70,6 +70,24 @@ const createChat = async (sender, receiver, date) =>{
   
 }
 
+const createChat2 = async (sender, receiver, date) =>{
+  const message = {
+    sender: "sys",
+    text: "Start chatting", 
+    date: convertToTimestamp(date),
+  }
+
+  try{
+    const participants = [sender, receiver];
+    createChatDatabase(sender, receiver, participants, message);
+    createChatDatabase(receiver, sender, participants, message);
+  }
+  catch(err){
+    console.log("Create chat: err");
+  }
+  
+}
+
 // create a group chat
 // each participant will get a new document with the
 // name of the chat as uid
@@ -86,6 +104,7 @@ const createGroup = async (sender, name, receivers, date) => {
 
   try{
     const participants = [sender, ...receivers];
+    console.log("Group", participants, receivers)
     createChatDatabase(sender, name, participants, message);
 
     for (const receiver of receivers){

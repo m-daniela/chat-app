@@ -31,7 +31,7 @@ const ChatWindow = () => {
     socket.on("message", (message) =>{
       console.log("You get here on message")
       console.log(message.room, current)
-      if (message.sender === current){
+      if (message.room === current || message.sender === current){
         // dispatch(addMessage(message));
         console.log(current)
         dispatch(getMessagesThunk({email, conversation: current}));
@@ -72,7 +72,7 @@ const ChatWindow = () => {
             .then(id => {
               console.log(id)
               dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
-              socket.emit('message', {id, text: enc, sender: email, date: dateFirebase, room: current});
+              socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
             })
             .finally(_ => console.log("WHY DID YOU FUCKING BREAK aaaaargh"))
           

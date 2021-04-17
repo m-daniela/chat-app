@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { SocketContext } from '../context/SocketContext';
-import { addConversation } from '../reducers/redux';
+import { addConversation, getConversationsThunk } from '../reducers/redux';
 import SideItem from './SideItem';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
@@ -85,6 +85,7 @@ const NewGroupChat = ({close}) =>{
 const ChatList = () => {
     const {socket} = useContext(SocketContext);
     const conversations = useSelector(state => state.conversations);
+    const email = useSelector(state => state.user.email)
     const dispatch = useDispatch();
     const [addChat, setAddChat] = useState(false);
     const [addGroup, setAddGroup] = useState(false);
@@ -93,14 +94,16 @@ const ChatList = () => {
         socket.on("new chat", (newChat) => {
             // not the best choice - this will add the chat with the same name
             // same for the group
-            dispatch(addConversation(newChat.chatName));
+            // dispatch(addConversation(newChat.chatName));
+            dispatch(getConversationsThunk({email}));
         });
         // eslint-disable-next-line
     }, [socket]);
 
     useEffect(() =>{
         socket.on("new group", (newChat) => {
-            dispatch(addConversation(newChat.chatName));
+            // dispatch(addConversation(newChat.chatName));
+            dispatch(getConversationsThunk({email}));
         });
         // eslint-disable-next-line
     }, [socket]);
@@ -117,43 +120,18 @@ const ChatList = () => {
 
     return (
         <div className="chat_list">
-            {/* {addChat ? <NewChat close={setAddChat}/> : <button className="side_item" onClick={addNewChat}>Add new chat</button>}
-            {addGroup ? <NewGroupChat close={setAddGroup}/> : <button className="side_item" onClick={addNewGroup}>Add new group</button>}
-            {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)} */}
-            {/* {!addChat ? <>
-                <button className="side_container" onClick={addNewChat}>Add chat</button>
-                {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
-                </>
-                :
-                <NewChat close={setAddChat}/>
-            } */}
             <div className="side_container buttons">
                 <button onClick={toggleChat}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Chat</>}</button>
                 <button onClick={toggleGroup}>{addGroup ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Group</>}</button>
             </div>
             {!addChat && !addGroup ? 
                 <>
-                {conversations.map(elem => <SideItem key={Math.random() * 1000} name={elem}/>)}
+                    {conversations.map(elem => <SideItem key={Math.random() * 1000} name={elem}/>)}
                 </>
                 :
                 <></>}
-            {addChat ?
-                <NewChat close={setAddChat}/>
-                :
-                <></>
-            }
-            {addGroup ?
-                <NewGroupChat close={setAddGroup}/>
-                :
-                <></>
-            }
-            {/* {!addChat ? <>
-                <button className="side_container" onClick={toggleChat}>Add chat</button>
-                {conversations.map(elem => <SideItem key={Math.random() * 100} name={elem}/>)}
-                </>
-                :
-                <NewChat close={setAddChat}/>
-            } */}
+            {addChat ? <NewChat close={setAddChat}/> : <></>}
+            {addGroup ? <NewGroupChat close={setAddGroup}/> : <></>}
         </div>
     )
 }
