@@ -31,11 +31,14 @@ const ChatWindow = () => {
     socket.on("message", (message) =>{
       console.log("You get here on message")
       console.log(message.room, current)
+      // TODO: fix this? 
       if (message.room === current || message.sender === current){
         // dispatch(addMessage(message));
         console.log(current)
         dispatch(getMessagesThunk({email, conversation: current}));
       }
+      console.log("?????", current)
+
     });
     // eslint-disable-next-line
   }, [current, dispatch, socket]);
@@ -61,10 +64,6 @@ const ChatWindow = () => {
 
       encryptMessage(participants, token, message)
         .then(enc => {
-          // this is, of course, not ok because the id is not present
-          // and the message will not be deleted
-          // will modify this later 
-          // socket.emit('message', {message: enc, from: email, room: current, date, receivers: participants});
           
           const msg = {message: enc, from: email, room: current, date, receivers: participants}
 
@@ -73,10 +72,7 @@ const ChatWindow = () => {
               console.log(id)
               dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
               socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
-            })
-            .finally(_ => console.log("WHY DID YOU FUCKING BREAK aaaaargh"))
-          
-          
+            });
 
           // dispatch(getMessagesThunk({email, conversation: current}));
 

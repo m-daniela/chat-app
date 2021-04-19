@@ -21,31 +21,29 @@ const Signup = () => {
     const {setToken} = useContext(E3Context);
 
     const onSubmitAction = async (e) =>  {
-        try{
-            e.preventDefault()
-            if (password === samePassword){
+        e.preventDefault()
+        if (password === samePassword){
 
-                register(email, password)
-                    .then(data =>{
-                        let user = data.user;
-                        const {uid} = user;
-                        e3register(email, password, setToken);
-                        dispatch(signup({uid, email, loggedIn: true}));
-                    })
-                    .then(_ => history.push("/"))
-                    .catch(err => console.log(err));
-            }
-            else{
-                setError({passNotMatching: "The passwords are not matching"});
-            }
+            register(email, password)
+                .then(data =>{
+                    let user = data.user;
+                    const {uid} = user;
+                    e3register(email, password, setToken);
+                    dispatch(signup({uid, email, loggedIn: true}));
+                })
+                .then(_ => history.push("/"))
+                .catch(error =>{
+                    switch(error.code){
+                        case "auth/email-already-in-use": setError({wrongEmail: error["message"]}); break;
+                        case "auth/weak-password": setError({wrongPass: error["message"]}); break;
+                        default: break;
+                    }
+                });
         }
-        catch (error){
-            switch(error.code){
-                case "auth/email-already-in-use": setError({wrongEmail: error["message"]}); break;
-                case "auth/weak-password": setError({wrongPass: error["message"]}); break;
-                default: break;
-            }
+        else{
+            setError({passNotMatching: "The passwords are not matching"});
         }
+
     }
 
     const onChangeEmail = text => {

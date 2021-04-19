@@ -28,12 +28,14 @@
     - [Extended Triple Diffie Hellamn](#extended-triple-diffie-hellamn)
     - [Double Ratchet](#double-ratchet)
     - [EdDSA signature](#eddsa-signature)
+    - [Sealed sender](#sealed-sender)
+    - [Security analyses](#security-analyses)
   - [MTProto](#mtproto)
     - [General description](#general-description)
-    - [Security analyses](#security-analyses)
+    - [Security analyses](#security-analyses-1)
   - [Signcryption](#signcryption)
     - [Signcryption](#signcryption-1)
-    - [Security analyses](#security-analyses-1)
+    - [Security analyses](#security-analyses-2)
   - [Letter Sealing](#letter-sealing)
   - [Threema](#threema)
   - [Group messaging](#group-messaging)
@@ -68,6 +70,8 @@
   - [Deniable encryption](#deniable-encryption)
   - [Federeation](#federeation)
   - [Fan-out](#fan-out)
+  - [Deniable encryption](#deniable-encryption-1)
+  - [SPDY](#spdy)
   - [Other websites](#other-websites)
 
 
@@ -630,121 +634,146 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 
 
 ### Extended Triple Diffie Hellamn
-- [x3dh](./PDF/Signal/x3dh.pdf)
-- key agreement protocol, it establishes a shared secret key between two parties who mutually auth each other based on public keys 
-- forward secrecy and crypto deniability
-- async - offline communication
+- [x3dh](./PDF/papers/signal/docs/x3dh.pdf)
+- Extended Triple Diffie Hellamn is the key exchange protocol used by Signal and provides forward secrecy and cryptographic deniability
+- It was designed for asynchronous communication, so the users need to provide some information to the server such that the others can establish the secret key without both being online; also, the public keys are used to authenticate the users
+- To prepare the setting, the communication will have 3 parties: the users, A (sender) and B (receiver), and the server
 
-- 3 phases
-	- Bob publshes his id key and prekeys to the server
-	- Alice gets the prekey bundle from the server, used to send the first message to Bob
-	- Bob recv the message from Alice
+- the algorithm used by the application needs the following parameters: a curve (X25519 or X448), a hash function (SHA 256 or 512) and information that identifies the application; it also needs an encoding function to encode the public key into a byte sequence
 
-**Publishing keys**
-- public keys - elliptic curve public keys (receiver - Bob)
-	- id key - uploaded once
-	- signed prekey - replaced after a time interval
-	- prekey signature - replaced after a time interval
-	- set of one-time prekeys - replaced at undefined times ?
-- private key corresp to previous signed prekey can be kept, but should be deleted at some point in order to keep forward secrecy
+- the keys are based on the elliptic curve previously chosen as parameter and they are as follows:
+  - long-term identity key - each party has one and they are public
+  - ephemeral key pair - generated at each run with the public key
+  - signed prekeys and a set of one-time prekeys - these are sent to the server so that the other party can establish the key exchange
+  - the shared secret is a 32 byte secret key
+
+- the protocol has 3 phases:
+
+**Key publishing**
+- B publishes his id key and prekeys to the server as follows:
+  - the id key is uploaded once
+  - the signed prekey and prekey signature are replaced after a time interval
+  - a set of one-time prekeys, which are changed after each run
+- the private keys of the previous signed prekeys should be deleted as fast as possible after they have decrypted the message, so forward secrecy can be kept
 
 
 **Initial message**
-- the prekey bundle (of the recv) should contain:
-	- id key
-	- signed prekey
-	- prekey signature
-	- one-time prekey (opt)
-- after the one-time prekey is sent, it should be deleted
-- the signature verification occurs
-- if the bundle doesn't contain the one-time prekey, the sender will compute an ephemeral key pair with their public key
--  key computations here
-- after the SK is computed, the sender deletes the ephemeral private key and the DH outputs 
-- computes associated data AD (maybe the metadata? since there might be certificates, usernames etc)
-- the initial message (from the sender) contains:
-	- id 
-	- ephemeral key 
-	- ids of the fetched prekeys used
-	- An initial ciphertext encrypted with some AEAD encryption scheme [4] using AD as associated data and using an encryption key which is either secret key or the output from some cryptographic PRF keyed by secret key
-- initial ciphertext has 2 roles:
-	- first message in post x3dh protocol
-	- sender's x3dh initial message
-- later can be used the same secret key or keys derived from it within the post-x3dh protocol
+- A gets the prekey bundle from the server, used to send the first message to B
+- the prekey bundle should contain the keys stated previously but the one-time prekeys are optional; if the server sends one, it should be then deleted
+- after the prekey signature verification is successful, A generates an ephemeral key pair and uses it, along with the signed prekey and identity key of B, to generate 3 key pairs that will compose the secret key; if the prekey bundle contains a one-time prekey, another key pair is generated using it and the ephemeral key
+- after the shared secret is computed, the ephemeral private key is deleted 
+- from the identity keys of the parties, an associated data sequence is generated, which may be have other additional information appended, such as identifying information, certificates, usernames etc.
+- the initial message contains:
+  - the identity and ephemeral keys of A
+  - information about B's used keys
+  - a ciphertext encrypted with an AEAD scheme which uses the associated data sequence and the encryption key is either the shared secret or a the output of a pseudo random function (PRF) keyed by the shared secret
 
-**Recv the initial message**
-- Bob retrieves Alice's id key and ephemeral key from the message
-- using them and the private id key and the private keys corresp to the signed prekey and the one-time prekey, Bob, the recv, obtains the secret key and deletes the DH values
-- bob constructs the associated data byte seq with the id key of the sender and his id key and decrypts using the secret key and deletes the one-time prekey private key (forward secrecy)
-- if the decryption fails, the secret key is deleted
-- like before, the secret key can be used later or derivations of it
+
+**Receiving the initial message**
+- to receive the initial message, B needs to obtain A's identity and ephemeral keys from the message
+- B then follows the same steps to compute the secret key and creates the AD sequence using the identity keys so he can decrypt the message using it and the shared secret
+- to keep th e forward secrecy, he deletes the one-time prekeys used for this message
+
+- in both cases, the parties may continue to use the same secret key or derivations of it after the exchange 
+
 
 **Security considerations**
 - authentication
-	- the parties may compare their id public keys (ex QR code scanning, compare pk fingerprints)
-	- if the auth is not performed, there is no guarantee that they are who they claim to be (mitm attacks possible then)
+	- the parties can compare their id public keys using an authenticated channel (ex QR code scanning, compare pk fingerprints)
+	- if they don't do this, there is no guarantee that the parties are who they claim to be
 
-- protocol replay
-	- if there is no one-time prekey from the sender, the message can be replayed to the recv and it might seem that the sender sent it more times and the same secret key might be derived
+- replay and key reuse
+  - if no one-time prekey is provided, the message can be replayed and accepted by the receiver
+  - this could raise problems because the same secret key can be derived in different runs
 	- to avoid 
-		- in a post-x3dh protocol - new enc key for the sender from a new random input (ex Diffie Hellman based ratcheting protocol)
+		- after the key exchange, a new encryption key for the sender can be negociated from a fresh input from the receiver
 		- blacklist observed messages
 		- replace old signed prekeys earlier
 
-
 - deniability
-	- no proof that that of the contents or that the communication took place
-	- [OBS - deniable encryption describes encryption techniques where the existence of an encrypted file or message is deniable in the sense that an adversary cannot prove that the plaintext data exists](https://en.wikipedia.org/wiki/Deniable_encryption)
+  - provides no proof that that of the contents or that the communication took place
 	- if one of the participants is collaborating with a third party, then proof of their communication can be provided
-
 
 - signatures
 	- if there is no signature verification - the server could provide forged prekeys => key compromise
-
 
 - key compromise
 	- compromise of private keys => could lead to impersonation or affect the security of secret key values
 	- mitigation (a kind of) - use of ephemeral keys and prekeys
 	- some compromise scenarios (pg 9)
 
-
 - server trust
-	- malicious server could cause communication failure, refuse to deliver messages
+	- malicious server could cause communication failure, can refuse to deliver messages
 	- if the parties are auth, the server might refuse to send the one time prekeys and then the forward secrecy of the secret key depends on the signed prekey's lifetime
 	- if one party attempts to drain the one-time prekeys of the other party, the server should prevent this (ex: rate limits on fetching the prekey bundles) - affects the forward secrecy
-
 
 - identity binding
 	- auth doesn't prevent identity misbinding/ unknown key share attacks
 	- an attacker could impersonate a party by presenting their prekey bundle as someone else's
-	- making it harder for the attacker to lie about their identity: add more identifying info in the associated data, hash more identifying info etc. 
+	- mitigation: add more identifying info in the associated data, hash more identifying info etc. 
 
 
 ### Double Ratchet
-- [double ratchet](./pdf/signal/doubleratchet.pdf)
-- after the key exchange, the parties are using the Double ratchet algorithm to send and receive messages
-- keys are derived for eveyr double ratchet message
-- uses KDF chains
-- kdf 
-  - a crypto function that takes a secret random KDF key and input data and the output should be indistiguishable from random
-  - the function should still be able to provide a random output, even if the key is known
-- kdf chain - when a part of the function output is used as output key, and another part is used to replace the kdf key and used for another input
-- properties:	
-  - resilience
-  - forward security
-  - break-in recovery
-- a double ratche session between two parties has a key for 3 chains:
-  - root chain
-  - sending chain
-  - receiving chain
-- on message exchange, the parteis exchange new DH pks and the output secrets become the inputs to the root chain
-- output keys from the root chains become new kdf keys for sending and recv chains
-- the sending and recv chains advance as each message is sent and recv (symmetric key ratchet)
+- [double ratchet](./pdf/papers/signal/docs/doubleratchet.pdf)
+- after the key exchange, the parties are using the Double ratchet algorithm to exchange messages
+- new keys are derived, combined with results from previous DH computations so that the keys cannot be recalculated later
+- this algorithm uses a cryptographic function, denoted KDF, which provides a seemingly random output from a random secret key and the input data
+- this is further expanded into KDF chains, which use as input and output key parts of the output of another KDF
+- this type of function then has the following properties, as stated in the paper:
+  - resilience - the output keys appear random if the keys are not known
+  - forward security - past keys appear random if the current ones are known
+  - break-in recovery - future keys appear random if the current ones are known
+- each party has 3 chains for each session: root, sending, receiving
+- a new concept, called DH ratchet, is described as follows: the newly exchanged DH secrets, during message exchange, become the input to the root chain and the outputs of the KDF are the keys for the sending and receiving chains  
+
+**Symmetric key ratchet**
+- the chains advance with each message sent and received and their unique output keys are used for the encryption and decryption; this is called a  symmetric key ratchet and the unique keys are message keys
+- they don't provide break-in recovery because the input ot the KDF is constant and they can be stored unordered or lost messages can be easily handled
+
+**Double Ratchet**
+- to prevent previous and future messages compromise, the protocol combines the symmetric key ratchet and the DH ratchet, resulting in the double ratchet algorithm
+- a new DH key pair is generated, being the current ratchet key pair; when a new ratchet key pair is received from another party (from the message header), the current one is replaced
+- when a new message is sent or received, the symmetric key ratchet step is applied on the corresponding chain (sending or receiving)
+- in this way, if one of the private keys is compromised, it will soon be replaced with another one, providing both forward and backward secrecy
+
+- in case the messages are sent out of order or some are lost, the messages header contains the number in the sending chian and the length in the previous sending chain /x, so the receiver will store the message keys for those messsages
+
+- pg 20
 
 
 ### EdDSA signature
 - [xeddsa](./PDF/Signal/xeddsa.pdf)
-- enables use of a single key pair for ECDH signatures
-- signatures are defined on [twisted Edwards curves](https://en.wikipedia.org/wiki/Twisted_Edwards_curve)
+- create and verify EdDSA signatures using the key pair defined for X25519 or X448
+- this scheme is defined as xeddsa with the extension vxeddsa, which provides a verifiable random function(VRF)
+- signatures are defined on [twisted Edwards curves](https://en.wikipedia.org/wiki/Twisted_Edwards_curve) and use the SHA 512 hash function
+
+- the input parameters for the signature algorithm are the (Montgomery) private key mod integer q, the message and 64 bytes of secure random data and for the verification algorithm: the (Montgomery) public key, the message and the signature 
+
+- the signatures are randommized 
+- signing time is constant
+- it is considered safe to use the same key pair to produce the signatures
+
+
+### Sealed sender
+- [sealed sender](./pdf/papers/signal/18.%20Technology%20preview%20Sealed%20sender%20for%20Signal%20-%20signal-org-blog-sealed-sender-.pdf)
+- available for the Signal app
+- the users have a certificate that attests their identity; they are periodically changed and contain the phone numner, public identity key and the expiration date; it can be included in the messages too
+
+- the users derive delivery token from the profile key, which is 96 bits long, and register it to the services; in order to send the sealed sender message, the user needs to prove that they know the delivery token for that user
+- the profile keys are also encrypted and the profiles are shared between the contacts
+
+- but the Signal app allows the users to receive sealed sender messages from outside their contacts list, but they won't be able to authenticate the senders first
+
+- the messages are encrypted in a normal fashion, but then the sender certificate and the ciphertext are also encrypted  
+
+### Security analyses
+
+- [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf)
+- double ratchet started with TextSecure, which was the app developed before Signal and it combined the ideas from OTR's asymmetric ratchet with a symmetric ratchet; this one didn't include parts from the DH exchange, it only derived a new symmetric key; this was reffered to as Axolotl ratchet
+
+- unknown key share attack (UKS) - hones user tries to communicate with another honest user 
+
+
 
 
 
@@ -1671,9 +1700,16 @@ A padding oracle is a system that behaves differently depending on whetherthe pa
 - [wiki](https://en.wikipedia.org/wiki/Fan-out_(software))
 - messaging pattern used to model an information exchange that implies the delivery (or spreading) of a message to one or multiple destinations possibly in parallel, and not halting the process that executes the messaging to wait for any response to that message.
 
+## Deniable encryption
+- [OBS - deniable encryption describes encryption techniques where the existence of an encrypted file or message is deniable in the sense that an adversary cannot prove that the plaintext data exists](https://en.wikipedia.org/wiki/Deniable_encryption)
+
+## SPDY
+- https://en.wikipedia.org/wiki/SPDY
+- was an experimental HTTP that would've been faster
+
+
 ## Other websites
 - https://www.securemessagingapps.com/
-- 
 
 
 

@@ -84,6 +84,7 @@ app.post("/chats", (req, res) => {
   
 });
 
+// add message to the database
 app.post("/message", (req, res) =>{
   console.log("Server POST /message");
   const message = req.body.message;
@@ -97,6 +98,7 @@ app.post("/message", (req, res) =>{
     })
 });
 
+// delete message from database
 app.post("/deleteMessage", (req, res)=>{
   console.log("Server POST /deleteMessage");
 
@@ -107,9 +109,10 @@ app.post("/deleteMessage", (req, res)=>{
   data.deleteMessage(user, chat, id)
     .then(data => res.json([]))
     .catch(err => res.json(["123"]))
-
 });
 
+
+// delete chat from database
 app.post("/chat", (req, res)=>{
   console.log("Server  POST /chat");
 
@@ -145,6 +148,8 @@ io.on('connection', (socket) => {
   // send a message to a room
   // broadcast the message to everyone but the sender
   // and add it to the database
+  // type - the number of participants in the chat
+  // TODO: find a better way to handle this
   socket.on('message', ({message, type}) => {
     const user = data.current(socket.id);
     console.log("Broadcast", user.username, type)

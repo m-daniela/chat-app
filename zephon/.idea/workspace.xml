@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="179998f4-829b-408e-9afa-bc00c38bc830" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/(2016) iMessage.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/Papers/Signal/signal-org-blog-sealed-sender-.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/Signal/doubleratchet.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/Signal/sesame.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/Signal/x3dh.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/Signal/xeddsa.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/PDF/more.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/convert.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/crypto.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Notes/crypto.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Notes/work.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Notes/work.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chatWindow/ChatWindow.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chatWindow/ChatWindow.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/reducers/redux.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/reducers/redux.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/userDetails/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/userDetails/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/userDetails/Signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/userDetails/Signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/ServerCalls.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/ServerCalls.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/styles/_forms.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/_forms.scss" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="D:\Programs\Intellij\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1rNk8geWxH5vmfmHND35Vn1m0e9" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="179998f4-829b-408e-9afa-bc00c38bc830" name="Default Changelist" comment="" />
+      <created>1618823776440</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1618823776440</updated>
+    </task>
+    <servers />
+  </component>
+</project>

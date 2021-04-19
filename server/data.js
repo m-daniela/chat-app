@@ -15,7 +15,7 @@ admin.initializeApp({
 const db = admin.firestore();
 const users = {};
 
-
+// convert the date to a firestore timestamp
 const convertToTimestamp = (date) =>{
   const timestamp = admin.firestore.Timestamp.fromDate(new Date(date));
   return timestamp;
@@ -53,24 +53,6 @@ const addUser = async (email) =>{
 // - receiver - the one added to the chat
 // - date - date used for the default message
 const createChat = async (sender, receiver, date) =>{
-  const message = {
-    sender: "sys",
-    text: "Start chatting", 
-    date: convertToTimestamp(date),
-  }
-
-  try{
-    const participants = [sender, receiver];
-    createChatDatabase(sender, receiver, participants, message);
-    createChatDatabase(receiver, sender, participants, message);
-  }
-  catch(err){
-    console.log("Create chat: err");
-  }
-  
-}
-
-const createChat2 = async (sender, receiver, date) =>{
   const message = {
     sender: "sys",
     text: "Start chatting", 
@@ -170,31 +152,6 @@ const sendMessage = async (message) => {
       sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
     }
     return messageId;
-  }
-  
-
-}
-
-
-const sendMessage2 = async (sender, room, receivers, text, date) => {
-  
-  const message = {
-    sender,
-    text, 
-    date: convertToTimestamp(date),
-  }
-
-  if (receivers.length === 2){
-    const [recv1, recv2] = [...receivers];
-    console.log("Send messages: ", recv1, recv2, receivers)
-
-    sendMessageDatabase(recv1, recv2, message);
-    sendMessageDatabase(recv2, recv1, message);
-  }
-  else{
-    for (const receiver of receivers){
-      sendMessageDatabase(room, receiver, message);
-    }
   }
   
 
@@ -313,28 +270,6 @@ const deleteMessage = async (user, chat, messageId) =>{
 // user - email of the user that deletes the chat
 // chat - chat name
 const deleteConversation = async (user, chat) =>{
-  const batch = db.batch();
-  // working version but it keeps the messages
-  // const conversation = await db
-  //   .collection(cts.users)
-  //   .doc(user)
-  //   .collection(cts.conversations)
-  //   .doc(chat)
-  //   .delete();
-
-  // delete the messages
-  // const messages = await db
-  //   .collection(cts.users)
-  //   .doc(user)
-  //   .collection(cts.conversations)
-  //   .doc(chat)
-  //   .collection(cts.messages)
-  //   .get();
-
-  // messages.forEach(snapshot => {
-  //   snapshot.ref.delete();
-  // });
-
 
   const conversation = await db
     .collection(cts.users)
@@ -353,6 +288,7 @@ const deleteConversation = async (user, chat) =>{
   console.log("Delete conversation: conversation deleted");
 }
 
+// add the user to the room
 const join = (chatid, username, room) =>{
     const user = {chatid, username, room};
     users[chatid] = {chatid, username, room};
@@ -369,8 +305,7 @@ module.exports = {
   current, 
   createChat, 
   createGroup,
-  sendMessage, 
-  sendMessage2, 
+  sendMessage,
   getMessages, 
   deleteMessage,
   getConversations,

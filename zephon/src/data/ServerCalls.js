@@ -23,7 +23,6 @@ export const getMessages = (user, room) =>{
 // - message - the message, containing the
 // the actual message, room, from, receivers, date
 export const addMessageServer = (message) =>{
-    console.log("????")
     return axios
         .post(addMessageUrl, {message})
         .then(res => res.data)

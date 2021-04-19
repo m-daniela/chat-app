@@ -30,6 +30,7 @@ export const getConversationsThunk = createAsyncThunk(
 export const getMessagesThunk = createAsyncThunk(
     "chat/getMessages",
     async ({email, conversation}, thunkAPI) => {
+        console.log("how", email, conversation)
         const response = await getMessages(email, conversation);
         return response;
     }
@@ -83,9 +84,6 @@ const conversationsSlice = createSlice({
     reducers: {
         addConversation: (state, action) => {state.push(action.payload)},
         deleteConversation: (state, action) =>state.filter(element => element !== action.payload),
-        //     const newConversations = 
-        //     state = newConversations;
-        // },
         clearConversations: {
             reducer: (state, action) => action.payload,
             prepare: () => {return {payload: initialConversationsState}}
@@ -96,7 +94,8 @@ const conversationsSlice = createSlice({
     }
 });
 
-
+// selected chat reducer
+// change the current chat selected by the user
 const selectedSlice = createSlice({
     name: "selected",
     initialState: initialSelectedConversationState,

@@ -15,23 +15,17 @@ const Login = () => {
     const history = useHistory();
 
     const onSubmitAction = async (e) => {
-        try{
-            e.preventDefault()
-            signin(email, password)
-                .then(data => {
-                    const user = data.user;
-                    const {uid} = user;
-                    dispatch(login({uid, email, loggedIn: true}));
-                    e3login(email, password, setToken);
-                    dispatch(getConversationsThunk({email}))
-                })
-                .then(_ => history.push("/"))
-                .catch(err => console.log(err));
-        }
-        catch (error){
-            console.log(error);
-            setError(error.message);
-        }
+        e.preventDefault()
+        signin(email, password)
+            .then(data => {
+                const user = data.user;
+                const {uid} = user;
+                dispatch(login({uid, email, loggedIn: true}));
+                e3login(email, password, setToken);
+                dispatch(getConversationsThunk({email}))
+            })
+            .then(_ => history.push("/"))
+            .catch(error => setError(error.message));
     }
 
     const onChangeEmail = text => {
