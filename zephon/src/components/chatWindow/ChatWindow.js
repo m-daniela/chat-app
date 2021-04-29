@@ -62,7 +62,10 @@ const ChatWindow = () => {
       const date = new Date();
       const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
 
-      encryptMessage(participants, token, message)
+      // the current user doesn't need to be passed in the auth enc function
+      const part = participants.filter(elem => elem !== email)
+
+      encryptMessage(part, token, message)
         .then(enc => {
           
           const msg = {message: enc, from: email, room: current, date, receivers: participants}

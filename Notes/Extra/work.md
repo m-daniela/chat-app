@@ -1,9 +1,10 @@
+
 ---
 format: markdown
-title: Thesis
+title: heh
+author: meh
 
 ---
-
 
 - [1. Introduction](#1-introduction)
   - [The application](#the-application)
@@ -36,7 +37,6 @@ title: Thesis
     - [EdDSA signature](#eddsa-signature)
     - [Sealed sender](#sealed-sender)
     - [Security analyses](#security-analyses)
-    - [Whatsapp](#whatsapp)
   - [MTProto](#mtproto)
     - [General description](#general-description)
     - [Security analyses](#security-analyses-1)
@@ -79,7 +79,6 @@ title: Thesis
   - [Fan-out](#fan-out)
   - [Deniable encryption](#deniable-encryption-1)
   - [SPDY](#spdy)
-  - [Out of bound verification](#out-of-bound-verification)
   - [Other websites](#other-websites)
 
 
@@ -765,9 +764,7 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 ### Sealed sender
 - [sealed sender](./pdf/papers/signal/18.%20Technology%20preview%20Sealed%20sender%20for%20Signal%20-%20signal-org-blog-sealed-sender-.pdf)
 - available for the Signal app
-- this feature provides sender anonimity because the identity of the sender is hidden from the service provider
-
-- the users have a certificate that attests their identity; they are periodically changed and contain the phone number, public identity key and the expiration date; it can be included in the messages too
+- the users have a certificate that attests their identity; they are periodically changed and contain the phone numner, public identity key and the expiration date; it can be included in the messages too
 
 - the users derive delivery token from the profile key, which is 96 bits long, and register it to the services; in order to send the sealed sender message, the user needs to prove that they know the delivery token for that user
 - the profile keys are also encrypted and the profiles are shared between the contacts
@@ -781,98 +778,8 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 - [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf)
 - double ratchet started with TextSecure, which was the app developed before Signal and it combined the ideas from OTR's asymmetric ratchet with a symmetric ratchet; this one didn't include parts from the DH exchange, it only derived a new symmetric key; this was reffered to as Axolotl ratchet
 
-- unknown key share attack (UKS) - is a type of attach where a communication between two honest users is targeted by an adversary at key exchange; one of the users thinks that they shared key with the recipient, but the recipient is unknowingly sharing the key with the attacker; this attack can be mitigated by including both user identities in the key derivation function 
-- this type of vulnerability was present in the TextSecure protocol and is not prevented by Signal, since the key derivation is not based on the identities of the users too 
+- unknown key share attack (UKS) - hones user tries to communicate with another honest user 
 
-- the paper focuses on the "multi stage AKE protocol" part of Signal
-
-- the paper defines the following threat model:
-- the network is fully controlled by the adversary
-- the authentication is implicit, meaning that the intended party can compute the key /x
-- side channel attacks are not taken into consideration and the out of band verifications of the long and mid term keys is assumed
-
-
-- [21 sealed sender - improvements](./pdf/papers/signal/21.%20Improving%20Signal’s%20Sealed%20Sender%20-%20ndss21.pdf)
-- according to this paper, the anonimity that this feature offers to provide is broken if more messages are sent
-- the attack proposed is of the statistical disclosure attack (sda) type and uses the delivery receipts 
-
-- the sealed sender feature hides the identity of the sender from the server or any third party and can be decrypted by the receiver, who will then learn the identity of the sender from the payload
-- the identity of he sender is included in the payload to be used later for message authentication
-- a delivery token of 96 bit length is derived form the user profile of the sender so the sender proves that they know the receiver -> this is used to prevent spam
-
-- the threat model presented is based on a type of sda, which can be used on message timings, so a link between the sender and the receiver can be made
-- this is plausible with the assumption that the response from the receiver is fast; this is facilitated by the usage of delivery receipts 
-- the delivery receipts are enabled by default and they tell the sender whether the message was only delivered or it was received by the recipient's device 
-
-- the attack is based on the fact that the sender appears as a recipient in the time period immediately after the initial receiver got the message
-- computations and other details at 6-8
-- this concludes that the average number of messages exchanged between the two parties would be under 5 to obtain the identity of the sender
-
-- proposal: sealed sender conversations - the initiator of the conversation is not leaked (3 solutions are briefly presented at page 2)
-- this improvement would target the whole conversation between two users, not just the messages
-- the identity of the receiver can be visible, but the sender's shouldn't be during the whole lifespan of the conversation
-
-
-
-**Extra**
-
-- [Statistical deisclosure control](https://en.wikipedia.org/wiki/Statistical_disclosure_control) 
-- technique that ensures that ensurea that no persona or organization is identifiable from the results of an analysis of survey or administrative data or in therelease of microdata
-- or protect the confidentiality of the respondets and subjs of the research
-- related to the statistical disclosure attacks
-
-
-*Terminology used*
-
-- target - bob, user being monitored
-- associate - alice, the user sending msg in the attack window to the target
-- non-associate - charlie, not sending msg to the target
-- attack window - attack time frame, spanning multiple messages to the target
-- target epoch - single epoch during the attack window immediately after a sealed sender msg to the receiver
-- random epoch - same len as target epoch, but randomly chosen and ind from bob
-
-
-
-### Whatsapp
-
-
-- [wapp whitepaper](./pdf/papers/signal/WA_Security_WhitePaper.pdf)
-- whatsapp follows the Signal protocol for registration and key exchange; it also implements the key chains used to derive message keys from the double ratchet algorithm
-- end-to-end encryption is enabled by default, from 201?
-- the attachments are encrypted with AES 256 in cbc mode and a random IV and a MAC of the ciphertext is appended using HMAC SHA256; two 32 byte keys are randomly generated, for AES 256 and a HMAC SHA256 ephemeral one /x
-- the attachment is uploaded to a "blob store"? and the encryption key, ephemeral key and the SHA 256 hash of the encrypted blob and a pointer to the blob store /x is sent to the recipient
-- the recipient will then obtain the keys, retrieve the encrypted blob, verify the hash and the MAC and then decrypt the message
-
-- to verify the identities of other participants, the users can scan their QR code
-
-- for the transport layer, [Noise Protocol framework](https://noiseprotocol.org/noise.html) is used, with curve25519, aes gcm, sha 256
-
-**Groups**
-
-- for groups, Whatsapp uses a "server-side fan-out" method for sending the encrypted messages to each member; this means that the sender transmits a single message to the server and the server will distribute it to each participant
-- this uses pairwise encryption and the Sender Keys component of the Signal protocol /x
-
-- first message:
-- sender generates a 32 byte chain key and a signature key pair, over curve25519
-- the chain key and the public signature key are combined and form a Sender Key message which will be individually encrypted and send using the pairwise model to each member
-
-- the rest of the messages:
-- a new message key is derived from the chain key and it is updated
-- the message is encrypted using AES 256 CBC and signed with the signeture key 
-- the sender then transmits the message to the server which forwards it in a fan-out fashion to the particpants
-
-- with the chain key, the forward secrecy is maintained and the sender key of each participant is reset when one member leaves
-
-
-**Calling**
-
-- video and voice calls are also encrypted
-- after a session is initialized, the initiator generates a random 32 byte SRTP master secret /x and sends an encrypted message containing it to the recipient
-
-**Analysis**
-- [2016-17 analysis](./pdf/papers/signal/WhatsApp%20Security%20Paper%20Analysis%2036.pdf)
-- this analysis paper mentions a lack of a thread model in the whitepaper and they provide one that can break the protocol either by decrypting the ciphertext of more messages or by impersonating a user
-- the issue found is that after, the session is established, some of the parameters of the same session are used, unless an external event (device change, reinstalling the app) occurs, and without scanning the QR code (the parties verifying each other's identity), MITM attacks are possible so the integrity of the messages is at risk so another verification step is recommended
 
 
 
@@ -1655,10 +1562,8 @@ The functionalities provided by the application are as follows:
 
 ## General flow
 
-![Use case diagram](Media/Diagrams/usecase.png)
-
 <figure>
-  <img src="Media/Diagrams/usecase.png" max-width="500px" alt="img">
+  <img src="./Media/Diagrams/usecase.png" max-width="500px" alt="img">
   <figcaption>Use case diagram</figcaption>
 <figure>
 
@@ -1850,10 +1755,6 @@ A padding oracle is a system that behaves differently depending on whetherthe pa
 ## SPDY
 - https://en.wikipedia.org/wiki/SPDY
 - was an experimental HTTP that would've been faster
-
-## Out of bound verification
-- https://doubleoctopus.com/security-wiki/authentication/out-of-band-authentication/
-- the authentication process also happens on a channel separate from the primary one 
 
 
 ## Other websites
