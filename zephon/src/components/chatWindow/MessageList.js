@@ -8,17 +8,16 @@ import { deleteMessageChat } from '../../data/ServerCalls';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
 
-/*
-Message List and Message
-- decryption happens in Message, using the keys
-*/
-
+// Message
+// displays the message 
+// the deletion option is bound to each message
 const Message = ({message}) => {
   const dispatch = useDispatch();
   const email = useSelector(state => state.user.email);
   const current = useSelector(state => state.selected);
   const [author, setAuthor] = useState("other");
 
+  // delete the message
   const deleteUserMessage = () =>{
     const choice = confirmDialog("this message");
     if(choice){
@@ -28,6 +27,7 @@ const Message = ({message}) => {
     }
   }
 
+  // if the sender is the current user, give the message block different style
   useEffect(() => {
     if (message.sender === email){
       setAuthor("current");
@@ -53,12 +53,16 @@ const Message = ({message}) => {
   )
 }
 
+// Message List
+// message decryption happens here, using the participant's key 
+// the messages are displayed in a container that is automatically scrolled to the bottom 
 const MessageList = () => {
   const messages = useSelector(state => state.chat.messages);
   const {token} = useContext(E3Context);
   const participants = useSelector(state => state.chat.participants);
-  const [newMessages, setNewMessages] = useState([])
+  const [newMessages, setNewMessages] = useState([]);
 
+  // decrypt the messages that are in the current state
   useEffect(() => {
     getDecryptedMessages(participants, token, messages)
       .then(msg => setNewMessages(msg))
@@ -66,6 +70,7 @@ const MessageList = () => {
     // eslint-disable-next-line
   }, [messages])
 
+  // scroll to the bottom of the container
   useEffect(() => {
     const container = document.querySelector(".message_list");
     container.scrollTop = container.scrollHeight;

@@ -6,6 +6,13 @@ import { getConversationsThunk, login } from '../reducers/redux';
 import { E3Context } from '../context/E3Context';
 import { e3login } from '../services/encryption';
 
+
+// Login
+// the user login logic
+// obtains the user token and the conversations
+// on successful login, the user is redirrected to the main page
+// otherwise, the error message is shown
+// the link for the Signup page is here
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

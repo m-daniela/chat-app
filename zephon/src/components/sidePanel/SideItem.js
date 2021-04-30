@@ -6,12 +6,9 @@ import { SocketContext } from '../context/SocketContext';
 import { changeConversation, deleteConversation, getMessagesThunk } from '../reducers/redux';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
-
-
-/* 
-- chat item on the left
-- socket emit "join" on click
-*/
+// Side item
+// displays the chats in the ChatList
+// the deletion option is present here
 const SideItem = ({name}) => {
     const dispatch = useDispatch();
     const email = useSelector(state => state.user.email);
@@ -23,10 +20,10 @@ const SideItem = ({name}) => {
         socket.emit("join", ({username: email, room: name}));
     }
 
+    // delete the chat 
     const handleDelete = ()=>{
         const choice = confirmDialog(`chat ${name}`);
         if (choice){
-            console.log("adding deletion logic")
             deleteConversationUser(email, name)
                 .then(_ => {
                     dispatch(changeConversation(""));
@@ -35,7 +32,6 @@ const SideItem = ({name}) => {
                 })
                 .catch(err => console.log(err));
         }
-
     }
 
     return (

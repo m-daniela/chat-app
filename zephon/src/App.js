@@ -9,7 +9,7 @@ import ChatWindow from './components/chatWindow/ChatWindow'
 import SidePanel from './components/sidePanel/SidePanel'
 import Login from './components/userDetails/Login'
 import Signup from './components/userDetails/Signup'
-import Settings from './components/settingsPanel/Settings';
+import Info from './components/infoPanel/Info';
 import SocketProvider from './components/context/SocketContext';
 import E3Provider from './components/context/E3Context';
 
@@ -21,7 +21,7 @@ export const ChatZone = () => {
       {loggedIn ? <>
           <SidePanel />
           <ChatWindow />
-          <Settings />
+          <Info />
         </> :  
         <Redirect to="/login"/>
       }

@@ -2,6 +2,8 @@ import { authUrl, jwtUrl } from "../../constants/Constants";
 import axios from "axios";
 import { EThree } from '@virgilsecurity/e3kit-browser';
 
+// obtain the Virgil Token that will be used for user login/ signup
+// in: config - obj containing configuration headers
 const getVirgilToken = async (config) => {
     const response = await axios.get(jwtUrl, config)
     if (response.status !== 200) {
@@ -10,6 +12,12 @@ const getVirgilToken = async (config) => {
     return response.data.virgilToken;
 }
 
+// obtain the user token from the key server if it was registered before
+// in: 
+// user - string, the email of the user
+// password - string, the password of the user
+// setToken - function, sets the user token in the context
+// out: the user token is set and message encryption/ decryption is possible
 export const e3login = (user, password, setToken) => {
     axios.post(authUrl, {user})
         .then(res => res.data)
@@ -36,6 +44,12 @@ export const e3login = (user, password, setToken) => {
 }
 
 
+// register the new user on the key server and set the token
+// in: 
+// user - string, the email of the user
+// password - string, the password of the user
+// setToken - function, sets the user token in the context
+// out: the user token is set and message encryption/ decryption is possible
 export const e3register = (user, password, setToken) => {
     axios.post(authUrl, {user})
         .then(res => res.data)
@@ -61,12 +75,22 @@ export const e3register = (user, password, setToken) => {
         .catch(err => console.log(err));
 }
 
+// obtain the public key of the user/s
+// not used
 export const getPublicKey = (email, eThree, setPublicKey) => {
     eThree.findUsers(email)
         .then(pk => {setPublicKey(pk); console.log("help", email, pk)})
         .catch(err => console.log(err));
 }
 
+
+// encrypt the message using the public keys of the recipients
+// TODO: optimize this part, maybe, by sending the public keys directly, not fetching them every time
+// in:
+// participants - list of strings with the emails of the participants
+// eThree - obj, the current user token 
+// message - string, the text of the message
+// out: the encrypted message or an empty string if something goes wrong
 export const encryptMessage = async (participants, eThree, message) =>{
 
     try{
@@ -78,9 +102,15 @@ export const encryptMessage = async (participants, eThree, message) =>{
         console.log(e);
         return "";
     }
-
 }
 
+
+// obtain the decrypted messages
+// in: 
+// participants - list of strings with the emails of the participants
+// eThree - obj, the current user token
+// messages - list of strings with the encrypted messages
+// out: list of strings with the decrypted messages or an empty list if something goes wrong
 export const getDecryptedMessages = async (participants, eThree, messages) =>{
 
     try{
@@ -101,9 +131,8 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                     };
                     newMessages.push(newMessage);
                 } catch(err){
-                    console.log("Why is this happening now", err)
+                    console.log(err)
                 }
-                
             }
         }
         return newMessages;
@@ -112,5 +141,4 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
         console.log(e);
         return [];
     }
-
 }

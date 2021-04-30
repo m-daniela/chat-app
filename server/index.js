@@ -152,7 +152,7 @@ io.on('connection', (socket) => {
   // TODO: find a better way to handle this
   socket.on('message', ({message, type}) => {
     const user = data.current(socket.id);
-    console.log("Broadcast", user.username, type)
+    console.log("Broadcast", user.username, message.room)
     if (type === 2){
       socket.broadcast.to(user.username).emit("message", message);
     }
@@ -174,28 +174,49 @@ io.on('connection', (socket) => {
   // add a new chat
   // broadcast to the receiver 
   // add it to the databse
+  // socket.on("new chat", (chat) =>{
+  //   const receiver = chat.chat;
+  //   const sender = chat.sender;
+  //   const date = chat.date;
+
+  //   data.createChat(sender, receiver, date)
+  //   io.emit("new chat", {chatName: receiver});
+  // });
+
+  // // add a new group chat
+  // // broadcast to the receivers
+  // // add it to the database
+  // socket.on("new group", (chat) =>{
+  //   const name = chat.chat;
+  //   const receivers = chat.receivers;
+  //   const sender = chat.sender;
+  //   const date = chat.date;
+
+  //   data.createGroup(sender, name, receivers, date)
+  //   io.emit("new group", {chatName: name});
+  // });
+  
   socket.on("new chat", (chat) =>{
-    const receiver = chat.chat;
-    const sender = chat.sender;
-    const date = chat.date;
-
-    data.createChat(sender, receiver, date)
-    io.emit("new chat", {chatName: receiver});
-  });
-
-  // add a new group chat
-  // broadcast to the receivers
-  // add it to the database
-  socket.on("new group", (chat) =>{
     const name = chat.chat;
     const receivers = chat.receivers;
     const sender = chat.sender;
     const date = chat.date;
+    
+    if (name){
+      data.createGroup(sender, name, receivers, date)
+        .then(_ => io.emit("new chat", {chatName: name}));
+      
+    }
+    else{
+      data.createChat(sender, receivers, date)
+        .then(_ => io.emit("new chat", {chatName: sender}));
+      
+    }
 
-    data.createGroup(sender, name, receivers, date)
-    io.emit("new group", {chatName: name});
+    
+    
   });
-  
+
 
   socket.on('disconnect', () => {
     console.log('user disconnected');

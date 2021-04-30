@@ -2,6 +2,10 @@ import React, {useState} from 'react'
 import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
 
+
+// Message input
+// handles the message text and attachments
+// this information is sent to the ChatWindow
 const MessageInput = ({addMessage}) => {
   const [message, setMessage] = useState("");
 

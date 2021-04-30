@@ -1,7 +1,7 @@
 
 import firebase from "firebase";
 
-
+// server communication urls
 export const port = 5000;
 export const baseUrl = `http://localhost:${port}/`;
 export const chatsUrl = `${baseUrl}chats`;
@@ -11,6 +11,8 @@ export const deleteChatUrl = `${baseUrl}chat`;
 export const authUrl = `${baseUrl}auth`;
 export const jwtUrl = `${baseUrl}virgil-jwt`;
 
+
+// dialog 
 export const confirmDialog = (message) =>{
   return window.confirm(`Are you sure you want to delete ${message}?`);
 }

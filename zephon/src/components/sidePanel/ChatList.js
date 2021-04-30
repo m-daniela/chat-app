@@ -5,83 +5,13 @@ import { addConversation, getConversationsThunk } from '../reducers/redux';
 import SideItem from './SideItem';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
+import GroupChat from './GroupChat';
+import PrivateChat from './PrivateChat';
 
-
-/*
-Chat List and New Chat
-- Chat List 
-    - add new chat
-    - socket on "new chat"
-- New Chat - socket emit "new chat"
-*/
-const NewChat = ({close}) =>{
-    const [newChat, setNewChat] = useState("");
-    const {socket} = useContext(SocketContext);
-    const email = useSelector(state => state.user.email);
-
-    const searchUser = (e) =>{
-        e.preventDefault();
-        const date = new Date();
-        socket.emit("new chat", {chat: newChat, sender: email, date});
-        close(false);
-    }
-
-    return (
-        <form 
-            className="search_input" 
-            onSubmit={(e) => searchUser(e)}>
-            <label>
-                Username or email
-                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)}/>
-            </label>
-            <button type="submit">Add</button>
-        </form>
-    );
-}
-
-
-const NewGroupChat = ({close}) =>{
-    const [newChat, setNewChat] = useState("");
-    const [current, setCurrent] = useState("");
-    const [participants, setParticipants] = useState([]);
-    const {socket} = useContext(SocketContext);
-    const email = useSelector(state => state.user.email);
-
-    const searchUser = (e) =>{
-        e.preventDefault();
-        const date = new Date();
-        socket.emit("new group", {chat: newChat, sender: email, receivers: participants, date});
-        close(false);
-    }
-
-    // fix fix fix
-    const addMoreUsers = (e) =>{
-        e.preventDefault();
-        setParticipants([...participants, current]);
-        setCurrent("");
-    }
-
-    return (
-        <form 
-            className="search_input" 
-            onSubmit={(e) => searchUser(e)}>
-            <label>
-                Chat name
-                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)}/>
-            </label>
-            <label>
-                Username or email
-                <input type="text" value={current} onChange={(e) => setCurrent(e.target.value)}/>
-            </label>
-            <button onClick={(e) => addMoreUsers(e)}>Add another email</button>
-            <button type="submit">Add</button>
-        </form>
-    );
-}
-
-// button 1 - make add simple chat visible
-// button 2 - make add group visible
-
+// Chat list
+// display the chats and the buttons for adding other chats
+// if the PrivateChat form is open, the add button will change to Close and the chat list will disappear
+// same if the GroupChat form is open
 const ChatList = () => {
     const {socket} = useContext(SocketContext);
     const conversations = useSelector(state => state.conversations);
@@ -95,20 +25,13 @@ const ChatList = () => {
             // not the best choice - this will add the chat with the same name
             // same for the group
             // dispatch(addConversation(newChat.chatName));
+            console.log("new chat")
             dispatch(getConversationsThunk({email}));
         });
         // eslint-disable-next-line
     }, [socket]);
 
-    useEffect(() =>{
-        socket.on("new group", (newChat) => {
-            // dispatch(addConversation(newChat.chatName));
-            dispatch(getConversationsThunk({email}));
-        });
-        // eslint-disable-next-line
-    }, [socket]);
-
-    const toggleChat = () =>{
+    const togglePrivate = () =>{
         setAddChat(!addChat);
         setAddGroup(false);
     }
@@ -121,7 +44,7 @@ const ChatList = () => {
     return (
         <div className="chat_list">
             <div className="side_container buttons">
-                <button onClick={toggleChat}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Chat</>}</button>
+                <button onClick={togglePrivate}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Chat</>}</button>
                 <button onClick={toggleGroup}>{addGroup ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Group</>}</button>
             </div>
             {!addChat && !addGroup ? 
@@ -130,8 +53,8 @@ const ChatList = () => {
                 </>
                 :
                 <></>}
-            {addChat ? <NewChat close={setAddChat}/> : <></>}
-            {addGroup ? <NewGroupChat close={setAddGroup}/> : <></>}
+            {addChat ? <PrivateChat close={setAddChat}/> : <></>}
+            {addGroup ? <GroupChat close={setAddGroup}/> : <></>}
         </div>
     )
 }

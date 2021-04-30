@@ -11,12 +11,9 @@ import firebase from "firebase";
 import { addMessageServer } from '../../data/ServerCalls';
 
 
-/*
-Chat window with the Message Input and Message List
-- addMessage
-- socket emit and on "message"
-*/
-
+// Chat Window
+// the logic for message sending and receiving
+// combines MessageInput and MessageList
 const ChatWindow = () => {
   const {socket} = useContext(SocketContext);
   const {token} = useContext(E3Context);
@@ -27,28 +24,8 @@ const ChatWindow = () => {
 
   const [isDisabled, setIsDisabled] = useState(true);
 
-  useEffect(() =>{
-    socket.on("message", (message) =>{
-      console.log("You get here on message")
-      console.log(message.room, current)
-      // TODO: fix this? 
-      if (message.room === current || message.sender === current){
-        // dispatch(addMessage(message));
-        console.log(current)
-        dispatch(getMessagesThunk({email, conversation: current}));
-      }
-      console.log("?????", current)
-
-    });
-    // eslint-disable-next-line
-  }, [current, dispatch, socket]);
-
-  useEffect(() =>{
-    socket.on("user left", ({username}) =>{
-      console.log("User left", username)
-    });
-  }, [socket]);
-
+  // disable the message input if the chatroom is not selected
+  // or there are no participants
   useEffect(() =>{
     if(participants !== null && current !== undefined && current !== ""){
       setIsDisabled(false);
@@ -57,6 +34,47 @@ const ChatWindow = () => {
     // eslint-disable-next-line
   }, [current, participants]);
 
+
+  // a message is received
+  useEffect(() =>{
+    socket.on("message", (message) =>{
+      // state update issues going on here
+      // the selected chat changes when the recv
+      // is on another chat and recv a message
+      // and the wrong messages are loaded
+      // POSSIBLE FIX: I will use different containers for this bacause the state
+      // changes on one window when it changes on the other one
+      // it doesn't even do what is in the if
+      console.log("Chat Window You get here on message")
+      console.log(message.room, current)
+      // TODO: fix this
+      // don't reload the messages when a new one is sent
+      // state update issues here too 
+      if (message.room === current || message.sender === current){
+        // dispatch(addMessage(message));
+        console.log(current)
+        dispatch(getMessagesThunk({email, conversation: current}));
+      }
+      console.log("Chat Window on new message", current)
+
+    });
+    // eslint-disable-next-line
+  }, [current, dispatch, socket]);
+
+
+  // a user leaves the group chat
+  // TODO: add a notification to the group members
+  useEffect(() =>{
+    socket.on("user left", ({username}) =>{
+      console.log("User left", username)
+    });
+  }, [socket]);
+
+  // add a message
+  // the message is encrypted and sent to the server
+  // the server returns the id and then the complete 
+  // message is sent via sockets
+  // in: message - string 
   const addNewMessage = (message) =>{
     if(message) {
       const date = new Date();
@@ -74,6 +92,7 @@ const ChatWindow = () => {
             .then(id => {
               console.log(id)
               dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
+              // TODO: better way to handle chat types
               socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
             });
 
@@ -91,7 +110,7 @@ const ChatWindow = () => {
           {isDisabled ? 
             <div className="empty">
               <h2>Welcome</h2>
-              <p>Please choose a chat to see magical stuff</p>
+              <p>Choose or add a new conversation to start.</p>
             </div> : 
             <>
               <MessageList />

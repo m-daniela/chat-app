@@ -6,7 +6,12 @@ import { register as signup } from '../reducers/redux';
 import { E3Context } from '../context/E3Context';
 import { e3register } from '../services/encryption';
 
-
+// Sign up
+// sign up logic
+// obtains the user token
+// if successful, the user is redirrected to the main page
+// otherwise, the error message is shown
+// the link for the Login page is here
 const Signup = () => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState({

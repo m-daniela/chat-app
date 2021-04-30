@@ -52,7 +52,7 @@ const addUser = async (email) =>{
 // - sender - the one who initialized the chat
 // - receiver - the one added to the chat
 // - date - date used for the default message
-const createChat = async (sender, receiver, date) =>{
+const createChat = async (sender, participants, date) =>{
   const message = {
     sender: "sys",
     text: "Start chatting", 
@@ -60,9 +60,9 @@ const createChat = async (sender, receiver, date) =>{
   }
 
   try{
-    const participants = [sender, receiver];
-    createChatDatabase(sender, receiver, participants, message);
-    createChatDatabase(receiver, sender, participants, message);
+    const [sender, receiver] = [...participants];
+    await createChatDatabase(sender, receiver, participants, message);
+    await createChatDatabase(receiver, sender, participants, message);
   }
   catch(err){
     console.log("Create chat: err");
@@ -85,12 +85,12 @@ const createGroup = async (sender, name, receivers, date) => {
   }
 
   try{
-    const participants = [sender, ...receivers];
-    console.log("Group", participants, receivers)
-    createChatDatabase(sender, name, participants, message);
+    // const participants = [sender, ...receivers];
+    console.log("Group", sender, receivers)
+    // createChatDatabase(sender, name, participants, message);
 
     for (const receiver of receivers){
-      createChatDatabase(receiver, name, participants, message);
+      await createChatDatabase(receiver, name, receivers, message);
     }
   }
   catch(err){
@@ -111,7 +111,6 @@ const createChatDatabase = async (sender, receiver, participants, message) =>{
       .doc(sender)
       .collection(cts.conversations)
       .doc(receiver);
-    console.log("----", conversation)
     await conversation.set({participants});
     await conversation
       .collection(cts.messages)

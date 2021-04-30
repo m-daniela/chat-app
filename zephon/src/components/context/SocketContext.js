@@ -6,7 +6,10 @@ export const SocketContext = createContext();
 
 let socket;
 
+// SocketProvider
+// context provider for the socket
 const SocketProvider = ({children}) =>{
+    // initialize the socket if it is not already
     if (!socket){
         socket = io(baseUrl);
     }

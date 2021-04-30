@@ -4,13 +4,16 @@ import Header from '../common/Header'
 import { E3Context } from '../context/E3Context'
 import { clearChat, clearConversations, clearSelected, logout } from '../reducers/redux'
 
-const Settings = () => {
+// Info
+// shows information about the user (email), the current chat (participants) and the logout button
+// the logout button will delete and reset all the data about the user
+const Info = () => {
     const email = useSelector(state => state.user.email);
     const participants = useSelector(state => state.chat.participants);
     const dispatch = useDispatch();
     const {clear} = useContext(E3Context);
 
-    console.log(participants)
+    // delete and reset the data from the state and context
     const handleLogout = () =>{
         dispatch(logout());
         dispatch(clearConversations());
@@ -21,7 +24,7 @@ const Settings = () => {
 
     return (
         <div className="settings_panel">
-            <Header title={"Settings"}/>
+            <Header title={"Info"}/>
             <span className="side_container" >{email}</span>
             <div className="side_container participants">
                 {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
@@ -32,4 +35,4 @@ const Settings = () => {
     )
 }
 
-export default Settings
+export default Info;
