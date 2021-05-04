@@ -186,6 +186,15 @@ const sendMessageWithIdDatabase = async (room, receiver, message, messageId) =>{
       .doc(receiver)
       .collection(cts.conversations)
       .doc(room)
+      // .get()
+      // .then(snapshot => {
+      //   if (snapshot.exists){
+      //     console.log("exists")
+      //   }
+      //   else{
+      //     console.log("doesn't exist")
+      //   }
+      // })
       .collection(cts.messages)
       .doc(messageId)
       .set(message);
@@ -291,6 +300,7 @@ const deleteConversation = async (user, chat) =>{
 const join = (chatid, username, room) =>{
     const user = {chatid, username, room};
     users[chatid] = {chatid, username, room};
+    console.log("Join data", users)
     return user;
 
 }

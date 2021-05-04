@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { confirmDialog, getDate } from '../../constants/Constants';
-import { E3Context } from '../context/E3Context';
-import { getDecryptedMessages } from '../services/encryption';
-import { deleteMessage } from '../reducers/redux'
-import { deleteMessageChat } from '../../data/ServerCalls';
+import { confirmDialog, getDate } from '../../utils/constants/Constants';
+import { E3Context } from '../../utils/context/E3Context';
+import { getDecryptedMessages } from '../../utils/services/encryption';
+import { deleteMessage } from '../../utils/reducers/redux'
+import { deleteMessageChat } from '../../utils/data/ServerCalls';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
 

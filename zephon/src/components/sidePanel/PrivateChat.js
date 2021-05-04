@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import { useSelector } from 'react-redux';
-import { SocketContext } from '../context/SocketContext';
+import { SocketContext } from '../../utils/context/SocketContext';
 
 // Private chat
 // the form for the private chat

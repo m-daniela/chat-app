@@ -2,13 +2,13 @@ import React, {useEffect, useContext, useState} from 'react'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import Header from '../common/Header'
-import { encryptMessage} from '../services/encryption';
+import { encryptMessage} from '../../utils/services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
-import { SocketContext } from '../context/SocketContext'
-import { addMessage, getMessagesThunk } from '../reducers/redux'
-import { E3Context } from '../context/E3Context';
+import { SocketContext } from '../../utils/context/SocketContext'
+import { addMessage, getMessagesThunk } from '../../utils/reducers/redux'
+import { E3Context } from '../../utils/context/E3Context';
 import firebase from "firebase";
-import { addMessageServer } from '../../data/ServerCalls';
+import { addMessageServer } from '../../utils/data/ServerCalls';
 
 
 // Chat Window

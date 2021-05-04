@@ -1,9 +1,9 @@
 import React, {useContext} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { confirmDialog } from '../../constants/Constants';
-import { deleteConversationUser } from '../../data/ServerCalls';
-import { SocketContext } from '../context/SocketContext';
-import { changeConversation, deleteConversation, getMessagesThunk } from '../reducers/redux';
+import { confirmDialog } from '../../utils/constants/Constants';
+import { deleteConversationUser } from '../../utils/data/ServerCalls';
+import { SocketContext } from '../../utils/context/SocketContext';
+import { changeConversation, deleteConversation, getMessagesThunk } from '../../utils/reducers/redux';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
 // Side item

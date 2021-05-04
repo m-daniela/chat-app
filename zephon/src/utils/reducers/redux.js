@@ -1,5 +1,5 @@
 import { configureStore, createSlice, createAsyncThunk, combineReducers } from "@reduxjs/toolkit";
-import { getChats, getMessages } from "../../data/ServerCalls";
+import { getChats, getMessages } from "../../utils/data/ServerCalls";
 
 // initial states
 

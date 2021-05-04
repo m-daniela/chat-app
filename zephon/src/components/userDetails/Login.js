@@ -1,10 +1,10 @@
 import React, {useContext, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import {signin} from "../services/firebase"
+import {signin} from "../../utils/services/firebase"
 import { useDispatch } from 'react-redux';
-import { getConversationsThunk, login } from '../reducers/redux';
-import { E3Context } from '../context/E3Context';
-import { e3login } from '../services/encryption';
+import { getConversationsThunk, login } from '../../utils/reducers/redux';
+import { E3Context } from '../../utils/context/E3Context';
+import { e3login } from '../../utils/services/encryption';
 
 
 // Login

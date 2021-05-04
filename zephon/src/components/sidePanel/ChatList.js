@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { SocketContext } from '../context/SocketContext';
-import { addConversation, getConversationsThunk } from '../reducers/redux';
+import { SocketContext } from '../../utils/context/SocketContext';
+import { addConversation, getConversationsThunk } from '../../utils/reducers/redux';
 import SideItem from './SideItem';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';

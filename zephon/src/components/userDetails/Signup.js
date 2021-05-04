@@ -1,10 +1,10 @@
 import React, {useContext, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import {register} from "../services/firebase"
+import {register} from "../../utils/services/firebase"
 import { useDispatch } from 'react-redux';
-import { register as signup } from '../reducers/redux';
-import { E3Context } from '../context/E3Context';
-import { e3register } from '../services/encryption';
+import { register as signup } from '../../utils/reducers/redux';
+import { E3Context } from '../../utils/context/E3Context';
+import { e3register } from '../../utils/services/encryption';
 
 // Sign up
 // sign up logic

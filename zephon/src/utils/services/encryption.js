@@ -1,4 +1,4 @@
-import { authUrl, jwtUrl } from "../../constants/Constants";
+import { authUrl, jwtUrl } from "../constants/Constants";
 import axios from "axios";
 import { EThree } from '@virgilsecurity/e3kit-browser';
 

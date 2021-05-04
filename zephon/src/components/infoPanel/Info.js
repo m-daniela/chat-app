@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Header from '../common/Header'
-import { E3Context } from '../context/E3Context'
-import { clearChat, clearConversations, clearSelected, logout } from '../reducers/redux'
+import { E3Context } from '../../utils/context/E3Context'
+import { clearChat, clearConversations, clearSelected, logout } from '../../utils/reducers/redux'
 
 // Info
 // shows information about the user (email), the current chat (participants) and the logout button

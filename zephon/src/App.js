@@ -10,8 +10,8 @@ import SidePanel from './components/sidePanel/SidePanel'
 import Login from './components/userDetails/Login'
 import Signup from './components/userDetails/Signup'
 import Info from './components/infoPanel/Info';
-import SocketProvider from './components/context/SocketContext';
-import E3Provider from './components/context/E3Context';
+import SocketProvider from './utils/context/SocketContext';
+import E3Provider from './utils/context/E3Context';
 
 export const ChatZone = () => {
   const loggedIn = useSelector(state => state.user.loggedIn);
