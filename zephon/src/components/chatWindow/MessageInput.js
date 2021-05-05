@@ -9,8 +9,6 @@ import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
 // this information is sent to the ChatWindow
 const MessageInput = ({addMessage, setIsAttached}) => {
   const [message, setMessage] = useState("");
-  // const [attachment, setAttachment] = useState(null);
-  // const [a, setA] = useState("");
 
   const onChangeInput = (text) => {
     setMessage(text);
@@ -20,14 +18,15 @@ const MessageInput = ({addMessage, setIsAttached}) => {
   const onChangeAttachment = (e) =>{
     const file = e.target.files[0];
     const reader = new FileReader();
+
     reader.onload = (res) => {
-      console.log(res.target.result);
-      // setAttachment(res.target.result);
       setIsAttached({
+        name: file.name,
         attachment: res.target.result,
         show: true,
       });
     }
+
     reader.readAsDataURL(file);
     
   }

@@ -25,6 +25,7 @@ const ChatWindow = () => {
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [isAttached, setIsAttached] = useState({
+    name: "",
     attachment: "", 
     show: false,
   });
@@ -66,6 +67,12 @@ const ChatWindow = () => {
     // eslint-disable-next-line
   }, [current, dispatch, socket]);
 
+
+  useEffect(() => {
+    socket.on("attachment", (message) =>{
+      console.log(message);
+    });
+  }, [socket]);
 
   // a user leaves the group chat
   // TODO: add a notification to the group members
@@ -109,9 +116,9 @@ const ChatWindow = () => {
     }
   }
 
-  // const addAttachment = () =>{
-
-  // }
+  const addAttachment = () =>{
+    socket.emit("attachment", {message: {text: isAttached.attachment, sender: email, room: current}, type: participants.length})
+  }
 
   return (
       <div className="chat_window">
@@ -122,8 +129,8 @@ const ChatWindow = () => {
               <p>Choose or add a new conversation to start.</p>
             </div> : 
             <>
-              {isAttached.show ? <AttachmentOverlay isAttached={isAttached} setIsAttached={setIsAttached} /> : <MessageList />}
-              <MessageInput addMessage={addNewMessage} setIsAttached={setIsAttached}/>
+              {isAttached.show ? <AttachmentOverlay isAttached={isAttached} setIsAttached={setIsAttached} addAttachment={addAttachment} /> : <MessageList />}
+              <MessageInput addMessage={addNewMessage} setIsAttached={setIsAttached} />
             </>}
       </div>
   )

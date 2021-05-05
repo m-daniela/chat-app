@@ -28,7 +28,7 @@ button, label{
   cursor: pointer;
 }
 
-.centered, .message_input label, img{
+.centered, .message_input label, img, .attachment > svg{
   @include centered;
 }
 

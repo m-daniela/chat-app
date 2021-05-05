@@ -78,17 +78,49 @@
 
 
 .attachment{
-  
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin-top: auto;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    justify-content: space-between;
+
     button{
-        align-self: flex-end;
         margin: 15px;
     }
-    img{
+
+    img, svg{
         // margin: 0 auto;
-        max-width: 50%;
-        height: auto;
-        box-sizing: border-box;
-  
+        max-height: 60%;
+        width: auto;
+        // box-sizing: border-box;
+    }
+}
+
+.preview{
+    background-color: var(--accent_bg);
+    width: 100%;
+    align-self: flex-end;
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    div {
+        display: flex;
+        align-items: center;
+        padding-bottom: 1px;
+        cursor: pointer;
+    }
+
+    div, #filename{
+        margin: 0 50px;
+    }
+    
+    #filename{
+        flex-grow: 2;
     }
 }
 
