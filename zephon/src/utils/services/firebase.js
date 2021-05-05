@@ -15,7 +15,8 @@ firebase.initializeApp(config);
 
 export const authentication = firebase.auth;
 export const database = firebase.database();
-export const storage = firebase.storage();
+export const storage = firebase.storage;
+export const storageReference = storage().ref();
 
 export const register = (email, password) => {
     return authentication().createUserWithEmailAndPassword(email, password);

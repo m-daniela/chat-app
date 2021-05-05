@@ -9,6 +9,7 @@ import { addMessage, getMessagesThunk } from '../../utils/reducers/redux'
 import { E3Context } from '../../utils/context/E3Context';
 import firebase from "firebase";
 import { addMessageServer } from '../../utils/data/ServerCalls';
+import AttachmentOverlay from './AttachmentOverlay';
 
 
 // Chat Window
@@ -23,6 +24,10 @@ const ChatWindow = () => {
   const participants = useSelector(state => state.chat.participants);
 
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isAttached, setIsAttached] = useState({
+    attachment: "", 
+    show: false,
+  });
 
   // disable the message input if the chatroom is not selected
   // or there are no participants
@@ -42,7 +47,7 @@ const ChatWindow = () => {
       // the selected chat changes when the recv
       // is on another chat and recv a message
       // and the wrong messages are loaded
-      // POSSIBLE FIX: I will use different containers for this bacause the state
+      // POSSIBLE FIX: use different containers for this bacause the state
       // changes on one window when it changes on the other one
       // it doesn't even do what is in the if
       console.log("Chat Window You get here on message")
@@ -104,17 +109,21 @@ const ChatWindow = () => {
     }
   }
 
+  // const addAttachment = () =>{
+
+  // }
+
   return (
       <div className="chat_window">
           <Header title={current} />
           {isDisabled ? 
-            <div className="empty">
+            <div className="empty centered">
               <h2>Welcome</h2>
               <p>Choose or add a new conversation to start.</p>
             </div> : 
             <>
-              <MessageList />
-              <MessageInput addMessage={addNewMessage} />
+              {isAttached.show ? <AttachmentOverlay isAttached={isAttached} setIsAttached={setIsAttached} /> : <MessageList />}
+              <MessageInput addMessage={addNewMessage} setIsAttached={setIsAttached}/>
             </>}
       </div>
   )

@@ -23,7 +23,7 @@ const Info = () => {
     }
 
     return (
-        <div className="settings_panel">
+        <div className="info_panel">
             <Header title={"Info"}/>
             <span className="side_container" >{email}</span>
             <div className="side_container participants">
