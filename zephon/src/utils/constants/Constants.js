@@ -12,6 +12,9 @@ export const authUrl = `${baseUrl}auth`;
 export const jwtUrl = `${baseUrl}virgil-jwt`;
 
 
+// id
+export const getId = () => Math.floor(Math.random() * 10000);
+
 // dialog 
 export const confirmDialog = (message) =>{
   return window.confirm(`Are you sure you want to delete ${message}?`);

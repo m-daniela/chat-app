@@ -142,3 +142,30 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
         return [];
     }
 }
+
+
+// encrypt file
+export const encryptFile = async (token, file) =>{
+
+    try{
+        const {encryptedSharedFile, fileKey} = await token.encryptSharedFile(file);
+        return {encryptedSharedFile, fileKey};
+    }
+    catch (e) {
+        console.log(e);
+        return {};
+    }
+}
+
+// decrypt the file
+export const decryptFile = async (token, file, fileKey, sender) =>{
+    try{
+        const pkSender = await token.findUsers(sender);
+        const decrypted = await token.decryptSharedFile(file, fileKey, pkSender);
+        return decrypted;
+    }
+    catch(e) {
+        console.log(e);
+        return {};
+    }
+}

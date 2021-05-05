@@ -2,7 +2,7 @@ import React, {useEffect, useContext, useState} from 'react'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import Header from '../common/Header'
-import { encryptMessage} from '../../utils/services/encryption';
+import { decryptFile, encryptFile, encryptMessage} from '../../utils/services/encryption';
 import { useSelector, useDispatch } from 'react-redux'
 import { SocketContext } from '../../utils/context/SocketContext'
 import { addMessage, getMessagesThunk } from '../../utils/reducers/redux'
@@ -10,6 +10,7 @@ import { E3Context } from '../../utils/context/E3Context';
 import firebase from "firebase";
 import { addMessageServer } from '../../utils/data/ServerCalls';
 import AttachmentOverlay from './AttachmentOverlay';
+import { downloadFile, uploadFile } from '../../utils/services/firebase';
 
 
 // Chat Window
@@ -24,10 +25,16 @@ const ChatWindow = () => {
   const participants = useSelector(state => state.chat.participants);
 
   const [isDisabled, setIsDisabled] = useState(true);
-  const [isAttached, setIsAttached] = useState({
+  const [filename, setFilename] = useState({
+    filename: "",
+    enc: {},
+    key: {},
+  });
+  const [attachment, setAttachment] = useState({
     name: "",
     attachment: "", 
     show: false,
+    file: null,
   });
 
   // disable the message input if the chatroom is not selected
@@ -114,23 +121,69 @@ const ChatWindow = () => {
         })
         .catch(err => console.log(err));
     }
+    if(attachment.show){
+      addAttachment();
+    }
   }
 
   const addAttachment = () =>{
-    socket.emit("attachment", {message: {text: isAttached.attachment, sender: email, room: current}, type: participants.length})
+    console.log(attachment.file);
+    encryptFile(token, attachment.file)
+      .then(({encryptedSharedFile, fileKey}) => {
+        console.log(encryptedSharedFile, fileKey);
+        uploadFile(encryptedSharedFile, setFilename)
+          .then((filename) => {
+            setAttachment({
+              name: "",
+              attachment: "",
+              show: false,
+              file: null,
+            });
+            setFilename({filename, enc: encryptedSharedFile, key: fileKey})
+            
+          // socket.emit("attachment", {message: {text: attachment.attachment, sender: email, room: current}, type: participants.length})
+          })
+      })
   }
+
+  const click = () => {
+    // decryptFile(token, filename.enc, filename.key, "example5@mail.com")
+    //                 .then(res => console.log(res))
+    // need cors config....
+    downloadFile(filename.filename)
+              .then((url) => {
+                var xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = (event) => {
+                  var blob = xhr.response;
+                  decryptFile(token, blob, filename.key, "example5@mail.com")
+                    .then(res => console.log(res))
+                };
+                xhr.open('GET', url);
+                xhr.send();
+
+              })
+  }
+
+  // const getAttachment = () => {
+  //   downloadFile("images/zephon_img_9229");
+  // }
 
   return (
       <div className="chat_window">
           <Header title={current} />
+          <button onClick={click} >click</button>
           {isDisabled ? 
             <div className="empty centered">
               <h2>Welcome</h2>
               <p>Choose or add a new conversation to start.</p>
             </div> : 
             <>
-              {isAttached.show ? <AttachmentOverlay isAttached={isAttached} setIsAttached={setIsAttached} addAttachment={addAttachment} /> : <MessageList />}
-              <MessageInput addMessage={addNewMessage} setIsAttached={setIsAttached} />
+              {attachment.show ? 
+                <AttachmentOverlay attachment={attachment} setAttachment={setAttachment} /> 
+                : 
+                <MessageList />}
+              <MessageInput addMessage={addNewMessage} setAttachment={setAttachment} />
             </>}
       </div>
   )
