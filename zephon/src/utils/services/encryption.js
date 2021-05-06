@@ -127,6 +127,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                         id: message.id,
                         sender: message.sender, 
                         date: message.date,
+                        attachment: message.attachment,
                         text,
                     };
                     newMessages.push(newMessage);

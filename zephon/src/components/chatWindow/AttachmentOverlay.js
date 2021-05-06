@@ -25,7 +25,7 @@ const AttachmentOverlay = ({attachment, setAttachment}) => {
             <div className="preview" onClick={() => close()}>
                 <span id="filename">{attachment.name}</span>
                 <div>
-                    <CloseOutlinedIcon fontSize="medium"/>
+                    <CloseOutlinedIcon fontSize="small"/>
                     <span>Close</span>
                 </div>
             </div>

@@ -31,27 +31,27 @@ export const signin = (email, password) => {
 // in:
 // attachment - the encrypted file
 // contenType - content type, taken from the file input
-export const uploadFile = async (attachment, setFilename) =>{
+export const uploadFile = async (attachment) =>{
     let filename = "";
 
     const metadata = {
       contentType: attachment.type,
     };
-    
+
+    const id = getId();
     // TODO: generalize
     if (attachment.type === "image/jpeg"){
-        const id = getId();
         filename = `images/zephon_img_${id}`;
     }
     else{
-        filename = `files/${attachment.name}`;
+        filename = `files/${id}_${attachment.name}`;
     }
 
-    console.log(attachment);
+    // console.log(attachment);
     
 
 
-    const state = storageReference.child(filename).put(attachment, metadata);
+    storageReference.child(filename).put(attachment, metadata);
     return filename;
     // print the stages, for debugging purposes
     // state.on(storage.TaskEvent.STATE_CHANGED,
@@ -84,7 +84,7 @@ export const uploadFile = async (attachment, setFilename) =>{
 // in: filename - path to the file
 export const downloadFile = (filename) =>{
     const state = storageReference.child(filename);
-    console.log(state);
+    // console.log(state);
     return state.getDownloadURL();
         // .then((url) => {
         //     console.log(url);

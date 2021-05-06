@@ -30,6 +30,7 @@ export const ChatZone = () => {
 }
 
 function App () {
+  console.log("kill me")
   return (
     <SocketProvider>
       <E3Provider>

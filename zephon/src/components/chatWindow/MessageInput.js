@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
-import {storage, storageReference} from "../../utils/services/firebase";
 
 
 // Message input

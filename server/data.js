@@ -57,6 +57,7 @@ const createChat = async (sender, participants, date) =>{
     sender: "sys",
     text: "Start chatting", 
     date: convertToTimestamp(date),
+    attachment: false,
   }
 
   try{
@@ -82,6 +83,7 @@ const createGroup = async (sender, name, receivers, date) => {
     sender: "sys",
     text: "Start chatting, group.", 
     date: convertToTimestamp(date),
+    attachment: false,
   }
 
   try{
@@ -134,7 +136,8 @@ const sendMessage = async (message) => {
   const newMessage = {
     sender: message.from,
     text: message.message,
-    date: convertToTimestamp(message.date)
+    date: convertToTimestamp(message.date),
+    attachment: message.attachment,
   }
 
   if (message.receivers.length === 2){
