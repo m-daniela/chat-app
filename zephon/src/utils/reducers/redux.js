@@ -30,7 +30,7 @@ export const getConversationsThunk = createAsyncThunk(
 export const getMessagesThunk = createAsyncThunk(
     "chat/getMessages",
     async ({email, conversation}, thunkAPI) => {
-        console.log("how", email, conversation)
+        console.log("how", email, conversation);
         const response = await getMessages(email, conversation);
         return response;
     }
@@ -43,21 +43,21 @@ export const clearChatThunk = createAsyncThunk(
     async (thunkAPI) => {
         return initialStateChat;
     }
-)
+);
 
 export const clearConversationsThunk = createAsyncThunk(
     "conversations/clear" , 
     async (thunkAPI) => {
         return initialConversationsState;
     }
-)
+);
 
 export const logoutThunk = createAsyncThunk(
     "user/logout", 
     async (thunkAPI) => {
         return initialUserState;
     }
-)
+);
 
 // reducers
 
@@ -67,7 +67,7 @@ const userSlice = createSlice({
     reducers: {
         logout: {
             reducer: (state, action) => action.payload,
-            prepare: () => {return {payload: initialUserState}}
+            prepare: () => {return {payload: initialUserState};}
         },
         login: (state, action) => action.payload,
         register: (state, action) => action.payload,
@@ -82,11 +82,11 @@ const conversationsSlice = createSlice({
     name: "conversations",
     initialState: initialConversationsState,
     reducers: {
-        addConversation: (state, action) => {state.push(action.payload)},
+        addConversation: (state, action) => {state.push(action.payload);},
         deleteConversation: (state, action) =>state.filter(element => element !== action.payload),
         clearConversations: {
             reducer: (state, action) => action.payload,
-            prepare: () => {return {payload: initialConversationsState}}
+            prepare: () => {return {payload: initialConversationsState};}
         }
     },
     extraReducers: {
@@ -103,7 +103,7 @@ const selectedSlice = createSlice({
         changeConversation: (state, action) => action.payload,
         clearSelected: {
             reducer: (state, action) => action.payload,
-            prepare: () => {return {payload: initialSelectedConversationState}}
+            prepare: () => {return {payload: initialSelectedConversationState};}
         }
     },
 });
@@ -118,14 +118,14 @@ const chatSlice = createSlice({
     name: "chat", 
     initialState: initialStateChat,
     reducers: {
-        addMessage: (state, action) => {state.messages.push(action.payload)},
+        addMessage: (state, action) => {state.messages.push(action.payload);},
         deleteMessage: (state, action) => {
             const newMessages = state.messages.filter(element => element.id !== action.payload);
             state.messages = newMessages;
         },
         clearChat: {
             reducer: (state, action) => action.payload,
-            prepare: () => {return {payload: initialStateChat}}
+            prepare: () => {return {payload: initialStateChat};}
         }
     },
     extraReducers: {
@@ -154,19 +154,19 @@ export const {
 export const {
     changeConversation,
     clearSelected
-} = selectedSlice.actions
+} = selectedSlice.actions;
 
 const reducer = combineReducers({
     user: userSlice.reducer,
     conversations: conversationsSlice.reducer,
     selected: selectedSlice.reducer,
     chat: chatSlice.reducer,
-})
+});
 
 export default configureStore({
     reducer,
     middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }),
 });

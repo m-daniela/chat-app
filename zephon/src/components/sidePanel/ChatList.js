@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SocketContext } from '../../utils/context/SocketContext';
 import { getConversationsThunk } from '../../utils/reducers/redux';
@@ -15,7 +15,7 @@ import PrivateChat from './PrivateChat';
 const ChatList = () => {
     const {socket} = useContext(SocketContext);
     const conversations = useSelector(state => state.conversations);
-    const email = useSelector(state => state.user.email)
+    const email = useSelector(state => state.user.email);
     const dispatch = useDispatch();
     const [addChat, setAddChat] = useState(false);
     const [addGroup, setAddGroup] = useState(false);
@@ -25,7 +25,7 @@ const ChatList = () => {
             // not the best choice - this will add the chat with the same name
             // same for the group
             // dispatch(addConversation(newChat.chatName));
-            console.log("new chat")
+            console.log("new chat");
             dispatch(getConversationsThunk({email}));
         });
         // eslint-disable-next-line
@@ -34,12 +34,12 @@ const ChatList = () => {
     const togglePrivate = () =>{
         setAddChat(!addChat);
         setAddGroup(false);
-    }
+    };
 
     const toggleGroup = () =>{
         setAddChat(false);
         setAddGroup(!addGroup);
-    }
+    };
 
     return (
         <div className="chat_list">
@@ -56,7 +56,7 @@ const ChatList = () => {
             {addChat ? <PrivateChat close={setAddChat}/> : <></>}
             {addGroup ? <GroupChat close={setAddGroup}/> : <></>}
         </div>
-    )
-}
+    );
+};
 
-export default ChatList
+export default ChatList;

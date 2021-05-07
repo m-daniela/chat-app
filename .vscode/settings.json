@@ -1,0 +1,13 @@
+{
+    "eslint.format.enable": true,
+    // "editor.fontLigatures": null,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "eslint.validate": [ "javascript", "javascriptreact", "html", "typescriptreact" ],
+    "eslint.workingDirectories": [
+      "./zephon", 
+      "./server",
+      { "mode": "auto" }
+  ],
+}

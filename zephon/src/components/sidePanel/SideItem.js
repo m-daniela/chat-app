@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { confirmDialog } from '../../utils/constants/Constants';
 import { deleteConversationUser } from '../../utils/data/ServerCalls';
@@ -18,7 +18,7 @@ const SideItem = ({name}) => {
         dispatch(changeConversation(name));
         dispatch(getMessagesThunk({email, conversation: name}));
         socket.emit("join", ({username: email, room: name}));
-    }
+    };
 
     // delete the chat 
     const handleDelete = ()=>{
@@ -32,7 +32,7 @@ const SideItem = ({name}) => {
                 })
                 .catch(err => console.log(err));
         }
-    }
+    };
 
     return (
         <div className="side_container">
@@ -43,7 +43,7 @@ const SideItem = ({name}) => {
             </div>
             <button onClick={() => handleDelete()}><CloseOutlinedIcon fontSize="small"/></button>
         </div>
-    )
-}
+    );
+};
 
-export default SideItem
+export default SideItem;

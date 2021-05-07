@@ -1,6 +1,6 @@
-import React, {useContext, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
-import {signin} from "../../utils/services/firebase"
+import React, {useContext, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import {signin} from "../../utils/services/firebase";
 import { useDispatch } from 'react-redux';
 import { getConversationsThunk, login } from '../../utils/reducers/redux';
 import { E3Context } from '../../utils/context/E3Context';
@@ -22,26 +22,26 @@ const Login = () => {
     const history = useHistory();
 
     const onSubmitAction = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         signin(email, password)
             .then(data => {
                 const user = data.user;
                 const {uid} = user;
                 dispatch(login({uid, email, loggedIn: true}));
                 e3login(email, password, setToken);
-                dispatch(getConversationsThunk({email}))
+                dispatch(getConversationsThunk({email}));
             })
             .then(_ => history.push("/"))
             .catch(error => setError(error.message));
-    }
+    };
 
     const onChangeEmail = text => {
         setEmail(text);
-    }
+    };
 
     const onChangePassword = text => {
         setPassword(text);
-    }
+    };
 
     return (
         <form className="custom_form" onSubmit={e => onSubmitAction(e)}>
@@ -58,7 +58,7 @@ const Login = () => {
             <button type="submit" className="primary_button">Log In</button>
             <Link to="/register">New here? register now</Link>
         </form>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;

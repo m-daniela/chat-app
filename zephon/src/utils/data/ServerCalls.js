@@ -14,7 +14,7 @@ export const getMessages = (user, room) =>{
             console.log("Get messages", err);
             return [];
         });
-}
+};
 
 
 // add a message
@@ -30,7 +30,7 @@ export const addMessageServer = (message) =>{
             console.log("addMessage", err);
             return "";
         });
-}
+};
 
 
 // get conversations of a user
@@ -43,7 +43,7 @@ export const getChats = (user) => {
             console.log("Get chats", err);
             return [];
         });
-}
+};
 
 // delete a message
 // in:
@@ -52,7 +52,7 @@ export const getChats = (user) => {
 // - messageId - the id of the message
 export const deleteMessageChat = (user, chat, messageId) =>{
     return axios.post(deleteMessageUrl, {user, chat, messageId});
-}
+};
 
 
 // delete a conversation
@@ -62,4 +62,4 @@ export const deleteMessageChat = (user, chat, messageId) =>{
 // - messageId - the id of the message
 export const deleteConversationUser = (user, chat) =>{
     return axios.post(deleteChatUrl, {user, chat});
-}
+};

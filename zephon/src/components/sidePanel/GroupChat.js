@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { SocketContext } from '../../utils/context/SocketContext';
 
@@ -16,13 +16,13 @@ const GroupChat = ({close}) =>{
         const date = new Date();
         socket.emit("new chat", {chat: newChat, sender: email, receivers: participants, date});
         close(false);
-    }
+    };
 
     const addMoreUsers = (e) =>{
         e.preventDefault();
         setParticipants([...participants, current]);
         setCurrent("");
-    }
+    };
 
     return (
         <form 
@@ -40,6 +40,6 @@ const GroupChat = ({close}) =>{
             <button type="submit">Add</button>
         </form>
     );
-}
+};
 
 export default GroupChat;

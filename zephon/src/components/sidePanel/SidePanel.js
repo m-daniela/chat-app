@@ -1,6 +1,6 @@
-import React from 'react'
-import ChatList from './ChatList'
-import Header from '../common/Header'
+import React from 'react';
+import ChatList from './ChatList';
+import Header from '../common/Header';
 
 const SidePanel = () => {
     return (
@@ -8,7 +8,7 @@ const SidePanel = () => {
             <Header title={"Chats"}/>
             <ChatList />
         </div>
-    )
-}
+    );
+};
 
-export default SidePanel
+export default SidePanel;

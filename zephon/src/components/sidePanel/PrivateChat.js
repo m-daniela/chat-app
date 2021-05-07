@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { SocketContext } from '../../utils/context/SocketContext';
 
@@ -14,7 +14,7 @@ const PrivateChat = ({close}) =>{
         const date = new Date();
         socket.emit("new chat", {receivers: [email, newChat], sender: email, date});
         close(false);
-    }
+    };
 
     return (
         <form 
@@ -27,6 +27,6 @@ const PrivateChat = ({close}) =>{
             <button type="submit">Add</button>
         </form>
     );
-}
+};
 
 export default PrivateChat;

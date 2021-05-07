@@ -21,21 +21,23 @@ export const storageReference = storage().ref();
 
 export const register = (email, password) => {
     return authentication().createUserWithEmailAndPassword(email, password);
-}
+};
 
 export const signin = (email, password) => {
     return authentication().signInWithEmailAndPassword(email, password);
-}
+};
 
 // upload a file to the firebase storage
 // in:
 // attachment - the encrypted file
 // contenType - content type, taken from the file input
-export const uploadFile = async (attachment) =>{
+// TODO: return the filename only after it was successfully uploaded
+export const uploadFile = async (attachment, setSuccessfulAttachment) =>{
     let filename = "";
+    let url = "";
 
     const metadata = {
-      contentType: attachment.type,
+        contentType: attachment.type,
     };
 
     const id = getId();
@@ -47,36 +49,32 @@ export const uploadFile = async (attachment) =>{
         filename = `files/${id}_${attachment.name}`;
     }
 
-    // console.log(attachment);
-    
-
-
-    storageReference.child(filename).put(attachment, metadata);
-    return filename;
+    const state = storageReference.child(filename).put(attachment, metadata);
+    // return filename;
     // print the stages, for debugging purposes
-    // state.on(storage.TaskEvent.STATE_CHANGED,
-    // (snapshot) => {
-    //     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    //     let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //     console.log('Upload is ' + progress + '% done');
-    //         switch (snapshot.state) {
-    //             case storage.TaskState.PAUSED: 
-    //             console.log('Upload is paused');
-    //             break;
-    //             case storage.TaskState.RUNNING:
-    //             console.log('Upload is running');
-    //             break;
-    //         }
-    //     }, 
-    //     (error) => {
-    //         console.log("Error")
-    //     }, 
-    //     () => {
-    //         // return the download url
-    //         state.snapshot.ref.getDownloadURL().then(url => setFilename(filename));
-    //     }
-    // );
-}
+    state.on(storage.TaskEvent.STATE_CHANGED,
+        (snapshot) => {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+            case storage.TaskState.PAUSED: 
+                console.log('Upload is paused');
+                break;
+            case storage.TaskState.RUNNING:
+                console.log('Upload is running');
+                break;
+            }
+        }, 
+        (error) => {
+            console.log("Error");
+        }, 
+        () => {
+            // return the download url
+            url = state.snapshot.ref.getDownloadURL().then(url => setSuccessfulAttachment({filename, url}));
+        }
+    );
+};
 
 
 // obtain the file url from firebase storage and 
@@ -84,9 +82,6 @@ export const uploadFile = async (attachment) =>{
 // in: filename - path to the file
 export const downloadFile = (filename) =>{
     const state = storageReference.child(filename);
-    // console.log(state);
     return state.getDownloadURL();
-        // .then((url) => {
-        //     console.log(url);
-        // });
-}
+
+};

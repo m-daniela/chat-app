@@ -1,3 +1,4 @@
+
 import { authUrl, jwtUrl } from "../constants/Constants";
 import axios from "axios";
 import { EThree } from '@virgilsecurity/e3kit-browser';
@@ -5,12 +6,12 @@ import { EThree } from '@virgilsecurity/e3kit-browser';
 // obtain the Virgil Token that will be used for user login/ signup
 // in: config - obj containing configuration headers
 const getVirgilToken = async (config) => {
-    const response = await axios.get(jwtUrl, config)
+    const response = await axios.get(jwtUrl, config);
     if (response.status !== 200) {
         throw new Error(`Error code: ${response.status} \nMessage: ${response.statusText}`);
     }
     return response.data.virgilToken;
-}
+};
 
 // obtain the user token from the key server if it was registered before
 // in: 
@@ -23,10 +24,10 @@ export const e3login = (user, password, setToken) => {
         .then(res => res.data)
         .then(data => {
             if (data !== undefined){
-                console.log("Authentication token", data)
+                console.log("Authentication token", data);
                 const config = {headers:{
                     Authorization: `Bearer ${data.authToken}`,
-                }}
+                }};
                 
                 EThree.initialize(() => getVirgilToken(config))
                     .then(eThree => {
@@ -41,7 +42,7 @@ export const e3login = (user, password, setToken) => {
             }
         })
         .catch(err => console.log(err));
-}
+};
 
 
 // register the new user on the key server and set the token
@@ -55,10 +56,10 @@ export const e3register = (user, password, setToken) => {
         .then(res => res.data)
         .then(data => {
             if (data !== undefined){
-                console.log("Authentication token", data)
+                console.log("Authentication token", data);
                 const config = {headers:{
                     Authorization: `Bearer ${data.authToken}`,
-                }}
+                }};
                 
                 EThree.initialize(() => getVirgilToken(config))
                     .then(eThree => {
@@ -73,15 +74,15 @@ export const e3register = (user, password, setToken) => {
             }
         })
         .catch(err => console.log(err));
-}
+};
 
 // obtain the public key of the user/s
 // not used
 export const getPublicKey = (email, eThree, setPublicKey) => {
     eThree.findUsers(email)
-        .then(pk => {setPublicKey(pk); console.log("help", email, pk)})
+        .then(pk => {setPublicKey(pk); console.log("help", email, pk);})
         .catch(err => console.log(err));
-}
+};
 
 
 // encrypt the message using the public keys of the recipients
@@ -102,7 +103,7 @@ export const encryptMessage = async (participants, eThree, message) =>{
         console.log(e);
         return "";
     }
-}
+};
 
 
 // obtain the decrypted messages
@@ -119,7 +120,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
         const newMessages = [];
         for (const message of messages){
             if (message.sender === "sys"){
-                newMessages.push(message)
+                newMessages.push(message);
             } else{
                 try{
                     const text = await eThree.authDecrypt(message.text, pks[message.sender]);
@@ -132,7 +133,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                     };
                     newMessages.push(newMessage);
                 } catch(err){
-                    console.log(err)
+                    console.log(err);
                 }
             }
         }
@@ -142,7 +143,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
         console.log(e);
         return [];
     }
-}
+};
 
 
 // encrypt file
@@ -156,7 +157,7 @@ export const encryptFile = async (token, file) =>{
         console.log(e);
         return {};
     }
-}
+};
 
 // decrypt the file
 export const decryptFile = async (token, file, fileKey, sender) =>{
@@ -169,4 +170,4 @@ export const decryptFile = async (token, file, fileKey, sender) =>{
         console.log(e);
         return {};
     }
-}
+};

@@ -1,6 +1,6 @@
-import React, {useContext, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
-import {register} from "../../utils/services/firebase"
+import React, {useContext, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import {register} from "../../utils/services/firebase";
 import { useDispatch } from 'react-redux';
 import { register as signup } from '../../utils/reducers/redux';
 import { E3Context } from '../../utils/context/E3Context';
@@ -25,8 +25,8 @@ const Signup = () => {
     const dispatch = useDispatch();
     const {setToken} = useContext(E3Context);
 
-    const onSubmitAction = async (e) =>  {
-        e.preventDefault()
+    const onSubmitAction = async (e) => {
+        e.preventDefault();
         if (password === samePassword){
 
             register(email, password)
@@ -39,9 +39,9 @@ const Signup = () => {
                 .then(_ => history.push("/"))
                 .catch(error =>{
                     switch(error.code){
-                        case "auth/email-already-in-use": setError({wrongEmail: error["message"]}); break;
-                        case "auth/weak-password": setError({wrongPass: error["message"]}); break;
-                        default: break;
+                    case "auth/email-already-in-use": setError({wrongEmail: error["message"]}); break;
+                    case "auth/weak-password": setError({wrongPass: error["message"]}); break;
+                    default: break;
                     }
                 });
         }
@@ -49,19 +49,19 @@ const Signup = () => {
             setError({passNotMatching: "The passwords are not matching"});
         }
 
-    }
+    };
 
     const onChangeEmail = text => {
         setEmail(text);
-    }
+    };
 
     const onChangePassword = text => {
         setPassword(text);
-    }
+    };
 
     const checkPasswords = text => {
         setSamePassword(text);
-    }
+    };
     
     return (
         <form className="custom_form" onSubmit={e => onSubmitAction(e)}>
@@ -83,7 +83,7 @@ const Signup = () => {
             <button type="submit" className="primary_button">Register</button>
             <Link to="/login">Have an account? log in</Link>
         </form>
-    )
-}
+    );
+};
 
-export default Signup
+export default Signup;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 
@@ -18,7 +18,7 @@ const AttachmentOverlay = ({attachment, setAttachment}) => {
             show: false,
             file: null,
         });
-    }
+    };
 
     return (
         <div className="attachment ">
@@ -29,9 +29,9 @@ const AttachmentOverlay = ({attachment, setAttachment}) => {
                     <span>Close</span>
                 </div>
             </div>
-            {image ? <img src={attachment.attachment} alt="img" onError={() => setImage(false)} /> : <DescriptionOutlinedIcon  />}
+            {image ? <img src={attachment.attachment} alt="img" onError={() => setImage(false)} /> : <DescriptionOutlinedIcon />}
         </div>
-    )
-}
+    );
+};
 
-export default AttachmentOverlay
+export default AttachmentOverlay;

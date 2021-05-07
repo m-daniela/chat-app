@@ -22,7 +22,7 @@
 
 
 .message{
-    // width: max-content;
+    width: fit-content;
     word-break: break-all;
     max-width: 100%;
     padding: 15px 20px;
@@ -35,6 +35,7 @@
 
     &.current{
         background-color: var(--message_bg_current);
+        align-self: flex-end;
     }
 
     .sender{
@@ -48,6 +49,25 @@
     .text{
         margin-top: 5px;
         text-align: justify;
+        padding: 0 20px 5px 20px;
+
+        a{
+            padding-bottom: 5px;
+            width: fit-content;
+            display: block;
+            overflow: hidden;
+            
+            img{
+                max-width: 250px;
+                height: auto;
+                &:before{
+                    content: "";
+                }
+                &:after{
+                    content: "";
+                }
+            }
+        }
     }
     .date{
         font-size: 0.7em;
