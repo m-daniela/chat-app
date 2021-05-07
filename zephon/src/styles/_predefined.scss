@@ -31,6 +31,20 @@
   
 }
 
+[data-theme="light"]{
+    --primary_bg: #f5f5f5;
+    --primary_font: #020100;
+    --secondary_bg: #edede6;
+    --accent_bg: #e2e1dd;
+    --message_bg: #e2e3dd;
+    --message_bg_current: #c9dacb;
+    --input_bg: #30303030;
+    --highlights: #30303030;
+    --shadows: rgba(0, 0, 0, .4);
+    --error: #dd0000;
+}
+
+
 @mixin vertical_align{
     display: flex;
     flex-direction: column;

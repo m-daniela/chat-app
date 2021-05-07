@@ -32,10 +32,10 @@ const Attachment = ({attachment, sender}) => {
 
             });
         // eslint-disable-next-line
-  }, [])
+    }, [])
 
     return (
-        <a href={url} download><img src={url} alt={filename} loading="lazy"/></a>
+        <a href={url} download><img src={url} alt={filename} loading="lazy" /></a>
     );
     
 };
@@ -48,6 +48,7 @@ const Message = ({message}) => {
     const email = useSelector(state => state.user.email);
     const current = useSelector(state => state.selected);
     const [author, setAuthor] = useState("other");
+
 
     // delete the message
     const deleteUserMessage = () =>{
@@ -65,7 +66,7 @@ const Message = ({message}) => {
             setAuthor("current");
         }
         // eslint-disable-next-line
-  }, []);
+    }, []);
   
     return (
         <div className={`message ${author}`}>

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
-import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
+import SendIcon from '@material-ui/icons/Send';
 
 
 // Message input
@@ -21,7 +21,6 @@ const MessageInput = ({addMessage, setAttachment}) => {
         reader.onload = (res) => {
             setAttachment({
                 name: file.name,
-                attachment: res.target.result,
                 show: true,
                 file,
             });
@@ -48,7 +47,7 @@ const MessageInput = ({addMessage, setAttachment}) => {
                 onChange={e => onChangeInput(e.target.value)}
                 placeholder={"Your message..."}
                 value={message}/>
-            <button type="submit"><SendOutlinedIcon/></button>
+            <button type="submit"><SendIcon/></button>
         </form>
     );
 };

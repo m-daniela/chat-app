@@ -26,20 +26,18 @@ const ChatWindow = () => {
     const current = useSelector(state => state.selected);
     const participants = useSelector(state => state.chat.participants);
 
+    const [fileKey, setFileKey] = useState([]);
     const [isDisabled, setIsDisabled] = useState(true);
     const [attachment, setAttachment] = useState({
         name: "",
-        attachment: "", 
         show: false,
         file: null,
     });
-
     const [successfulAttachment, setSuccessfulAttachment] = useState({
         filename: "",
         url: "",
     });
 
-    const [fileKey, setFileKey] = useState([]);
 
     // disable the message input if the chatroom is not selected
     // or there are no participants
@@ -52,35 +50,37 @@ const ChatWindow = () => {
     }, [current, participants]);
 
     // obtain the download link and filename when the attachment is successfully uploaded
+    // reset the attachment data and close the overlay
     useEffect(() =>{
-        setAttachment({
-            name: "",
-            attachment: "",
-            show: false,
-            file: null,
-        });
-        const message = JSON.stringify({fileKey, filename: successfulAttachment.filename});
-        console.log("File key message", message);
-        const date = new Date();
-        const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+        if (successfulAttachment.filename !== ""){
+            setAttachment({
+                name: "",
+                show: false,
+                file: null,
+            });
+            const message = JSON.stringify({fileKey, filename: successfulAttachment.filename});
 
-        // the current user doesn't need to be passed in the auth enc function
-        const part = participants.filter(elem => elem !== email);
+            const date = new Date();
+            const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
 
-        encryptMessage(part, token, message)
-            .then(enc => {
+            // the current user doesn't need to be passed in the auth enc function
+            const part = participants.filter(elem => elem !== email);
 
-                const msg = {message: enc, from: email, room: current, date, receivers: participants, attachment: true};
+            encryptMessage(part, token, message)
+                .then(enc => {
 
-                addMessageServer(msg)
-                    .then(id => {
-                        console.log(id);
-                        dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase, attachment: true}));
-                        // TODO: better way to handle chat types
-                        socket.emit('attachment', {message: {id, text: enc, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
-                    });
-            })
-            .catch(err => console.log(err));
+                    const msg = {message: enc, from: email, room: current, date, receivers: participants, attachment: true};
+
+                    addMessageServer(msg)
+                        .then(id => {
+                            dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase, attachment: true}));
+                            // TODO: better way to handle chat types
+                            socket.emit('attachment', {message: {id, text: enc, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
+                        });
+                })
+                .catch(err => console.log(err));
+        }
+        
 
     }, [successfulAttachment]);
 
@@ -95,8 +95,7 @@ const ChatWindow = () => {
             // POSSIBLE FIX: use different containers for this bacause the state
             // changes on one window when it changes on the other one
             // it doesn't even do what is in the if
-            console.log("Chat Window You get here on message");
-            console.log(message.room, current);
+
             // TODO: fix this
             // don't reload the messages when a new one is sent
             // state update issues here too 
@@ -105,16 +104,14 @@ const ChatWindow = () => {
                 console.log(current);
                 dispatch(getMessagesThunk({email, conversation: current}));
             }
-            console.log("Chat Window on new message", current);
 
         });
         // eslint-disable-next-line
     }, [current, dispatch, socket]);
 
-
+    // an attachment is received
     useEffect(() => {
         socket.on("attachment", (message) =>{
-            console.log("Chat Window You get here on attachment");
 
             // TODO: fix this
             // don't reload the messages when a new one is sent

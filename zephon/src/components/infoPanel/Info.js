@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Header from '../common/Header';
 import { E3Context } from '../../utils/context/E3Context';
@@ -12,6 +12,7 @@ const Info = () => {
     const participants = useSelector(state => state.chat.participants);
     const dispatch = useDispatch();
     const {clear} = useContext(E3Context);
+    const [theme, setTheme] = useState("dark");
 
     // delete and reset the data from the state and context
     const handleLogout = () =>{
@@ -22,6 +23,21 @@ const Info = () => {
         clear();
     };
 
+    // toggle between light and dark theme
+    const toggleTheme = () =>{
+        
+        if (theme === "dark"){
+            document.documentElement.setAttribute("data-theme", "light");
+            setTheme("light");
+        }
+        else{
+            document.documentElement.setAttribute("data-theme", "dark");
+            setTheme("dark");
+        }
+        localStorage.setItem("theme", theme);
+
+    };
+
     return (
         <div className="info_panel">
             <Header title={"Info"}/>
@@ -30,6 +46,7 @@ const Info = () => {
                 {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
                 {participants?.map(element => <span key={element}>{element === email ? "You" : element}</span>)}
             </div>
+            <span className="side_container side_item" onClick={toggleTheme}>Theme: {theme}</span>
             <span className="side_container side_item" onClick={handleLogout}>Log out</span>
         </div>
     );

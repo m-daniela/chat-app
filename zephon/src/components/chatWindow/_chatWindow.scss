@@ -56,16 +56,24 @@
             width: fit-content;
             display: block;
             overflow: hidden;
-            
             img{
                 max-width: 250px;
                 height: auto;
-                &:before{
-                    content: "";
-                }
-                &:after{
-                    content: "";
-                }
+                position: relative;
+                
+                // &:before{
+                // }
+                // &:after{
+                //     display: block;
+                //     position: absolute;
+                //     top: 0;
+                //     left: 0;
+                //     // width: 25px;
+                //     height: 100%;
+                //     background-color: black;
+                //     text-align: center;
+                //     content: " ";
+                // }
             }
         }
     }

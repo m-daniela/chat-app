@@ -16,6 +16,10 @@
   box-sizing: border-box;
 }
 
+a{
+  color: var(--primary_font);
+}
+
 input[type="file"]{
   display: none;
 }
