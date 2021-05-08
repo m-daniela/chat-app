@@ -1,6 +1,6 @@
 ---
 format: markdown
-title: Thesis
+title: End-to-End Encryption - an overview
 mainfont: Times New Roman
 papersize: a4
 linestretch: 1.15

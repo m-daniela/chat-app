@@ -5,6 +5,8 @@ title: Thesis
 ---
 
 
+- [Presentation](#presentation)
+- [Abstract](#abstract)
 - [1. Introduction](#1-introduction)
   - [The application](#the-application)
 - [2. Basic concepts](#2-basic-concepts)
@@ -82,6 +84,40 @@ title: Thesis
   - [Out of bound verification](#out-of-bound-verification)
   - [Other websites](#other-websites)
 
+# Presentation
+1. What is e2ee
+2. How it works
+3. Why would you need this
+   1. Privacy
+   2. Surveillance
+4. Issues with current popular apps + backdoors + current state
+    - one of the biggest issues is that these protocols are not rigurously analysed 
+    - the most "prolific" in the field is the Signal protocol, which developed a few advanced algorithms
+5. Probably the application
+   1. overview of the app - what the user can do and show all these 
+      1. sign up
+      2. log in in another window with another user
+      3. add a private chat (enc) and send some messages betwee the two users + attachemnts
+      4. add another private chat (unenc) and send messages
+      5. same for groups
+      6. maybe I manage to add the "third party view" and show everything directly 
+      7. tell them how hard life is
+      8. that's it, probably show the cool color scheme and that I will make it responsive
+   2. talk about the technologies for a few minutes while I show the stuff and how everything works
+6. Conclusions
+
+# Abstract
+End-to-end encryption is intended to prevent data from being read by other parties, i.e. servers, service providers, the government, than the ones directly involved into a conversation. This approach has gained popularity in recent years in instant messaging applications and many of these developed their own protocol or adapted a base one. 
+- The list includes iMessage, Signal, Whatsapp, Facebook Messenger, Telegram, Threema, to name a few, and the protocols used by these will be analysed in this paper. 
+- This proccess involves public key encryption to share a secret between the users, a key exchange algorithm to safely exchange the keys and a symmetric key encryption algorithm that encrypts and decrypts the messages. 
+- This paper presents an overview of the security issues raised over the years based on the choices of cryptographic algorithms in some of the aforementioned popular chat applications that have switched to end-to-end encryption.
+- Another issue is the user metadata. The messages may be encrypted and unintelligible for a third party, but the fact that two users have communicated at a given time might be enough in case of citizen surveillance. 
+- The state of group messaging will be also addressed. This type of communication gets more complex since the algorithms need to keep track of each user involved and having more members becomes cumbersome in certain cases. 
+
+
+
+
+
 
 # 1. Introduction
 - what is this about? - end to end encryption in messaging apps
@@ -93,12 +129,12 @@ title: Thesis
 
 - as online communication gained more popularity, using instant messaging applications has become a standard in our quotidian lives
 - therefore, the need for assurance that there is no third party spying on our conversations, either the government, the service provider or a person with malicious intent, grew even more, especially in states where free speech is threatened
-- end-to-end encryption is used to protect the privacy of the messages sent between two or more participants, as they are in transit or at rest, with the intendend recipients being the only ones that can decrypt and read the messages
+- end-to-end encryption is used to protect the privacy of the messages sent between two or more participants, in transit or at rest, with the intendend recipients being the only ones that can decrypt and read the messages
 - thus, the third parties interested in intercepting the information sent are unable to see the actual plaintext
-- messaging apps using end-to-end encryption have been around since 2012, with iPhone's native messaging app iMessage[1] and then Signal[4], previously known as TextSecure and RedPhone, developed in 2013
-- but this practice was popularized by WhatsApp in 2016[2], after they announced that the users' messages will have the end-to-end encryption enabled by default for all of their chats from now on, and Facebook's testing of secret chats in the application, in the same year[3]
+- messaging apps using end-to-end encryption have been around since 2012, starting with iPhone's native messaging app iMessage[1] and then Signal[4], previously known as TextSecure and then RedPhone, developed in 2013
+- but this practice became more popular starting from 2016, after Whatsapp announced that the users' messages will now be end-to-end encrypted by default for all of their chats, and with Facebook's testing of secret chats in the messaging application, in the same year[3]
 - both are using the Signal protocol in the background, which came with a few novelties in the field, such as the Double Ratchet Algorithm[5]
-- various other apps became more popular in the past years after they received endorsement from different public figures (Snowden, Elon[9] - Signal, Telegram - ??), or are used in a more restricted area (Line - mostly Asian user base)
+- various other apps became more popular in the past years after they received endorsement from different public figures (Snowden, Elon[9] - Signal, Telegram - ??), or are used in certain crountries (Line - mostly Asian user base)
 - some of these are implementing their own encryption schemes and protocols, but they are mostly relying on Elliptic Curve cryptography, especially the Curve25519 variant of the Diffie-Hellman key exchange and SHA 256 for hashing ++
 - a more in depth analysis of the protocols used by some popular applications will be discussed in [Section 3](#3-existing-technologies), as well as their security issues or proposed improvements
 - the main cryptographic concepts on which these are based will be briefly presented in [Section 2](#2-basic-concepts), details added accordingly for each protocol extending them
@@ -112,7 +148,7 @@ title: Thesis
 
 ## The application
 
-- the app created is a web messaging application which provides end-to-end encryption for both private and group chats
+- the app is a web-based instant messaging application which provides end-to-end encryption for both private and group chats
 - in order to illustrate the risks of using chat applications without end-to-end encryption, the user can switch between the encrypted and non-encrypted versions
 - the implementation and the used frameworks and libraries are discussed at large in [Section 4](#4-technologies-used) and [Section 5](#5-the-application)
 
@@ -143,7 +179,7 @@ References
 - definitions and small descriptions of various base concepts that will be used throughout the thesis
 - more explanations later
 
-
+> https://www.tutorialspoint.com/cryptography/attacks_on_cryptosystems.htm attack types
 
 ## Symmetric key encryption
 - HOAC 33
@@ -152,33 +188,56 @@ References
 - [aes](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
 
 
-- Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. An advantage of this type of ciphers is that they are more efficient in terms of software and hardware. 
-- image/ formula?
-- One such cryptographic algorithm used by some end-to-end encryption protocols is AES (Advanced Encryption Standard) [aes]
+Symmetric-key encryption is an encryption scheme which uses the same key for both encryption and decryption. In this case, the key must be a shared secret between the communicating parties, which might result in security issues if the key is intercepted, if it is sent through an insecure channel. 
+
+An advantage of this type of ciphers is that they are more efficient in terms of software and hardware. 
+
+- /e image
+
+One such cryptographic algorithm that is popular in end-to-end encryption protocols is AES (Advanced Encryption Standard) [aes].
 
 **Attacks**
-- https://www.ics.uci.edu/~stasio/ics8-w12/Week9%20-%20part%202%20-%20Symmetric%20Key%20Encryption.pdf
-- ciphertext only attack
-- known plaintext attack
-- chosen plaintext
-- chosen ciphetext
-- brute force - try all keys and determine if the decrypted text is a likely plaintext
+- this is general, most details taken from https://www.tutorialspoint.com/cryptography/attacks_on_cryptosystems.htm
 
+- https://www.ics.uci.edu/~stasio/ics8-w12/Week9%20-%20part%202%20-%20Symmetric%20Key%20Encryption.pdf
+- https://www.cs.clemson.edu/course/cpsc424/material/Cryptography/Attacks%20on%20Symmetric%20Key.pdf
+
+There are various attack vectors that can be identified on cryptosystems. Their aim is to obtain the private key based on information that can be collected from plaintext or ciphertext, usually. Some of them are presented below.
+
+The **ciphertext only attack** involves an attacker who has access to the ciphertexts and can is successful when the plaintext can be obtained from a set of ciphertexts. The encryption key can be determined afterwards.
+
+Modern cryptosystems are not affected by this type of attack anymore.
+
+In the **known plaintext attack**, the attacker knows the plaintext and corresponding ciphertext ant its aim is to obtain the key. This type of attack works on simple ciphers. 
+
+Cryptanalysis
+**Chosen plaintext, ciphertext attacks** - discussed for pke.
+
+**Brute force attacks** are the slowest ones. They are done by trying all the possible keys until the message is decrypted, hence the decryption key is obtained. 
+
+
+**Side channel attacks** are more concerned on the way the computer system is implemented, not on the implementation of the algorithm itself. Usually physical, the information that can be used against a cryptosystem consists of power usage, the amount of time the process takes, sounds or electromagnetic radiation leaks.
 
 
 ## AES
 - contemporary crypto/ 282
 - NIST paper
 - diagrams for the algo https://proprivacy.com/guides/aes-encryption
-- It is a symmetric block cipher, based on a substitution-permutation network, which uses keys of length 128, 192 or 256 bits to process data in blocks of 128 bits, introduced by NIST in 2001. 
-- the operations are performed on a State array, which is a two-dimensional array of bytes, having the block length div by 32, Nb (Nb = 128 / 32 = 4) rows and columns and the cells contain 1 byte of the block
-- in the beginning, the input bytes are copied into the State and after the encryption/ decryption, the output bytes are copied again in the State, row by row (figure at pg 285)
+- https://techjury.net/blog/what-is-aes/
+
+
+AES (Advanced Encryption Standard) is a symmetric block cipher, based on a substitution-permutation network, which uses keys of length 128, 192 or 256 bits to process data in blocks of 128 bits, introduced by NIST in 2001. It is widely used in modern applications, due to its efficiency and security, and was approved by the NSA. 
+
+**About the algorithm**
+
+The operations are performed on a State array, which is a two-dimensional array of bytes, having the block length div by 32, Nb (Nb = 128 / 32 = 4) rows and columns and the cells contain 1 byte of the block
+In the beginning, the input bytes are copied into the State and after the encryption/ decryption, the output bytes are copied again in the State, row by row (figure at pg 285)
 
 - the key length is computed in the same way, so it would have length Nk 4, 6, 8, depending on number of columns in the cipher key (from 128, 192, 256 bits)
 - the state array can be interpreted as a state array of 32 bit words
 - operations over a finite field
   - addition - xor
-  - multiplication - multiplication of the polynomials mod irreducible polynomial x^8 + x^4 + x^3 + x + 1 
+  - multiplication - multiplication of the polynomials mod irreducible polynomial $x^8 + x^4 + x^3 + x + 1$ 
 - round keys are values derived from the cipher key and are applied to the state
 - these values are fixed: Nr = 10, Nk = 4; Nr = 12, Nk = 6; Nr = 14, Nk = 8
 - the round function is composed of:
@@ -217,8 +276,10 @@ References
   - enc: xor the plaintext and stream (obtained by "enc"? the nonce and the counter)
 
 **Attacks**
-- brute force + crytanalysis
-- side channel attacks - gain info about the implementation of the algo
+- https://www.schneier.com/blog/archives/2009/07/new_attack_on_a.html
+- https://www.schneier.com/blog/archives/2009/07/another_new_aes.html
+- https://blogs.ntu.edu.sg/science/2021/03/03/finding-keys-to-the-most-secured-encryption-algorithm/
+- side channel attacks are possible
 
 
 [aes]: NIST, [Announcing the ADVANCED ENCRYPTION STANDARD (AES)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf)
@@ -230,37 +291,44 @@ References
 - https://resources.infosecinstitute.com/topic/padding-oracle-attack-2/
 - enc function - trapdoor function with the nec info being the decryption key
 
-- Public-key encryption, or asymmetric encryption, is an encryption scheme which uses a public and a private key pair for each user. The public key is known and can be publicly distributed, so sending it through an insecure channel is not an issue anymore, but the private key must be kept secret by the user. 
-- To encrypt a message, the sender uses the public key of the receiver, which can be decrypted only using the recipient's private key. 
-- The security of this encryption scheme resides on the property of the key pair that while knowing the encryption key, it must be computationally infeasible to obtain the plaintext message from a random ciphertext, thus obtaining the decryption key. ?
-- Public key encryption is less efficient than symmetric key encryption, so it can be used as a secure channel for key exchange or for encrypting smaller data sets. 
-- Examples of asymmmetric key algorithms, commonly used in popular end-to-end protocols, are the Diffie-Hellman key echange protocol and Elliptic curve based cryptography.
+Public-key encryption, or asymmetric encryption, is an encryption scheme which uses a public and a private key pair for each user. The public key is known and can be publicly distributed, so sending it through an insecure channel is not an issue anymore, but the private key must be kept secret by the user. To encrypt a message, the sender uses the public key of the receiver, which can be decrypted only using the recipient's private key. 
+
+The security of this encryption scheme resides on the property of the key pair that, while knowing the encryption key, it must be computationally infeasible to obtain the plaintext message from a random ciphertext, so obtaining the decryption key.
+
+A drawback of public key encryption is that it is less efficient than symmetric key encryption but it can be used as a secure channel for key exchange or for encrypting smaller data sets. 
+
+Examples of asymmmetric key algorithms, commonly used in popular end-to-end protocols, are the Diffie-Hellman key echange protocol and Elliptic curve based cryptography.
+
 
 ### Attacks
 
 **Impersonation**
-- There still remains room for an impersonation attack. This means that an adversary can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key.
-- In this way, the adversary can decrypt the message, read and/ or alter it before encrypting it with B's key and sending it forward. 
-- This kind of attack can be mitigated using authentication, so guaranteeing that the recipient is the intended one. 
 
-**Chosen plaintext**
+There still remains room for an impersonation attack, meaning that an adversary can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key. In this way, the adversary can decrypt the message, read and/ or alter it before encrypting it with B's key and sending it forward. 
+
+This kind of attack can be mitigated using authentication, so guaranteeing that the recipient is the intended one. 
+
+**Chosen plaintext attack**
 - [wiki](https://en.wikipedia.org/wiki/Chosen-plaintext_attack)
 - [wiki, semantic security](https://en.wikipedia.org/wiki/Semantic_security)
-- The adversary chooses arbitrary plaintext and then is given the corresponding ciphertext and the intention is to reduce the security of the encryption scheme. 
-- There are two forms, of this attack:
-  - batch attack - when the adversary knows the plaintext before seeing the ciphertext
-  - adatptive - when the attacker can request other ciphertexts after seeing some ciphertexts of corresponding plaintext
-- This vulnerability can be fixed by providing semantic security, meaning that the adversary should not be able to derive anything but negligible information about a plaintext message, given the ciphertext and the public key. This property is also called indistiguishability under chosen plaintext attack. 
 
-**Chosen ciphertext**
+The adversary chooses arbitrary plaintext and then is given the corresponding ciphertext. The intention is to reduce the security of the encryption scheme. 
+
+This attack can be classified further into batch attacks and adaptive attacks. In case of a batch chosen plaintext attack, the adversary knows the plaintext before seeing the corresponding ciphertext, while in the adaptive chosen ciphertext attack, the attacker can request more ciphertexts after seeing the ciphertext of corresponding plaintext. /x
+
+This vulnerability can be fixed by providing semantic security, meaning that the adversary should not be able to derive anything but negligible information about a plaintext message, given the ciphertext and the public key. This property is also called indistiguishability under chosen plaintext attack. 
+
+**Chosen ciphertext attack**
 - [wiki](https://en.wikipedia.org/wiki/Chosen-ciphertext_attack)
-- This type of attack consists of an adversay that has access to decryptions of chosen ciphertexts and the intention is to obtain the private key.
-- This type of attacks can be split in two categories:
-  - indifferent or lunchtime attacks - the attacker receives the decryptions of any chosen ciphertext. These must be chosen before receiving the target ciphertext ???
-  - adaptive attacks - the attacker has access to the victim's **decryption machine**, and may request decryptions of related ciphertext, but not the target ciphertext, based on the previously received plaintext
-- To avoid such attacks, the cryptosystem should not provide any decryption oracles, for example.
 
-- This algorithm is usually used for digital signatures. ?
+In this type of attacks, the adversary has access to the decryptions of chosen ciphertexts and the intention is to obtain the privete key. 
+
+It can be split in two categories, too: indifferent or "lunchtime" attack and adaptive attack. 
+The lunchtime attack refers to the fact the the attacker can receive decryptions of any chosen ciphertext until a certain point. The term comes from the fact that the attacker has access to the user's device that can decrypt these ciphertexts, which was left unattended. 
+In adaptive chosen ciphertext attacks, the adversary is only allowed to choose ciphertexts related to the target one and obtain enough information to decrypt it. 
+
+To avoid such attacks, the cryptosystem should not provide any decryption oracles, for example.
+
 
 
 
@@ -274,10 +342,13 @@ References
 
 
 
+Authentication is the process of proving the identity of an entity, called claimant, to a verifier and preventing impersonations. It might be done using certain credentials (a password) or with a digital certificate (in case of websites). 
 
-- Authentication is the process of proving the identity of an entity, called claimant, to a verifier, and preventing impersonations. It might be done using certain credentials (a password) or with a digital certificate (in case of websites). 
-- Data origin authentication or message authentication techniques assures one party of the identity of the sender.
-- Usually, the message has additional information attached so the receiver can determine it. 
+Data origin authentication or message authentication techniques assures one party of the identity of the sender. Usually, the message has additional information attached so the receiver can determine it. 
+
+- /m
+
+/x
 The following objectives are included for the three different parties A, B, C
 1. A successfully authenticates to B, then B will complete the protocol by accepting A’s identity.
 2. After an identity exchange of B with A, B cannot impersonate A to the third party C.
@@ -289,8 +360,8 @@ The following objectives are included for the three different parties A, B, C
 - Also, the message authentication provides a meaningful message, whereas the other type only assures that the claimant is right? 
 
 ### Message authentication codes
-- some other info from Serious crypto pg 179
-- contemporary crypto/ 318
+- some other info from Serious crypto pg 179 [1]
+- contemporary crypto/ 318 [2]
 
 - [MLS](PDF/Papers/20. Evaluation of the MessagingLayer Security Protocol - FULLTEXT01.pdf)
 - hash function - function that transforms data of an arbitrary size to a fixed size hash value, and it can be used for data verification, signatures etc. 
@@ -298,18 +369,13 @@ The following objectives are included for the three different parties A, B, C
 
 - keyed hashing functions (hashing func with secret keys) => message auth codes (MAC) and pseudorandom func (PRF)
 
-- macs protect the identity and auth by creating a value (authentication tag) from the message and the key
-- authentication tags, computed and verified with a secret key. They depend on the authenticated message and the secret key, which is known to the communicating parties
-- if you know the macs key, you can confirm that a message was not modified in transit => integrity and auth
-- often combined with a cipher => preserving message's confidentiality, integrity, auth
-- ex: ssh, tls, ip security generate a mac for each packet sent
-- forgery - create a tag when you don't know the key
-- attack vectors:
-  - known-message attack - tags and data collected by an eavesdropper
-  - chosen message attack - the attacker chooses the messages to be auth and if the attacker is able to adaptively choose other messages and their corresponding MACs, it is an adaptive chosen-message attack
-  - replay attacks - capture a message and resent it to the receiver, pretending to be the sender - mitigation by numbering the messages?
+MACs (Message authentication codes) are authentication tags created from the message and the secret key and protect the authenticity and integrity of the message. The secret key must be known by both participants because it is also used to verify the MAC and to confirm that a message was not modified in transit. 
 
-- There are two types of technologies used for messsage authentication:
+They are usually combined with a cipher and, in this way, the message's integrity, authenticity and confidentiality is kept. 
+
+- ex: ssh, tls, ip security generate a mac for each packet sent
+
+- According to [1], there are two types of technologies used for messsage authentication:
   - digital signatures + public key crypto => the private key being the one generating the digital signature and the public one is the used for verification
   - message authentication codes (MACs) + secret key crypto? 
 
@@ -317,7 +383,16 @@ The following objectives are included for the three different parties A, B, C
   - digital signatures may be used to provide nonrepudiation
   - MACs can be verified only by those who know or obtain the secret key, whereas the digital signatures can be verified by anyone
 
+**Attacks**
 
+A MAC is secure when the attacker cannot create a tag for a message when they don't know the key. 
+In [2], two types of attack vectors are presented: forgery attacks and replay attacks.
+
+- forgery - create a tag when you don't know the key
+- attack vectors:
+  - known-message attack - tags and data collected by an eavesdropper
+  - chosen message attack - the attacker chooses the messages to be auth and if the attacker is able to adaptively choose other messages and their corresponding MACs, it is an adaptive chosen-message attack
+  - replay attacks - capture a message and resent it to the receiver, pretending to be the sender - mitigation by numbering the messages?
 
 - It can be concluded that if the adversary can determine the secret key, the system is totally broken. If the MAC of a meaningful message was determined, then the MAC is selectively forged, and if the message is not meaningful, the MAC is existentially forged. ? rephrase
 - A way to lower the possibility of guessing a MAC (which is always possible?) is to increase the tag length and a message authentication system is secure if the attacker can only guess the MAC in order to forge it. 
@@ -394,20 +469,25 @@ The following objectives are included for the three different parties A, B, C
 - https://cybersecurity.att.com/blogs/security-essentials/digital-signatures-101-a-powerful-and-underused-cybersecurity-ally /////
 
 
-Digital signatures are equivalent to handwritten signatures and are a means of verifying the authenticity of messages or documents, by providing the entity a way to bind its identity to a piece of information, making it dependent on a secret known by the sender and the content of the message. A valid digital signature is supposed to assure the recipient that the sender is authenticated and that the data was not altered in transit, becoming a way to detect forgery or tampering. 
-They must be verifiable and they can also provide non-repudiation, which means that the signer cannot successfully claim that they did not sign the message.
+Digital signatures are equivalent to handwritten signatures and are a means of verifying the authenticity of messages or documents, by providing the entity a way to bind its identity to a piece of information, making it dependent on a secret known by the sender and the content of the message. A valid digital signature is supposed to assure the recipient that the sender is authenticated and that the data was not altered in transit, becoming a way to detect forgery or tampering. /x
 
-- So, the digital signature must be correct (the valid signatures must be accepted) and secure (it is computationally infeasible to forge a signature without knowing the key). 
+They must be verifiable and they can also provide non-repudiation, which means that the signer cannot successfully claim that they did not sign the message. Therefore, the digital signature must be correct (the valid signatures must be accepted) and secure (it should be computationally infeasible to forge a signature without knowing the key). 
 
 ### Attacks
 - cc/397
-- Regarding the security bit, there are two major attack vectors that are taken into account:
-  - key-only attack - when the attacker knows the signatory's verification key but has no information about the signed messages
-  - message attack - the attacker knows both the signatory's verification key and some information about the messages or is able to obtain it; this category can be further split into:
-    - knwon message - a certain number of messages and their corresponding signatures are known, but not chosen
-    - generic chosen message - the signatory's key knowledge is independent of the attacker's choice of messages (along with their corresponding digital signatures)
-    - directed chosen message - similar to the previous attack vector but this one is directed against a signatory's key
-    - adaptive chosen message - the attacker can obtain the digital signatures of a chosen list of messages and it depends on the signing key; the list of messages can be adaptively chosen during the attack (the attacker has access to the signature generation oracle => for every message, the attacker returns a valid signature)
+
+There are two major attack vectors that are taken into account regarding the security of a digital signature:
+- key-only attack, when the attacker knows the signatory's verification key but has no information about the signed messages
+- message attack, when the attacker knows both the signatory's verification key and some information about the messages or is able to obtain it
+
+The second category can be further split into the following attacks:
+- known message attack, when a certain number of unchosen messages and their corresponding signatures are known
+- generic chosen message attack, the signatory's key knowledge is independent of the attacker's choice of messages (along with their corresponding digital signatures); the messages must be chosen a priori
+- directed chosen message - similar to the previous attack vector but this one is directed against a signatory's key
+- adaptive chosen message - the attacker can obtain the digital signatures of a chosen list of messages and it depends on the signing key; the list of messages can be adaptively chosen during the attack (the attacker has access to the signature generation oracle => for every message, the attacker returns a valid signature)
+
+
+
 - maybe about the security breaks?
   - total break - determine the key
   - universal forgery - find similar signature algo
@@ -439,11 +519,13 @@ Also, the following properties must be satisfied by the signing and verification
 
 - https://infosec-handbook.eu/blog/limits-e2ee/ to read
 
-- End-to-end encryption is a communication system in which the messages can be read only by those participating in the conversation and allowing them to securely communicate through an unsecured channel. 
-- The data is encrypted by the sender, at the endpoint, using the public key of the receiver and the only way to decrypt it is by using the recipient’s private key. 
-- This ensures that the data cannot be read or modified by the service provider or any third party involved because they don’t have access to the private keys. 
-- The need for this method arises from the fact that many email and messaging applications use third parties to store the data and it is protected only "in transit" (ex: TLS), but when it reaches the server, it can be decrypted and read and/ or tampered with before redirecting it to the recipient
-- Thus, the privacy of data and the user is put at risk, since the contents can be used and interpreted by anyone with access to the server
+End-to-end encryption is a communication system in which the messages can be read only by those participating in the conversation and is allowing them to securely communicate through an unsecured channel. 
+
+The data is encrypted by the sender, at the endpoint, using the public key of the receiver and the only way to decrypt it is by using the recipient’s private key. This ensures that the data cannot be read or modified by any third party involved, since they don’t have access to the private keys. 
+
+The need for this method arises from the fact that many messaging applications use third parties to store the data and it is protected only "in transit" (ex: TLS), meaning that it can be decrypted and read and/ or tampered with before redirecting it to the recipient, when it reaches the server. Therefore, the privacy of data and the user is put at risk, since the contents can be used and interpreted by anyone with access to the server.
+
+End-to-end encryption involves a key exchange between the parties. 
 
 
 
@@ -1637,6 +1719,35 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 - socket.io
 - Firebase
 - Docker
+
+
+**React**
+- https://reactjs.org/
+- React is "a JavaScript library for building user interfaces". 
+- This library was used to create the frontend of the application. There are interactions with the database on user authentication and attachment upload.
+
+**Redux toolkit**
+- https://redux-toolkit.js.org/
+- For state management in the front end. 
+
+
+**Node.js with express**
+- https://nodejs.org/en/
+- https://expressjs.com/
+- These are used for the backend and relationship with the database. 
+
+**socket.io**
+- https://socket.io/
+- Makes the real-time communication possible. 
+
+**Firebase**
+- https://firebase.google.com/
+- Holds the data of the application, such as users with their conversations, messages and attachments. 
+
+**Virgil security**
+- https://developer.virgilsecurity.com/docs/e3kit/fundamentals/supported-algorithms/
+- This framework is used for end-to-end encryption for both the messages and the attachments. It also provides a key server where the user data (public keys) are stored. 
+
 
 
 # 5. The application
