@@ -13,7 +13,7 @@ const initialConversationsState = [];
 
 const initialSelectedConversationState = "";
 
-const initialStateChat = {messages: [], participants: []};
+const initialStateChat = {messages: [], participants: [], isEncrypted: true};
 
 // middleware
 

@@ -189,14 +189,15 @@ io.on('connection', (socket) => {
     const receivers = chat.receivers;
     const sender = chat.sender;
     const date = chat.date;
+    const isEncrypted = chat.isEncrypted;
     
     if (name){
-      data.createGroup(sender, name, receivers, date)
+      data.createGroup(sender, name, receivers, date, isEncrypted)
         .then(_ => io.emit("new chat", {chatName: name}));
       
     }
     else{
-      data.createChat(sender, receivers, date)
+      data.createChat(sender, receivers, date, isEncrypted)
         .then(_ => io.emit("new chat", {chatName: sender}));
       
     }

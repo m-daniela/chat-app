@@ -12,6 +12,7 @@ import Signup from './components/userDetails/Signup';
 import Info from './components/infoPanel/Info';
 import SocketProvider from './utils/context/SocketContext';
 import E3Provider from './utils/context/E3Context';
+import ThirdPartyProvider from './utils/context/ThirdPartyContext';
 
 export const ChatZone = () => {
     const loggedIn = useSelector(state => state.user.loggedIn);
@@ -33,27 +34,29 @@ function App () {
     return (
         <SocketProvider>
             <E3Provider>
-                <Helmet>
-                    <title>zephon</title>
-                </Helmet>
-                <div className="App">
-                    <Router>
-                        <Route exact path="/" render={props => (
-                            <ChatZone />
-                        )}>
-                        </Route>
-                        <Route exact path="/login" render={props => (
-                            <Login />
-                        )}>
-                        </Route>
-                        <Route exact path="/register" render={props => (
-                            <Signup />
-                        )}>
-                        </Route>
+                <ThirdPartyProvider>
+                    <Helmet>
+                        <title>zephon</title>
+                    </Helmet>
+                    <div className="App">
+                        <Router>
+                            <Route exact path="/" render={props => (
+                                <ChatZone />
+                            )}>
+                            </Route>
+                            <Route exact path="/login" render={props => (
+                                <Login />
+                            )}>
+                            </Route>
+                            <Route exact path="/register" render={props => (
+                                <Signup />
+                            )}>
+                            </Route>
 
-                    </Router>
+                        </Router>
 
-                </div>
+                    </div>
+                </ThirdPartyProvider>
             </E3Provider>
         </SocketProvider>
     );

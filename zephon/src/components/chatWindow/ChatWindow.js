@@ -25,6 +25,7 @@ const ChatWindow = () => {
     const email = useSelector(state => state.user.email);
     const current = useSelector(state => state.selected);
     const participants = useSelector(state => state.chat.participants);
+    const isEncrypted = useSelector(state => state.chat.isEncrypted);
 
     const [fileKey, setFileKey] = useState([]);
     const [isDisabled, setIsDisabled] = useState(true);
@@ -132,6 +133,52 @@ const ChatWindow = () => {
         });
     }, [socket]);
 
+
+    const sendEncryptedMessage = (message, date) =>{
+        const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+
+        // the current user doesn't need to be passed in the auth enc function
+        const recipients = participants.filter(elem => elem !== email);
+
+        encryptMessage(recipients, token, message)
+            .then(enc => {
+
+                const msg = {message: enc, from: email, room: current, date, receivers: participants};
+
+                addMessageServer(msg)
+                    .then(id => {
+                        console.log(id);
+                        dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
+                        // TODO: better way to handle chat types
+                        socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
+                    });
+
+                // dispatch(getMessagesThunk({email, conversation: current}));
+
+                console.log("After add message dispatch");
+            })
+            .catch(err => console.log(err));
+    };
+
+    const sendUnencryptedMessage = (message, date) =>{
+        const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+       
+        const msg = {message, from: email, room: current, date, receivers: participants};
+
+        addMessageServer(msg)
+            .then(id => {
+                console.log(id);
+                dispatch(addMessage({id, text: message, sender: email, date: dateFirebase}));
+                // TODO: better way to handle chat types
+                socket.emit('message', {message: {id, text: message, sender: email, date: dateFirebase, room: current}, type: participants.length});
+            });
+
+        // dispatch(getMessagesThunk({email, conversation: current}));
+
+        console.log("After add message dispatch");
+            
+    };
+
     // add a message
     // the message is encrypted and sent to the server
     // the server returns the id and then the complete 
@@ -140,29 +187,37 @@ const ChatWindow = () => {
     const onMessage = (message) =>{
         if(message) {
             const date = new Date();
-            const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+            if (isEncrypted){
+                sendEncryptedMessage(message, date);
+            }
+            else{
+                sendUnencryptedMessage(message, date);
+            }
+            // const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
 
-            // the current user doesn't need to be passed in the auth enc function
-            const recipients = participants.filter(elem => elem !== email);
+            // // the current user doesn't need to be passed in the auth enc function
+            // const recipients = participants.filter(elem => elem !== email);
 
-            encryptMessage(recipients, token, message)
-                .then(enc => {
+            // sendEncryptedMessage(message, recipients, dateFirebase);
 
-                    const msg = {message: enc, from: email, room: current, date, receivers: participants};
+            // encryptMessage(recipients, token, message)
+            //     .then(enc => {
 
-                    addMessageServer(msg)
-                        .then(id => {
-                            console.log(id);
-                            dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
-                            // TODO: better way to handle chat types
-                            socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
-                        });
+            //         const msg = {message: enc, from: email, room: current, date, receivers: participants};
 
-                    // dispatch(getMessagesThunk({email, conversation: current}));
+            //         addMessageServer(msg)
+            //             .then(id => {
+            //                 console.log(id);
+            //                 dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
+            //                 // TODO: better way to handle chat types
+            //                 socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
+            //             });
 
-                    console.log("After add message dispatch");
-                })
-                .catch(err => console.log(err));
+            //         // dispatch(getMessagesThunk({email, conversation: current}));
+
+            //         console.log("After add message dispatch");
+            //     })
+            //     .catch(err => console.log(err));
         }
         if(attachment.show){
             addAttachment();

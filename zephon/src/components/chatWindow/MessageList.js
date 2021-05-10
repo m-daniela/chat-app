@@ -7,6 +7,7 @@ import { deleteMessage } from '../../utils/reducers/redux';
 import { deleteMessageChat } from '../../utils/data/ServerCalls';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import { downloadFile } from '../../utils/services/firebase';
+import { ThirdPartyContext } from '../../utils/context/ThirdPartyContext';
 
 // Attachment
 // if the message contains an attachment, download it
@@ -15,9 +16,10 @@ import { downloadFile } from '../../utils/services/firebase';
 const Attachment = ({attachment, sender}) => {
     const [url, setUrl] = useState("");
     const {token} = useContext(E3Context);
+    const {thirdPartyView} = useContext(ThirdPartyContext);
     const {fileKey, filename} = JSON.parse(attachment);
 
-    useEffect(() => {
+    const downloadAndDecrypt = () => {
         downloadFile(filename)
             .then((url) => {
                 const xhr = new XMLHttpRequest();
@@ -31,11 +33,31 @@ const Attachment = ({attachment, sender}) => {
                 xhr.send();
 
             });
+    };
+
+    const downloadOnly = () =>{
+        downloadFile(filename)
+            .then((url) => {
+                setUrl(url);
+            });
+    };
+
+    useEffect(() => {
+        if(thirdPartyView){
+            downloadOnly();
+        }
+        else{
+            downloadAndDecrypt();
+        }
         // eslint-disable-next-line
-    }, [])
+    }, [thirdPartyView])
 
     return (
+        // <>
+        //     {thirdPartyView ? attachment : (<a href={url} download><img src={url} alt={filename} loading="lazy" /></a>)}
+        // </>
         <a href={url} download><img src={url} alt={filename} loading="lazy" /></a>
+        
     );
     
 };
@@ -76,8 +98,8 @@ const Message = ({message}) => {
                 <button onClick={() => deleteUserMessage()}><CloseOutlinedIcon fontSize="small"/></button>
             </div>
             <div className="text">
-                {!message.attachment ? message.text : (<Attachment attachment={message.text} sender={message.sender} />)}
-                {/* {message.text} */}
+                {/* {!message.attachment ? message.text : (<Attachment attachment={message.text} sender={message.sender} />)} */}
+                {message.text}
             </div>
             <div className="date">
                 {getDate(message.date)}
@@ -93,14 +115,22 @@ const Message = ({message}) => {
 const MessageList = () => {
     const messages = useSelector(state => state.chat.messages);
     const {token} = useContext(E3Context);
+    const {thirdPartyView} = useContext(ThirdPartyContext);
     const participants = useSelector(state => state.chat.participants);
+    const isEncrypted = useSelector(state => state.chat.isEncrypted);
     const [newMessages, setNewMessages] = useState([]);
 
     // decrypt the messages that are in the current state
     useEffect(() => {
-        getDecryptedMessages(participants, token, messages)
-            .then(msg => setNewMessages(msg))
-            .catch(err => console.log(err));
+        if(isEncrypted){
+            getDecryptedMessages(participants, token, messages)
+                .then(msg => setNewMessages(msg))
+                .catch(err => console.log(err));
+        }
+        else{
+            setNewMessages(messages);
+        }
+        
     // eslint-disable-next-line
   }, [messages])
 
@@ -113,7 +143,10 @@ const MessageList = () => {
     return (
         <div className="message_list">
             {
-                newMessages.map(elem => <Message key={elem.id} message={elem}/>)
+                thirdPartyView ? 
+                    messages.map(elem => <Message key={elem.id} message={elem}/>)
+                    :
+                    newMessages.map(elem => <Message key={elem.id} message={elem}/>)
             }
         </div>
     );

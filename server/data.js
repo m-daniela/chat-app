@@ -52,7 +52,7 @@ const addUser = async (email) =>{
 // - sender - the one who initialized the chat
 // - receiver - the one added to the chat
 // - date - date used for the default message
-const createChat = async (sender, participants, date) =>{
+const createChat = async (sender, participants, date, isEncrypted) =>{
   const message = {
     sender: "sys",
     text: "Start chatting", 
@@ -62,8 +62,8 @@ const createChat = async (sender, participants, date) =>{
 
   try{
     const [sender, receiver] = [...participants];
-    await createChatDatabase(sender, receiver, participants, message);
-    await createChatDatabase(receiver, sender, participants, message);
+    await createChatDatabase(sender, receiver, participants, message, isEncrypted);
+    await createChatDatabase(receiver, sender, participants, message, isEncrypted);
   }
   catch(err){
     console.log("Create chat: err");
@@ -78,7 +78,7 @@ const createChat = async (sender, participants, date) =>{
 // - name - name of the chat
 // - receivers - array of emails with the users added to the group
 // - date - date used for the default message
-const createGroup = async (sender, name, receivers, date) => {
+const createGroup = async (sender, name, receivers, date, isEncrypted) => {
   const message = {
     sender: "sys",
     text: "Start chatting, group.", 
@@ -92,7 +92,7 @@ const createGroup = async (sender, name, receivers, date) => {
     // createChatDatabase(sender, name, participants, message);
 
     for (const receiver of receivers){
-      await createChatDatabase(receiver, name, receivers, message);
+      await createChatDatabase(receiver, name, receivers, message, isEncrypted);
     }
   }
   catch(err){
@@ -107,13 +107,13 @@ const createGroup = async (sender, name, receivers, date) => {
 // - receiver - email of the recv or the name of the chat
 // - participants - array of emails with the participants
 // - message - the default message object
-const createChatDatabase = async (sender, receiver, participants, message) =>{
+const createChatDatabase = async (sender, receiver, participants, message, isEncrypted) =>{
   try{
     const conversation = await db.collection(cts.users)
       .doc(sender)
       .collection(cts.conversations)
       .doc(receiver);
-    await conversation.set({participants});
+    await conversation.set({participants, isEncrypted});
     await conversation
       .collection(cts.messages)
       .add(message);
@@ -257,7 +257,7 @@ const getMessages = async (user, conversation) =>{
 
   console.log("Get messages: messages collected");
 
-  return {messages, participants: participants.data().participants};
+  return {messages, participants: participants.data().participants, isEncrypted: participants.data().isEncrypted};
 }
 
 // delete a message for the given chat and user
