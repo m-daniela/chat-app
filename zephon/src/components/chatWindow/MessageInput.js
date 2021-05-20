@@ -21,6 +21,7 @@ const MessageInput = ({addMessage, setAttachment}) => {
         reader.onload = (res) => {
             setAttachment({
                 name: file.name,
+                attachment: res.target.result,
                 show: true,
                 file,
             });

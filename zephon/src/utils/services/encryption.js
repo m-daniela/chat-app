@@ -140,7 +140,7 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
         return newMessages;
     }
     catch (e) {
-        console.log(e);
+        console.log("Encryption", e.message);
         return [];
     }
 };

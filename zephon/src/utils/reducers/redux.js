@@ -30,7 +30,6 @@ export const getConversationsThunk = createAsyncThunk(
 export const getMessagesThunk = createAsyncThunk(
     "chat/getMessages",
     async ({email, conversation}, thunkAPI) => {
-        console.log("how", email, conversation);
         const response = await getMessages(email, conversation);
         return response;
     }

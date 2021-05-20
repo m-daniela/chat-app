@@ -45,7 +45,8 @@ const Info = () => {
         <div className="info_panel">
             <Header title={"Info"}/>
             <span className="side_container" >{email}</span>
-            <span className="side_container" >{isEncrypted ? "Encrypted" : "Not encrypted"}</span>
+            {participants.length !== 0 ? (<span className="side_container" >{isEncrypted ? "Encrypted" : "Not encrypted"}</span>) : <></>}
+            
             <div className="side_container participants">
                 {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
                 {participants?.map(element => <span key={element}>{element === email ? "You" : element}</span>)}

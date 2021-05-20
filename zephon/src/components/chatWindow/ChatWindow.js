@@ -31,6 +31,7 @@ const ChatWindow = () => {
     const [isDisabled, setIsDisabled] = useState(true);
     const [attachment, setAttachment] = useState({
         name: "",
+        attachment: "",
         show: false,
         file: null,
     });
@@ -54,32 +55,52 @@ const ChatWindow = () => {
     // reset the attachment data and close the overlay
     useEffect(() =>{
         if (successfulAttachment.filename !== ""){
+            if(isEncrypted){
+                const message = JSON.stringify({fileKey, filename: successfulAttachment.filename});
+
+                const date = new Date();
+                const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+    
+                // the current user doesn't need to be passed in the auth enc function
+                const part = participants.filter(elem => elem !== email);
+    
+                encryptMessage(part, token, message)
+                    .then(enc => {
+    
+                        const msg = {message: enc, from: email, room: current, date, receivers: participants, attachment: true};
+    
+                        addMessageServer(msg)
+                            .then(id => {
+                                dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase, attachment: true}));
+                                // TODO: better way to handle chat types
+                                socket.emit('attachment', {message: {id, text: enc, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
+                            });
+                    })
+                    .catch(err => console.log(err));
+            }
+            else{
+                const message = JSON.stringify({fileKey: "", filename: successfulAttachment.filename});
+
+                const date = new Date();
+                const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
+    
+                const msg = {message, from: email, room: current, date, receivers: participants, attachment: true};
+    
+                addMessageServer(msg)
+                    .then(id => {
+                        dispatch(addMessage({id, text: message, sender: email, date: dateFirebase, attachment: true}));
+                        // TODO: better way to handle chat types
+                        socket.emit('attachment', {message: {id, text: message, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
+                    });
+                   
+            }
             setAttachment({
                 name: "",
+                attachment: "", 
                 show: false,
                 file: null,
             });
-            const message = JSON.stringify({fileKey, filename: successfulAttachment.filename});
-
-            const date = new Date();
-            const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
-
-            // the current user doesn't need to be passed in the auth enc function
-            const part = participants.filter(elem => elem !== email);
-
-            encryptMessage(part, token, message)
-                .then(enc => {
-
-                    const msg = {message: enc, from: email, room: current, date, receivers: participants, attachment: true};
-
-                    addMessageServer(msg)
-                        .then(id => {
-                            dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase, attachment: true}));
-                            // TODO: better way to handle chat types
-                            socket.emit('attachment', {message: {id, text: enc, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
-                        });
-                })
-                .catch(err => console.log(err));
+            
         }
         
 
@@ -220,7 +241,14 @@ const ChatWindow = () => {
             //     .catch(err => console.log(err));
         }
         if(attachment.show){
-            addAttachment();
+            console.log(isEncrypted);
+            if(isEncrypted){
+                addAttachment();
+            }
+            else{
+                addUnencryptedAttachment();
+            }
+            
         }
     };
 
@@ -234,6 +262,11 @@ const ChatWindow = () => {
                 uploadFile(encryptedSharedFile, setSuccessfulAttachment);
                 setFileKey(fileKey);
             });
+    };
+
+
+    const addUnencryptedAttachment = () =>{
+        uploadFile(attachment.file, setSuccessfulAttachment);
     };
 
     return (
