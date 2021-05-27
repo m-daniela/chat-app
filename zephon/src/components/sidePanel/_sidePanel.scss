@@ -30,27 +30,15 @@ button.side_item{
     flex-direction: row;
     justify-content: space-between;
   
-    &.buttons{
-      // justify-content: flex-start;
-      // width: 70%;
-      padding: 0;
-  
-      border-bottom: 1px solid var(--highlights); 
-      button{
-        // padding-left: 0;
-        padding: 10px;
-        font-size: 15px;
-        flex: 1;
-        height: 100%;
-        justify-content: center;
-        display: flex;
-        align-items: center;
-  
-        // padding-right: 50px;
-      }
-      & > :first-child{
-        border-right: 1px solid var(--highlights);
-      }
+    &.add_button{
+      border-bottom: 1px solid var(--primary_bg); 
+      padding: 10px 20px;
+      font-size: 15px;
+      flex: 1;
+      height: 100%;
+      justify-content: flex-start;
+      display: flex;
+      align-items: center;
     }
   
     &.participants{
@@ -63,10 +51,14 @@ button.side_item{
     }
     
   
-    // &:hover{
-    //   opacity: 0.6;
-    //   cursor: pointer;
-    // }
+    &.buttons{
+      justify-content: left;
+      button{
+        margin-right: 15px;
+        border-radius: 5px;
+        background-color: var(--input_bg);
+      }
+    }
   
 }
   

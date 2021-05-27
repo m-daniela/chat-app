@@ -1,16 +1,19 @@
 
-import React, { useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { confirmDialog, getDate } from '../../utils/constants/Constants';
 import { deleteMessage } from '../../utils/reducers/redux';
 import { deleteMessageChat } from '../../utils/data/ServerCalls';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Attachment from './Attachment';
+import { ThirdPartyContext } from '../../utils/context/ThirdPartyContext';
 
 // Message
 // displays the message 
 // the deletion option is bound to each message
 const Message = ({message}) => {
+    const {thirdPartyView} = useContext(ThirdPartyContext);
+    const isEncrypted = useSelector(state => state.chat.isEncrypted);
     const dispatch = useDispatch();
     const email = useSelector(state => state.user.email);
     const current = useSelector(state => state.selected);
@@ -43,8 +46,11 @@ const Message = ({message}) => {
                 <button onClick={() => deleteUserMessage()}><CloseOutlinedIcon fontSize="small"/></button>
             </div>
             <div className="text">
-                {/* {!message.attachment ? message.text : (<Attachment attachment={message.text} sender={message.sender} />)} */}
-                {message.text}
+                {thirdPartyView && isEncrypted ?
+                    message.text
+                    :
+                    !message.attachment ? message.text : (<Attachment attachment={message.text} sender={message.sender} />)
+                }
             </div>
             <div className="date">
                 {getDate(message.date)}

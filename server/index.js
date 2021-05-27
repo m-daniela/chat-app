@@ -161,17 +161,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // attachment
-  socket.on('attachment', ({message, type}) => {
-    const user = data.current(socket.id);
-    if (type === 2){
-      socket.broadcast.to(user.username).emit("attachment", message);
-    }
-    else{
-      socket.broadcast.to(message.room).emit("attachment", message);
-    }
-  });
-
   // broadcast the fact that a user
   // has left the group chat
   socket.on('user left', ({username, room}) => {

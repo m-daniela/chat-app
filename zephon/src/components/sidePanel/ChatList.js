@@ -5,8 +5,7 @@ import { getConversationsThunk } from '../../utils/reducers/redux';
 import SideItem from './SideItem';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
-import GroupChat from './GroupChat';
-import PrivateChat from './PrivateChat';
+import Chat from './Chat';
 
 // Chat list
 // display the chats and the buttons for adding other chats
@@ -18,7 +17,6 @@ const ChatList = () => {
     const email = useSelector(state => state.user.email);
     const dispatch = useDispatch();
     const [addChat, setAddChat] = useState(false);
-    const [addGroup, setAddGroup] = useState(false);
 
     useEffect(() =>{
         socket.on("new chat", (newChat) => {
@@ -31,30 +29,21 @@ const ChatList = () => {
         // eslint-disable-next-line
     }, [socket]);
 
-    const togglePrivate = () =>{
+    const toggleChatForm = () =>{
+        
         setAddChat(!addChat);
-        setAddGroup(false);
-    };
-
-    const toggleGroup = () =>{
-        setAddChat(false);
-        setAddGroup(!addGroup);
     };
 
     return (
         <div className="chat_list">
-            <div className="side_container buttons">
-                <button onClick={togglePrivate}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Chat</>}</button>
-                <button onClick={toggleGroup}>{addGroup ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Group</>}</button>
-            </div>
-            {!addChat && !addGroup ? 
+            <button className="side_container add_button" onClick={toggleChatForm}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Add a new chat</>}</button>
+            {!addChat ? 
                 <>
                     {conversations.map(elem => <SideItem key={Math.random() * 1000} name={elem}/>)}
                 </>
                 :
                 <></>}
-            {addChat ? <PrivateChat close={setAddChat}/> : <></>}
-            {addGroup ? <GroupChat close={setAddGroup}/> : <></>}
+            {addChat ? <Chat close={setAddChat}/> : <></>}
         </div>
     );
 };

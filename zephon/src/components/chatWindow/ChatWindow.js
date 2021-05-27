@@ -73,7 +73,7 @@ const ChatWindow = () => {
                             .then(id => {
                                 dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase, attachment: true}));
                                 // TODO: better way to handle chat types
-                                socket.emit('attachment', {message: {id, text: enc, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
+                                socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
                             });
                     })
                     .catch(err => console.log(err));
@@ -90,7 +90,7 @@ const ChatWindow = () => {
                     .then(id => {
                         dispatch(addMessage({id, text: message, sender: email, date: dateFirebase, attachment: true}));
                         // TODO: better way to handle chat types
-                        socket.emit('attachment', {message: {id, text: message, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
+                        socket.emit('message', {message: {id, text: message, sender: email, date: dateFirebase, room: current, attachment: true}, type: participants.length});
                     });
                    
             }
@@ -131,21 +131,6 @@ const ChatWindow = () => {
         // eslint-disable-next-line
     }, [current, dispatch, socket]);
 
-    // an attachment is received
-    useEffect(() => {
-        socket.on("attachment", (message) =>{
-
-            // TODO: fix this
-            // don't reload the messages when a new one is sent
-            // state update issues here too 
-            if (message.room === current || message.sender === current){
-                // dispatch(addMessage(message));
-                dispatch(getMessagesThunk({email, conversation: current}));
-            }
-        });
-        // eslint-disable-next-line
-    }, [current, socket]);
-
     // a user leaves the group chat
     // TODO: add a notification to the group members
     useEffect(() =>{
@@ -153,6 +138,32 @@ const ChatWindow = () => {
             console.log("User left", username);
         });
     }, [socket]);
+
+    // add a message
+    // the message is encrypted and sent to the server
+    // the server returns the id and then the complete 
+    // message is sent via sockets
+    // in: message - string 
+    const onMessage = (message) =>{
+        if(message) {
+            const date = new Date();
+            if (isEncrypted){
+                sendEncryptedMessage(message, date);
+            }
+            else{
+                sendUnencryptedMessage(message, date);
+            }
+        }
+        if(attachment.show){
+            console.log(isEncrypted);
+            if(isEncrypted){
+                addAttachment();
+            }
+            else{
+                addUnencryptedAttachment();
+            }
+        }
+    };
 
 
     const sendEncryptedMessage = (message, date) =>{
@@ -200,58 +211,7 @@ const ChatWindow = () => {
             
     };
 
-    // add a message
-    // the message is encrypted and sent to the server
-    // the server returns the id and then the complete 
-    // message is sent via sockets
-    // in: message - string 
-    const onMessage = (message) =>{
-        if(message) {
-            const date = new Date();
-            if (isEncrypted){
-                sendEncryptedMessage(message, date);
-            }
-            else{
-                sendUnencryptedMessage(message, date);
-            }
-            // const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
-
-            // // the current user doesn't need to be passed in the auth enc function
-            // const recipients = participants.filter(elem => elem !== email);
-
-            // sendEncryptedMessage(message, recipients, dateFirebase);
-
-            // encryptMessage(recipients, token, message)
-            //     .then(enc => {
-
-            //         const msg = {message: enc, from: email, room: current, date, receivers: participants};
-
-            //         addMessageServer(msg)
-            //             .then(id => {
-            //                 console.log(id);
-            //                 dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
-            //                 // TODO: better way to handle chat types
-            //                 socket.emit('message', {message: {id, text: enc, sender: email, date: dateFirebase, room: current}, type: participants.length});
-            //             });
-
-            //         // dispatch(getMessagesThunk({email, conversation: current}));
-
-            //         console.log("After add message dispatch");
-            //     })
-            //     .catch(err => console.log(err));
-        }
-        if(attachment.show){
-            console.log(isEncrypted);
-            if(isEncrypted){
-                addAttachment();
-            }
-            else{
-                addUnencryptedAttachment();
-            }
-            
-        }
-    };
-
+    
     // encrypt the attachment and obtain the file key and encrypted file
     // upload the encrypted file and get its filename
     // encrypt the filekey and filename and sent it to the recipient like a normal message
