@@ -67,7 +67,7 @@ const ChatWindow = () => {
                 encryptMessage(part, token, message)
                     .then(enc => {
     
-                        const msg = {message: enc, from: email, room: current.id, date, receivers: participants, attachment: true};
+                        const msg = {text: enc, from: email, room: current.id, date, receivers: participants, attachment: true};
     
                         addMessageServer(msg)
                             .then(id => {
@@ -83,7 +83,7 @@ const ChatWindow = () => {
                 const date = new Date();
                 const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
     
-                const msg = {message, from: email, room: current.id, date, receivers: participants, attachment: true};
+                const msg = {text: message, from: email, room: current.id, date, receivers: participants, attachment: true};
     
                 addMessageServer(msg)
                     .then(id => {
@@ -175,11 +175,10 @@ const ChatWindow = () => {
         encryptMessage(recipients, token, message)
             .then(enc => {
 
-                const msg = {message: enc, from: email, room: current.id, date, receivers: participants};
+                const msg = {text: enc, from: email, room: current.id, date, receivers: participants};
 
                 addMessageServer(msg)
                     .then(id => {
-                        console.log(id);
                         dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase}));
                         socket.emit('message', {id, text: enc, sender: email, date: dateFirebase, room: current.id});
                     });
@@ -194,7 +193,7 @@ const ChatWindow = () => {
     const sendUnencryptedMessage = (message, date) =>{
         const dateFirebase = firebase.firestore.Timestamp.fromDate(date);
        
-        const msg = {message, from: email, room: current.id, date, receivers: participants};
+        const msg = {text: message, from: email, room: current.id, date, receivers: participants};
 
         addMessageServer(msg)
             .then(id => {

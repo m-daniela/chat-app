@@ -159,7 +159,7 @@ const sendMessage = async (message) => {
   
   const newMessage = {
     sender: message.from,
-    text: message.message,
+    text: message.text,
     date: convertToTimestamp(message.date),
     attachment: message.attachment ? message.attachment : false,
   }
@@ -235,21 +235,9 @@ const sendMessageWithIdDatabase = async (room, receiver, message, messageId) =>{
 
 // get all conversations of a user
 // - user - email of the user
-// const getConversations = async (user) =>{
-//   const conversations = [];
-//   const rawConversations = await db.collection(cts.users)
-//     .doc(user)
-//     .collection(cts.conversations)
-//     .get();
-
-//   rawConversations.forEach(snapshot =>{
-//     if (snapshot.id !== "ignore") conversations.push(snapshot.id);
-//   });
-
-//   return conversations;
-// }
-
-
+// out: 
+// - conversation - list of conversation objects (id, name, participants)
+// TODO: don't send the participants list 
 const getConversations = async(user) =>{
   const conversations = [];
   const conversationDB = await db
