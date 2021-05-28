@@ -44,9 +44,10 @@ const Info = () => {
     return (
         <div className="info_panel">
             <Header title={"Info"}/>
-            <span className="side_container" >{email}</span>
-                        
-            <div className="side_container participants">
+            <span className={`side_container ${thirdPartyView ? "third_party" : ""}`}>{email}</span>
+            {participants.length !== 0 ? (<span className={`side_container ${thirdPartyView ? "third_party" : ""}`}>{isEncrypted ? "Encrypted" : "Not encrypted"}</span>) : <></>}
+            
+            <div className={`side_container participants ${thirdPartyView ? "third_party" : ""}`}>
                 {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
                 {participants?.map(element => <span key={element}>{element === email ? "You" : element}</span>)}
             </div>

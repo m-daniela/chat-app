@@ -6,6 +6,7 @@ import SideItem from './SideItem';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import Chat from './Chat';
+import { ThirdPartyContext } from '../../utils/context/ThirdPartyContext';
 
 // Chat list
 // display the chats and the buttons for adding other chats
@@ -15,6 +16,7 @@ const ChatList = () => {
     const {socket} = useContext(SocketContext);
     const conversations = useSelector(state => state.conversations);
     const email = useSelector(state => state.user.email);
+    const {thirdPartyView} = useContext(ThirdPartyContext);
     const dispatch = useDispatch();
     const [addChat, setAddChat] = useState(false);
 
@@ -35,7 +37,7 @@ const ChatList = () => {
     };
 
     return (
-        <div className="chat_list">
+        <div className={`chat_list ${thirdPartyView ? "third_party" : ""}`}>
             <button className="side_container add_button" onClick={toggleChatForm}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Add a new chat</>}</button>
             {!addChat ? 
                 <>

@@ -45,6 +45,7 @@ const Message = ({message}) => {
                 <span>{message.sender}</span>
                 <button onClick={() => deleteUserMessage()}><CloseOutlinedIcon fontSize="small"/></button>
             </div>
+            {thirdPartyView ? <div className="text">{`Attachment: ${message.attachment}`}</div> : ""}
             <div className="text">
                 {thirdPartyView && isEncrypted ?
                     message.text

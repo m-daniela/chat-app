@@ -42,7 +42,7 @@ const MessageList = () => {
     }, [newMessages]);
   
     return (
-        <div className="message_list">
+        <div className={`message_list ${thirdPartyView ? "third_party" : ""}`}>
             {
                 thirdPartyView ? 
                     messages.map(elem => <Message key={elem.id} message={elem}/>)

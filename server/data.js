@@ -64,7 +64,7 @@ const createChat = async (name, participants, date, isEncrypted) => {
 
   // TODO: change it to name !== undefined
   // and then test it
-  if (participants.length === 2){
+  if (name !== undefined){
     
     const [recv1, recv2] = [...participants];
 
@@ -158,7 +158,7 @@ const addConversationWithIdDatabase = async (chatId, receiver, chat, message) =>
 const sendMessage = async (message) => {
   
   const newMessage = {
-    sender: message.from,
+    sender: message.sender,
     text: message.text,
     date: convertToTimestamp(message.date),
     attachment: message.attachment ? message.attachment : false,

@@ -108,7 +108,7 @@ app.post("/deleteMessage", (req, res)=>{
 
   data.deleteMessage(user, chat, id)
     .then(data => res.json([]))
-    .catch(err => res.json(["123"]))
+    .catch(err => res.json([]))
 });
 
 
