@@ -9,26 +9,28 @@ import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 // Side item
 // displays the chats in the ChatList
 // the deletion option is present here
-const SideItem = ({name}) => {
+const SideItem = ({element}) => {
+    const {name, id, isEncrypted} = element;
+    const chatInformation = {id, name};
     const dispatch = useDispatch();
     const email = useSelector(state => state.user.email);
     const {socket} = useContext(SocketContext);
 
     const handleClick = () =>{
-        dispatch(changeConversation(name));
-        dispatch(getMessagesThunk({email, conversation: name}));
-        socket.emit("join", ({username: email, room: name}));
+        dispatch(changeConversation(chatInformation));
+        dispatch(getMessagesThunk({email, conversation: id}));
+        socket.emit("join", ({username: email, room: id}));
     };
 
     // delete the chat 
     const handleDelete = ()=>{
         const choice = confirmDialog(`chat ${name}`);
         if (choice){
-            deleteConversationUser(email, name)
+            deleteConversationUser(email, id)
                 .then(_ => {
                     dispatch(changeConversation(""));
-                    dispatch(deleteConversation(name));
-                    socket.emit("user left", ({username: email, room: name}));
+                    dispatch(deleteConversation(id));
+                    socket.emit("user left", ({username: email, room: chatInformation.id}));
                 })
                 .catch(err => console.log(err));
         }
@@ -38,7 +40,7 @@ const SideItem = ({name}) => {
         <div className="side_container">
             <div className="side_item" onClick={() => handleClick()}>
                 {name}
-                <span>Status maybe</span>
+                <span>{isEncrypted ? "Encrypted" : "Not encrypted"}</span>
                 
             </div>
             <button onClick={() => handleDelete()}><CloseOutlinedIcon fontSize="small"/></button>

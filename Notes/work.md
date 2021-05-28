@@ -1928,28 +1928,28 @@ Compared to one-to-one chats, group messaging becomes more complex as the number
 
 # The application
 
-- login/ signup
-- add conversation - set it to encrypted or unencrypted
-- delete conversation
-- send messages and attachments 
-- delete messages
-- third party view
-
-The application is a full stack web application, created with React, Node.js and the database and authentication logic are hosted by Firebase. For the real-time aspect of the messaging app, the front and the back are communicating using Socket.io, which is a package created over websockets. 
-The key management and encryption/ decryption are managed using the VirgilSecurity framework. 
-
-The application provides authentication based on 
-
-The functionalities provided by the application are as follows:
-- Login/ Signup - the user can login to an existing account or create a new account with the email and a password, upon opening the application, and is redirected to the main application window.
-- Logout - the user is send back to the login page.
-- Display chats - the conversations of the logged user are displayed automatically, if any.
-- Select chat and send messages and attachments - once a chat is selected, the user can send messages to the recipient(s) and also see the previous messages sent and received
-- Add chat - a private or a group chat can be added. Here, the user can select whether they want it encrypted or not
-- Delete chat - each chat will have a delete button, which erases it from the database and it won't appear in the user's list anymore, but will still be visible for the recipient. In case of a group, a message will be displayed that the user left the chat
-- Delete message - each message will have a delete button and will be removed from the user's message list. It will be still visible for the recipient. 
-
 ## General flow
+
+To use this application, the user can login to an existing account or create a new one with an email and a password. After a successful login or registration, an "Add a new chat" appears on the left, along with the list of chats tied to that accound, if any added. 
+
+When the user clicks on the button, a form will open in which they can enter the required details: chat name, in case of a group conversation (more than 3 participants), and the emails of the participants, one at a time. Their addresses appear beneath the form as they are added. 
+
+The user can choose to have the chat encrypted or unencrypted by clicking the button. Encrypted chats are selected by default, but this feature is aimed to show the risks of having unencrypted chats, through the "third party view" feature. Once this is selected, the attachments are left unencrypted as well. 
+
+Any conversation can be deleted by clicking the "X" button at the right of the chat name and the group participants are notified. 
+
+To access the chats, the user clicks on one from the left side. The messages are automatically decrypted and the attachments are shown - either the images or as a path to the file. A download prompt appears when they are clicked and the user can save them locally. 
+
+Text messages and attachments can be sent using the input from the bottom and can be deleted by pressing the "X" button from the top right corner of each message. 
+
+The right panel contains the logout button, the email of the user, information about the currently selected chat, such as the participants, if the chat is encrypted and switches for the theme and the third party view. 
+
+The user can choose between a dark and a light theme. 
+
+The third party view is a feature that enables the user to "see through the eyes of a third party": the server or someone who controls it, the database etc. The visible information is highlighted when this is set to on and it includes the payload - the messages, attachments, and metadata - participants, who sent the messages, the time and date. 
+
+In this way, the users can see what information is more vulnerable can be accessed by the server. 
+
 
 ![Use case diagram](Media/Diagrams/usecase.png)
 
@@ -1958,20 +1958,74 @@ The functionalities provided by the application are as follows:
   <figcaption>Use case diagram</figcaption>
 <figure>
 
-The user is greeted with a login page. From this, they can create a new account or login, using an email and a password.
-
-On the left side, the list of conversations for that account (it is empty if a new account was created) will appear, as well as buttons to add a new private or group chat. Clicking one of the buttons will open a form over the chat list and, for the private chat, will ask for the email of the recipient and to choose if you want the chat unencrypted (it is encrypted by default) and for the group, there will be an additional input for the chat name and an button saying "Add another participant". When this succeeds, the initiator and the recipients will be prompted with the newly created chat. 
-The chats can be deleted by clicking the "x" button next to them and after confirming the decision in the dialog box. In case of groups, the participants will be notified if one of them leaves and will be deleted from the list of participants. 
-
-After choosing one of the listed chats (or after adding one), the user is prompted with a chat box and can send messages to the selected recipient. 
-If the user wants to add an attachment, the file explorer will open and the client will be able to choose the desired file. 
-Each message can be deleted by clicking "x" and confirming in the dialog box. These messages are only deleted for the current user, so they will remain visible for the rest of the participants. 
-
-The right side contains information about the user (the email), the participants in the selected group and the logout button. The logout button will redirect the user to the login page and all the locally saved data will be deleted. 
-
 ## Implementation and code layout
 
-- diagrams for the frontend and backend are present in the "back.pdf" and "front.pdf" files
+- frontend - react + scss + redux toolkit
+- backend - node js + express
+- database - firebase
+- real-time - socket io
+- encryption/ decryption and key handling - virgil security
+
+encryption - aes256gcm https://github.com/VirgilSecurity/virgil-crypto-javascript/blob/dec8b1c79f550f13f8c2f95095ad18e6cad1de89/packages/virgil-crypto/src/VirgilCrypto.ts#L582
+hash - sha256 https://github.com/VirgilSecurity/virgil-crypto-javascript/blob/dec8b1c79f550f13f8c2f95095ad18e6cad1de89/packages/virgil-crypto/src/VirgilCrypto.ts#L210
+
+
+- https://developer.virgilsecurity.com/docs/e3kit/fundamentals/jwt/ [1]
+
+
+The application is a full stack web application with the frontend created with React and Redux Toolkit for state management and the styling with SCSS. For the backend, Node.js, express and socket.io are used to communicate with the frontend. The accounts and the user data is stored in Firebase and the key management and encryption and decryption process are handled by the VirgilSecurity framework. 
+
+When the user logs in, the credentials are checked via the Firebase instance initialized for the frontend. If the user registers for the first time, the details are saved to the database. If these operations are successful, the user is redirected to the main chat page and information such as the email, uid and the the fact that it is logged in is saved in the redux state tree. 
+
+In order to have access to the services from the Virgil Security platform, the client app asks the server for a JSON Web Token that is used to authenticate with the platform. [1] It contains information about the user and application, signature, encoding etc. 
+
+After this is retrieved, the user's token is saved in the context and will allow various operations and requests to the key server.  
+
+Next, the conversations of the user are loaded from the database and saved in the state tree as well. When one is selected, the currently selected conversation name is changed and the messages corresponding to the email and conversation are fetched from the database.  
+
+When they arrive, if `isEncrypted` is true for that conversation, then the public keys of the participants are retrieved and the messages are decrypted. Otherwise, they are formatted and displayed in the main section. 
+
+When the user sends a message, it is encrypted using AES 256 GCM and then sent to the server to be saved in the database. The function that does the encryption is `authEncrypt` from the user token and takes in as parameters the public keys of the participants and the message. It is of the form
+
+```js
+
+"message": {
+  "text", 
+  "sender", 
+  "date", 
+  "room",
+  "attachment" // can be missing if the message only contains text
+}
+
+```
+
+and is sent through the socket to the participants after the id is obtained from the database. 
+
+The attachments are uploaded from the computer and they are encrypted using `encryptSharedFile` and them uploaded to Firebase Storage. The key and the filename are turned to JSON and the text is treated as a normal message. When they need to be displayed, the text of the message is sent to the `Attachment.js` component which handles the key and filepath extraction and requests the media files, which, in case of images, are displayed in the message container. Before they are sent, a preview is shown in the `AttachmentOverlay.js` component over the messages list. 
+
+When a new conversation is added, it is saved in the database and each of the participants receive a notification through the socket so the app can update the list of conversations. 
+
+When a message or conversation is deleted, they are deleted from the database only for the current user. When a group conversation is deleted, the other participants are notified in this sense with a message. 
+
+The third party view feature changes the way in which the messages are displayed, adding a different style to the message list and other available metadata. Since the messages are stored in the state tree unencrypted, this switch is easier, as the methods called are depending on whether this feature is active or not. 
+
+In case of encrypted attachments, the user will only see the encrypted key and filename object with the `attachment` flag set. 
+
+On logout, all the locally saved data is deleted and the state tree is cleared. 
+
+---
+
+- login /
+- signup /
+- add conversation /
+- delete conversation /
+- send message/
+- send attachment/
+- delete message/ conversation/
+- logout/
+- 3rd party view
+
+---
 
 The frontend is created using React with functional components, the axios package to communicate with the server and Redux Toolkit for state management. The backend uses Node.js and express, to handle the requests. 
 To obtain the real-time communication between the users, the socket.io library is used. When a message is sent or a chat is created, the server notifies the parties involved using sockets and only after the data is saved to the database.

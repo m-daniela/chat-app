@@ -1,6 +1,7 @@
 
 require('dotenv').config();
 
+const {logger} = require("./utils/logger");
 const data = require("./data");
 const {generateVirgilJwt} = require("./authentication/jwtToken");
 const {requireAuthHeader} = require("./authentication/validation");
@@ -29,7 +30,7 @@ const port = process.env.PORT || 5000;
 
 // get the conversations for the given user
 app.post("/", (req, res) => {
-  console.log("Server POST");
+  logger("Server", "POST /")
   const user = req.body.user;
   if (user){
     data.getConversations(user).then(data => res.json(data));
@@ -40,9 +41,8 @@ app.post("/", (req, res) => {
 // add a user to the database if it is not there
 // already and ask for the jwt
 app.post("/auth", (req, res) =>{
-  console.log("Server POST /auth");
+  logger("Server", "POST /auth")
   try{
-    console.log(req.body);
     const email = req.body.user;
     if (email !== undefined || email !== null){
       data
@@ -51,7 +51,7 @@ app.post("/auth", (req, res) =>{
     }
   }
   catch(err){
-    console.log("Server POST /auth:", err);
+    logger("Server", "POST /auth", err)
   }
   
 })
@@ -150,15 +150,11 @@ io.on('connection', (socket) => {
   // and add it to the database
   // type - the number of participants in the chat
   // TODO: find a better way to handle this
-  socket.on('message', ({message, type}) => {
+  socket.on('message', (message) => {
     const user = data.current(socket.id);
     console.log("Broadcast", user.username, message.room)
-    if (type === 2){
-      socket.broadcast.to(user.username).emit("message", message);
-    }
-    else{
-      socket.broadcast.to(message.room).emit("message", message);
-    }
+    socket.broadcast.to(user.room).emit("message", message);
+
   });
 
   // broadcast the fact that a user
@@ -176,20 +172,11 @@ io.on('connection', (socket) => {
   socket.on("new chat", (chat) =>{
     const name = chat.chat;
     const receivers = chat.receivers;
-    const sender = chat.sender;
     const date = chat.date;
     const isEncrypted = chat.isEncrypted;
-    
-    if (name){
-      data.createGroup(sender, name, receivers, date, isEncrypted)
-        .then(_ => io.emit("new chat", {chatName: name}));
-      
-    }
-    else{
-      data.createChat(sender, receivers, date, isEncrypted)
-        .then(_ => io.emit("new chat", {chatName: sender}));
-      
-    }
+
+    data.createChat(name, receivers, date, isEncrypted)
+      .then(_ => io.emit("new chat"));
   });
 
 

@@ -19,7 +19,7 @@ const ChatList = () => {
     const [addChat, setAddChat] = useState(false);
 
     useEffect(() =>{
-        socket.on("new chat", (newChat) => {
+        socket.on("new chat", () => {
             // not the best choice - this will add the chat with the same name
             // same for the group
             // dispatch(addConversation(newChat.chatName));
@@ -39,7 +39,7 @@ const ChatList = () => {
             <button className="side_container add_button" onClick={toggleChatForm}>{addChat ? <><CloseOutlinedIcon />Close</> : <><AddOutlinedIcon />Add a new chat</>}</button>
             {!addChat ? 
                 <>
-                    {conversations.map(elem => <SideItem key={Math.random() * 1000} name={elem}/>)}
+                    {conversations.map(elem => <SideItem key={Math.random() * 1000} element={elem}/>)}
                 </>
                 :
                 <></>}

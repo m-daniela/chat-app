@@ -25,7 +25,10 @@ const Chat = ({close}) =>{
 
     const addMoreUsers = (e) =>{
         e.preventDefault();
-        setParticipants([...participants, current]);
+        if (current !== ""){
+            setParticipants([...participants, current]);
+        }
+        
         setCurrent("");
     };
 
