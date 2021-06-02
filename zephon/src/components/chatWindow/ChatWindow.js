@@ -108,8 +108,14 @@ const ChatWindow = () => {
     // a user leaves the group chat
     // TODO: add a notification to the group members
     useEffect(() =>{
-        socket.on("user left", ({username}) =>{
-            console.log("User left", username);
+        socket.on("user left", (res) =>{
+            console.log("User left", res);
+            if (res.room === current.id){
+
+                dispatch(addMessage(res));
+                // things change here?
+                // dispatch(getMessagesThunk({email, conversation: current.id}));
+            }
         });
     }, [socket]);
 

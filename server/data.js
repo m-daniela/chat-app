@@ -64,7 +64,8 @@ const createChat = async (name, participants, date, isEncrypted) => {
 
   // TODO: change it to name !== undefined
   // and then test it
-  if (name !== undefined){
+  console.log(name);
+  if (name === "" || name === undefined){
     
     const [recv1, recv2] = [...participants];
 
@@ -95,7 +96,54 @@ const createChat = async (name, participants, date, isEncrypted) => {
       addConversationWithIdDatabase(chatId, receiver, chat, message);
     }
   }
+}
+
+// remove the participant from the participants list
+// in:
+// - chat - id of the chat
+// - participant - email of the participant
+// - user - email of the current user
+const removeParticipant = (chat, participant, user) =>{
+  try{
+    db
+      .collection(cts.users)
+      .doc(user)
+      .collection(cts.conversations)
+      .doc(chat)
+      .update({
+        participants: admin.firestore.FieldValue.arrayRemove(participant)
+      });
+    console.log("Participant removed", participant);
+  }
+  catch(err){
+    console.log("Participant removed", err);
+  }
   
+}
+
+// add a message to the database
+// name - name of the chat
+// receiver - name of the receiving user
+// message - the message object
+const userLeftMessage = async (message) => {
+  
+  const newMessage = {
+    sender: "sys",
+    text: `${message.username} has left the chat.`,
+    date: convertToTimestamp(message.date),
+  }
+
+  const messageId = await sendMessageDatabase(message.room, message.receivers[0], newMessage);
+  // removeParticipant(message.room, message.username, message.receivers[0]);
+  for (const receiver of message.receivers.slice(1)){
+    sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
+    // removeParticipant(message.room, message.username, receiver);
+  }
+
+  newMessage["id"] = messageId;
+  newMessage["room"] = message.room;
+
+  return newMessage;
 
 }
 
@@ -233,6 +281,8 @@ const sendMessageWithIdDatabase = async (room, receiver, message, messageId) =>{
   }
 }
 
+
+
 // get all conversations of a user
 // - user - email of the user
 // out: 
@@ -353,6 +403,7 @@ module.exports = {
   sendMessage,
   getMessages, 
   deleteMessage,
+  userLeftMessage,
   getConversations,
   deleteConversation,
 };

@@ -1,12 +1,8 @@
 
+
 .chat_list{
-    // button{
-    //   display: flex;
-    //   align-items: center;
-    // }
     .search_input{
         width: 100%;
-
         input{
             box-sizing: border-box;
             width: 80%;
@@ -53,6 +49,7 @@ button.side_item{
   
     &.buttons{
       justify-content: left;
+      flex-wrap: wrap;
       button{
         margin-right: 15px;
         border-radius: 5px;

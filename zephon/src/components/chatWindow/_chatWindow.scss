@@ -91,9 +91,6 @@
 
     input{
         @include custom_input;
-        &:focus{
-            @include custom_input;
-        }
     }
 
     button{

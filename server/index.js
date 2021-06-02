@@ -159,11 +159,13 @@ io.on('connection', (socket) => {
 
   // broadcast the fact that a user
   // has left the group chat
-  socket.on('user left', ({username, room}) => {
+  socket.on('user left', (message) => {
 
-    console.log("Broadcast", username, room)
-    // socket.broadcast.to(room).emit("message", {room, sender, text, date});
-    socket.broadcast.to(room).emit("user left", {username});
+    data.userLeftMessage(message)
+    .then(res => socket.broadcast.to(message.room).emit("user left", res))
+    .catch(err =>{
+      console.log("User Left", err);
+    })
     
   });
 

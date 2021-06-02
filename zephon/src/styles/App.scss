@@ -24,6 +24,11 @@ input[type="file"]{
   display: none;
 }
 
+// input:focus{
+//   border: none;
+//   background-color: var(--highlights);
+// }
+
 button, label{
   margin: 0;
   padding: 0 20px;

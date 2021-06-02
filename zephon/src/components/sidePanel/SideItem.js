@@ -10,7 +10,7 @@ import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 // displays the chats in the ChatList
 // the deletion option is present here
 const SideItem = ({element}) => {
-    const {name, id, isEncrypted} = element;
+    const {name, id, isEncrypted, participants} = element;
     const chatInformation = {id, name};
     const dispatch = useDispatch();
     const email = useSelector(state => state.user.email);
@@ -30,7 +30,9 @@ const SideItem = ({element}) => {
                 .then(_ => {
                     dispatch(changeConversation(""));
                     dispatch(deleteConversation(id));
-                    socket.emit("user left", ({username: email, room: chatInformation.id}));
+                    const date = new Date();
+                    const receivers = participants.slice().filter(elem => elem !== email);
+                    socket.emit("user left", ({username: email, room: chatInformation.id, date, receivers}));
                 })
                 .catch(err => console.log(err));
         }

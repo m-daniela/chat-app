@@ -37,10 +37,10 @@ fontsize: 12pt
   - [Elliptic curve cryptography](#elliptic-curve-cryptography)
 - [Existing Technologies](#existing-technologies)
   - [Signal protocol](#signal-protocol)
-    - [Diffie Hellamn](#diffie-hellamn)
     - [Extended Triple Diffie Hellamn](#extended-triple-diffie-hellamn)
     - [Double Ratchet](#double-ratchet)
     - [EdDSA signatures](#eddsa-signatures)
+    - [Sesame](#sesame)
     - [Sealed sender](#sealed-sender)
     - [Whatsapp](#whatsapp)
   - [MTProto](#mtproto)
@@ -50,8 +50,9 @@ fontsize: 12pt
   - [Letter Sealing](#letter-sealing)
   - [Threema](#threema)
   - [Group messaging](#group-messaging)
-  - [About MLS?](#about-mls)
     - [MLS](#mls)
+  - [About MLS?](#about-mls)
+    - [MLS](#mls-1)
 - [Technologies used](#technologies-used)
 - [The application](#the-application-2)
   - [General flow](#general-flow)
@@ -86,6 +87,7 @@ fontsize: 12pt
   - [Out of bound verification](#out-of-bound-verification)
   - [IND CCA](#ind-cca)
   - [Other websites](#other-websites)
+  - [KEM](#kem)
 
 # Presentation
 1. What is e2ee
@@ -766,9 +768,8 @@ Attack models [2], [3] /x
 - wapp https://www.signal.org/blog/whatsapp/ [9]
 - wapp 2 https://www.signal.org/blog/whatsapp-complete/ [10]
 - fb https://www.signal.org/blog/facebook-messenger/ [11] - use this for the introduction
-
-
----
+- [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf) [12]
+- https://signal.org/blog/private-groups/ [13]  this is from 2014, maybe there is something newer
 
 Pros: double ratchet algorithm, sealed sender feature, improvements on cryptographic primitives. 
 
@@ -779,11 +780,13 @@ Initialy implemented in 2013 for TextSecure, the predecessor of the Signal app, 
 
 OTR uses ephemeral key exchanges to offer perfect forward secrecy and this is achieved by a new Diffie-Hellman key exchange for each message. This property assures the user that, if the private keys are compromised, the previous messages cannot be decrypted by an adversary. The static public keys then take the role of authenticating the users. 
 
-The second version, in 2014, added new improvements to the ratcheting algorithm by using the SCIMP's way of obtaining the message key by hashing the last message, therefore obtaining chains of keys. [6] It was initially called Axolotl Ratchet [7], but it was later renamed to Double Ratchet algorithm. 
+The second version, in 2014, added new improvements to the ratcheting algorithm by using the SCIMP's way of obtaining the message key by hashing the last message, therefore obtaining chains of keys and using up to 10 different types. [6], [12] It was initially called Axolotl Ratchet [7], but it was later renamed to Double Ratchet algorithm. 
 
 A third version rolled out in 2016 and they renamed the application to Signal [8]. In the same year, the interest of using end-to-end encrypted applications increased after Whatsapp announced that they are now supporting the Signal protocol. [9?][10]
 
+Group messaging uses pairwise messaging by sending the encrypted message to each member. [13]
 
+---
 
 - combines 
   - double ratchet algo
@@ -827,29 +830,18 @@ A third version rolled out in 2016 and they renamed the application to Signal [8
 - xeddsa signature scheme - x25519 or x448
 - the rest is highlighted in the other version of the paper
 
-
-
-### Diffie Hellamn
-- https://www.cs.jhu.edu/~rubin/courses/sp03/papers/diffie.hellman.pdf
-- [Diffie-Helman key exchange (colors)](https://www.youtube.com/watch?v=NmM9HA2MQGI)
-- [Diffie-Helman key exchange (maths)](https://www.youtube.com/watch?v=Yjrfm_oRO0w)
-- [How Signal Instant Messaging Protocol Works - more explanations](https://www.youtube.com/watch?v=DXv1boalsDI)
-- [How End-to-End encryption Works? - wapp](https://www.youtube.com/watch?v=hwQbPgvEQyw)
-- [Double Ratchet Messaging Encryption](https://www.youtube.com/watch?v=9sO2qdTci-s)
-- [Key Exchange problems](https://www.youtube.com/watch?v=vsXMMT2CqqE)
-- [Elliptic curve](https://www.youtube.com/watch?v=NF1pwjL9-DE)
-
-
+---
 
 ### Extended Triple Diffie Hellamn
 - x3dh https://signal.org/docs/specifications/x3dh/ [1]
 
+/simplify
 
-Extended Triple Diffie-Hellamn is the key exchange protocol used by Signal and provides forward secrecy and deniability. It was designed for asynchronous communications, so the users need to provide some information to the server so that the others can establish the secret key without both being online. 
+Extended Triple Diffie-Hellamn (X3DH) is the key exchange protocol used by Signal and provides forward secrecy and deniability. It was designed for asynchronous communications, so the users need to provide some information to the server so that the others can establish the secret key without both being online. 
 
 The algorithm needs an elliptic curve, either X25519 or X448, a hash function, SHA 256 or SHA 512, the information identifying the application and, additionally, an encoding function for the public key. 
 
-Each user has a set of keys based on the chosen elliptic curve: /x??
+Each user has a set of key pairs as follows: 
 
 - long-term identity key - each party has one and they are public
 - ephemeral key pair - generated at each run with the public key
@@ -859,15 +851,9 @@ Each user has a set of keys based on the chosen elliptic curve: /x??
 +using Montgomery ladder to be more resistant to timing side channel attacks
 
 
-To prepare the setting, the communication will have 3 parties: the users, A (sender) and B (receiver), and the server. The following three phases are defined [1]: 
+To prepare the setting, the communication will have 3 parties: the users, A (sender) and B (receiver), and the server.  
 
-
-**Key publishing**
-
-B publishes to the server his id key and the prekeys. The id key is uploaded once and, in order to keep forward secrecy, the signed prekey and prekey signature are replaced after a time interval and the one-time prekeys are changed after each run. 
-
-
-**Sending the initial message**
+Before the communication begins, B publishes to the server his id key and the prekeys. The id key is uploaded once and, in order to keep forward secrecy, the signed prekey and prekey signature are replaced after a time interval and the one-time prekeys are changed after each run. 
 
 After A gets the prekey bundle from the server and the prekey signature is verified, the ephemeral key pair is generated and it will be deleted when the shared secret is computed. 
 If the server doesn't provide an one-time prekey, then three ECDH shared secrets are obtained using the identity keys of the participants, the signed prekey of B and the ephemeral key of A, which are concatenated and passed to a HMAC based key derivation function. The shared secret is the result of this computation. 
@@ -878,10 +864,7 @@ The initial message contains A's identity and epehemeral keys, information about
 
 Other additional data can be added, such as identifying information, certificates, usernames etc.
 
-
-**Receiving the initial message**
-
-B needs to obtain A's identity and ephemeral keys from the message. B then follows the same steps to compute the secret key, creates the associated data sequence using the identity keys and he can decrypt the message using it and the shared secret.
+To receive the initial message, B needs to obtain A's identity and ephemeral keys from the message. B then follows the same steps to compute the secret key, creates the associated data sequence using the identity keys and he can decrypt the message using it and the shared secret.
 
 Again, the one-time prekey used for this message is deleted to keep the forward secrecy. 
 
@@ -908,28 +891,23 @@ The current authentication scheme does not prevent unknown key share attacks or 
 - [double ratchet](./pdf/papers/signal/docs/doubleratchet.pdf) [1]
 
 
-After the shared secret is obtained, the parties are using the Double ratchet algorithm to exchange messages. The new keys are derived and combined with DH values sent along with the messages, so the the messages are protected if the previous or future keys are compromised.  
+After the shared secret is obtained, the parties are using the Double ratchet algorithm to exchange messages. The new keys are derived and combined with DH values sent along with the messages, so they are protected if the previous or future keys are compromised.  
 
-This algorithm uses KDFs which are then used to form KDF chains. They use as input and output key parts of the output of another KDF. In this way, resilience, forward security and break-in recovery, as stated in [1]. 
+This algorithm uses KDFs (key derivation functions) to form KDF chains. They use as input and output key parts of the output of another KDF. In this way, resilience, forward security and break-in recovery, as stated in [1]. 
 
 Each party has three chains for each session: root, sending and receiving. 
 
+The inputs for the root chain are the Diffie-Hellman secrets that are exchanged along with the messages. This concepts is called a Diffie-Hellman ratchet and is accomplished by replacing the ratchet key pairs in a "ping-pong behaviour". The messages contain a hearder with the current public key of the ratchet. The receiver combines it with their private ratchet key in order to obtain the shared secret, which will be fed to the KDF of the root chain and the outputs are used as sending and receiving keys for the corresponding chain. 
 
-- a new concept, called DH ratchet, is described as follows: the newly exchanged DH secrets, during message exchange, become the input to the root chain and the outputs of the KDF are the keys for the sending and receiving chains  
+The other chains advance with each message and the output is used as encryption keys or message keys, creating a symmetric-key ratchet. Since the input is constant, they do not guarantee break-in recovery by themselves, but they can be stored to handle communication issues, such as out-of-order or lost messages.
 
-**Symmetric key ratchet**
-- the chains advance with each message sent and received and their unique output keys are used for the encryption and decryption; this is called a  symmetric key ratchet and the unique keys are message keys
-- they don't provide break-in recovery because the input ot the KDF is constant and they can be stored unordered or lost messages can be easily handled
+To avoid this, the messages are numbered such that the ratchet can store the message keys until they arrive.  
 
-**Double Ratchet**
-- to prevent previous and future messages compromise, the protocol combines the symmetric key ratchet and the DH ratchet, resulting in the double ratchet algorithm
-- a new DH key pair is generated, being the current ratchet key pair; when a new ratchet key pair is received from another party (from the message header), the current one is replaced
-- when a new message is sent or received, the symmetric key ratchet step is applied on the corresponding chain (sending or receiving)
-- in this way, if one of the private keys is compromised, it will soon be replaced with another one, providing both forward and backward secrecy
+The break-in recovery and resilience roperties are satisfied by the usage of KDF chains. 
 
-- in case the messages are sent out of order or some are lost, the messages header contains the number in the sending chian and the length in the previous sending chain /x, so the receiver will store the message keys for those messsages
+Therefore, these two ratchets form the Double Ratchet algorithm. It can be initialized with the secret key from the X3DH  exchange and the associated data will be used as input for encryption and decryption functions. The signed ephemeral key and corresponding private key of the recipient can be the initial key pair of the ratchet.
 
-- pg 20
+Security risks could arise from the stored or recovered message keys, obtained after deletion. 
 
 
 ### EdDSA signatures
@@ -948,6 +926,13 @@ The signature scheme is defined on twisted Edwards curves.
 - it is considered safe to use the same key pair to produce the signatures
 
 
+### Sesame
+- [sesame](./pdf/papers/signal/docs/sesame.pdf)
+
+Sesame is an algorithm used for session management and was developed for the asynchronous and multi-device setting. 
+
+- this is referenced in one of the security analyses
+
 ### Sealed sender
 - [sealed sender](./pdf/papers/signal/18.%20Technology%20preview%20Sealed%20sender%20for%20Signal%20-%20signal-org-blog-sealed-sender-.pdf)
 
@@ -962,18 +947,30 @@ But the users can enable this for anyone who isn't in their contacts list, so th
 The messages are encrypted in a normal fashion, and then they are encrypted again, along with the sender certificate. 
 
 
-**Groups**
-
-- https://signal.org/blog/private-groups/ - this is from 2014, maybe there is something newer
-
-Group messaging uses pairwise messaging by sending the encrypted message to each member. 
-
 **Security analyses**
 
-- [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf)
+- 14 https://eprint.iacr.org/2014/904.pdf [3]
+
+TextSecure was vulnerable to UKS (unknown key share) attacks, which target a communication session between two honest users at key exchange; one of the users thinks that they shared key with the recipient, but the recipient is unknowingly sharing the key with the attacker. The mitigation proposed is by adding the identities of the parties in the authentication tag. 
+
+Also, they go further with the authentication issue and propose that the party could prove that they know the secret key corresponding to the long-term identity key.
+
+
+- [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf) [1]
+
+
+This paper analyses the multi-stage authenticated key exchange protocol of Signal and points out the novelties introduced in their cryptographic core, including the ratcheting algorithm and the implied secrecy and authentication with forward security and future secrecy. 
+
+It is also stated that unknown key share attacks [3] are still possible in the Signal protocol, since the key derivation is not based on the identities of the users, but the applications implementing the protocol can prevent it by adding them to the initially exchanged messages. 
+
+- since this is the "first" paper talking about this, I'll link it to future work somehow
+- references to this paper in [2]/ 17
+
+---
+
 - double ratchet started with TextSecure, which was the app developed before Signal and it combined the ideas from OTR's asymmetric ratchet with a symmetric ratchet; this one didn't include parts from the DH exchange, it only derived a new symmetric key; this was reffered to as Axolotl ratchet
 
-- unknown key share attack (UKS) - is a type of attach where a communication between two honest users is targeted by an adversary at key exchange; one of the users thinks that they shared key with the recipient, but the recipient is unknowingly sharing the key with the attacker; this attack can be mitigated by including both user identities in the key derivation function 
+- unknown key share attack (UKS) - is a type of attack where a communication between two honest users is targeted by an adversary at key exchange; one of the users thinks that they shared key with the recipient, but the recipient is unknowingly sharing the key with the attacker; this attack can be mitigated by including both user identities in the key derivation function 
 - this type of vulnerability was present in the TextSecure protocol and is not prevented by Signal, since the key derivation is not based on the identities of the users too 
 
 - the paper focuses on the "multi stage AKE protocol" part of Signal
@@ -983,13 +980,79 @@ Group messaging uses pairwise messaging by sending the encrypted message to each
 - the authentication is implicit, meaning that the intended party can compute the key /x
 - side channel attacks are not taken into consideration and the out of band verifications of the long and mid term keys is assumed
 
+---
 
-- [21 sealed sender - improvements](./pdf/papers/signal/21.%20Improving%20Signal’s%20Sealed%20Sender%20-%20ndss21.pdf)
+- [19. automated and manual testing of Signal](./pdf/papers/Signal/19.%20z00b_2019_thesis_dion_van_dam_2019_eerder.pdf) [2]
+
+This research studies the security claims of the protocol and the Java implementation of the protocol, Android application and the server. It also aims to discover buffer over-read vulnerabilities (Heartbleed bug) using different types of fuzz testing on the simplified server code and the messaging process?. 
+
+They have also analysed the Sesame algorithm manually, but found that the session recovery feature is not implemented in the application. They present four cases: app restoration with and without backup after the account was deleted and without deleting it. They found out that, in the first two cases, the other party cannot send messages once the account was deleted, whereas, in the last two, the messages are sent but not delivered to the other party, therefore, they are lost and this could leave place for other attacks. 
+
+Forward and future secrecy are also challenged, being too weak regarding the code implementation and the case in which the device is compromised. Also, data is not completely deleted from the device and then an attacker could retrieve the previously saved and used keys to break these properties.   
+
+The deniability property does not hold because, comparing it to the TextSecure case, the other party could copy the encryption process locally and that the user still needs to authenticate with the server. The latter could be solved by using the sealed sender feature, which is analysed in [4]. 
+
+---
+
+- fuzzing - technique for automated testing that sends semi-random input and observes the output
+
+
+- 20 deniability https://eprint.iacr.org/2021/642.pdf [1]
+
+This paper claims that authentication is not sufficient to provide deniability and aims to prove the offline deniability of the Signal protocol. In offline deniability, a third party is given access to the transcript of a conversation between two participants, A and B, by B, A, for example, but they are not present during it. The third party then needs to decide whether B knew that they were talking to A. 
+
+They prove that X3DH is a deniable authenticated key exchange in the random oracle model. This holds even without the long term public keys being registered. 
+
+
+// ================ //
+
+
+
+
+They prove that 3DH is deniable, then take X3DH into consideration. Even if the 
+If the initial AKE is deniable, Signal is deniable because subsequent messages do not use the long-term keys of the parties.  
+
+
+KDH - knowledge of DH
+
+This paper explores the offline deniability property of Signal. 
+
+Offline deniability - a judge sees a transcript of the conversation between A and B, provided by B, to decide if A knew that she was communicating with B. 
+
+They state that online denibility, when the judge is present during the communication, does not hold for Signal. 
+
+They also study implicitly authenticated protocols, meaning that the transcript is not dependant on the private keys of the communicating parties, therefore anyone can generate the mesages. But this is not enough since you need to simulate the session key. 
+
+AKE is deniable if a party prevents the other one from proving to a third party that the key exchange took place between them and another certain party. (or to protect, in the same fashion, the contents of the messages that were exchanged between the participants)
+
+Adversary - M, has a number of randomly chosen public keys and can behave like an initiator or a responder
+View - contains the transcript of M and session keys from the session M takes part in
+Simulator - takes the role of the inititator/ responder and imitates this party without the long term private key sk; it receives the public keys of all parties and auxiliary available to the adversary; 
+
+The session key is included so you can say that the contents of the session authenticated with the session key are also deniable. 
+
+
+
+
+Even if the ephemeral keys are signed by the clients, they are available on the server for anyone to access, therefore they cannot be immediately associated to a specific user, so deniability still holds. 
+
+
+
+
+- Deniability - ensure that the transcript of online communications between 2 parties cannot be used as a proof to a tird party that the comm took place and this should hold even if one of the parties is willing to reveal the identity of the other party
+
+- deniable auth key exch - same, but this time you take into consideration the transcript of the ake protocol
+
+- implicit authenticated protocols - transcript is independent of the private keys of the parties, meaning that anyone can generate the transcript messages and authentication is provided by the use of the private keys in the derivation of the session key
+
+
+- [21 sealed sender - improvements](./pdf/papers/signal/21.%20Improving%20Signal’s%20Sealed%20Sender%20-%20ndss21.pdf) [4]
 
 This paper proposes a statistical disclosure attack on the Sealed Sender feature and message timings to create a link between two communicating users. With the help of delivery receipts and the assumptions that the response form the recipeint is immediately send after the message was received, the identity of the sender can be discovered in relatively small number of exchanged messages. 
 
 The proposed solution is to implement a similar scheme, but scaled for conversations. In this way, the identity of the sender is protected during the whole lifespan of the conversation. 
 
+---
 
 - according to this paper, the anonimity that this feature offers to provide is broken if more messages are sent
 - the attack proposed is of the statistical disclosure attack (sda) type and uses the delivery receipts 
@@ -1207,6 +1270,19 @@ A security analysis of signcryption was conducted in 2002? [2].
 
 **Security**
 
+- adr
+
+They compare ets, ste with e&s and introduce something called commit then encrypt and sign, which would do the two operations in parallel.
+
+Regardint the security of the signcryption protocol, they define two types: outsider and insider. In the outsider security setting, the adversary can place chosen ciphertext attacks on the sender and the receiver, therefore having access to the signcryption and desygncryption oracles. /x????
+
+Insider security properties of privacy and authenticity hold if the induced 
+
+
+
+- commitment/ 6 - tldr - commit to a value, keep it hidden but you can show it later; allows one to commit to a chosen value (or chosen statement) while keeping it hidden to others, with the ability to reveal the committed value later.[1] Commitment schemes are designed so that a party cannot change the value or statement after they have committed to it: that is, commitment schemes are binding.
+
+
 - pg 8
 - outsider security - the adv knows the public keys and has access to the signcryption and unsigncryption oracles of the sender and the receiver, so it can do CPAs and CCAs; the scheme is outsider secure (indistiguishable against generalized CCA2) if it is outsider secure against adaptive chosen ciphertext attacks; OR it protects the privacy of the receiver when talking to the sender from outsider intruders who don'r knwo the secret key of the sender
 - insider security - the adversary is a user of the system so the sender has access to the secret key of the receiver and for encryption, the receiver has access to the decryption key because it contains the secret key of the sender; the scheme is insider secure against gcca2 or cma attacks on the privacy or authenticity property if the corresponding induced enc/ sign scheme is secure against the attack (IND gCCA2 - enc, UF-CMA - sign); OR one of the parties is the attacker, so the scheme protects the sender's authenticity against the receiver and the receiver's privacy against the sender
@@ -1299,6 +1375,29 @@ Group encryption employs a pairwise encryption method by repeating the encryptio
 
 
 - [cca](./pdf/papers/iMessage/17.%20Chosen%20Ciphertext%20Attacks%20on%20Apple%20iMessage%20-%20imessage.pdf)
+- https://www.gnu.org/software/gzip/ [2]
+
+The paper shows practical adaptive chosen ciphertext attacks on the application, which allows the attacker to retrospectively decrypt certain payloads if one of the parties is online. This attack targets messages with gzip compressed data and can be run through the Apple's server. The messages are containing attachments, which provide the AES decryption key for the file and the link to the resource in the database, to be downloaded.  
+
+Some limitations are also specified, including the Apple server, which, if compromised, the whole iMessage infrastructure is compromised too, and the application doesn't provide any authenticity verification for the keys received from the server. Older versions don't support certificate pinning and all these could lead to MITM attacks. 
+
+Moreover, the protocol uses non-standard cryptographic practices and it uses ECDSA as means of keeping data integrity and not an authenticated encryption algorithm. This makes the application vulnerable to practical CCA. 
+
+Also, it doesn't provide forward secrecy and the replay attacks are possible. 
+
+The attack model proposed targets the digital signature method used to provide ciphertext authenticity and the gzip compresion format for the ciphertexts. The attacker can modify and send the ciphertext, which is not contained in the RSA ciphertext, to the victim to decrypt, employing the chosen ciphertext attack. The validity of the tampered message is checked with the CRC, cyclic redundancy check, from the gzip compression format, therefore the attacker can adapt and modify the compressed ciphertext accordingly.  
+
+`gzip` is a program used for data compression [2] and it uses LZ77 and Huffman coding. 
+
+Using this approach, the adversary then can change the id of the sender to point to the controlled account and information about the Huffman table can be extracted. In this way, the key can be obtained. 
+
+They also found out that if the adversary can bypass TLS or compromise the servers, the attack can be done remotely.
+
+They recommend that, besides using a more analyzed protocol, Apple should implement manual key verification, periodically change the message key pairs to keep forward secrecy and to protect the users against CCA and replay attacks by keeping a list of previously received RSA messages. 
+Also, they should change the message layout and add the sender and receiver id fields into the message. 
+
+---
+
 - the analysis shows that practical adaptive chosen ciphertext vulnerabilities are present and that the attacker can retrospectively decrypt ciphertext (payloads and attachments) in a relatively short time (2^18 queries)
 - this type of attack operates on gzip compressed data and they call it "gzip format oracle attack"
 - about the conducted attacks: they provide attacks that are retrospective, meaning that the attacker needs one of the target devices to be online and has access to the ciphertexts
@@ -1318,7 +1417,7 @@ Group encryption employs a pairwise encryption method by repeating the encryptio
 - gzip, version of DEFLATE compression, combines LZ77 and Huffman coding to compress common data types
 - the attacker intercepts the gzip compressed message encrypted with an unauth stream cipher and has access to the decryption oracle,
 
-- EXTRA: some references to the fact that the some states (USA mostly) wanted to have backdoors into the end-to-end encryption schemes of the app
+- EXTRA: some references to the fact that the some states (USA mostly) wanted to have backdoors into the end-to-end encryption schemes of the app - 11, 12, 7, 26, 33, 32
 
 
 
@@ -1750,10 +1849,184 @@ Moreover, [1] showed that the applications do not ask for too many permissions, 
 
 ## Group messaging
 
-- [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf)
+- On Ends-to-Ends Encryption - https://eprint.iacr.org/2017/666.pdf [1]
+- Asynchronous Decentralized Key Managementfor Large Dynamic Groups - https://prosecco.gforge.inria.fr/personal/karthik/pubs/treekem.pdf [2]
+- [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf) [3]
+- Challenges in E2E Encrypted Group Messaging [4]
+- sensors [8]
+
+
 - info is available in [this blog post](./pdf/Papers/Groups/signal-org-blog-private-groups-.pdf) too
 
-Compared to one-to-one chats, group messaging becomes more complex as the number of participants grows
+Compared to one-to-one chats, group messaging becomes more cumbersome as the number of participants grows and when you want to keep the properties in the two party setting. Therefore, confidentiality, integrity, authentication, forward secrecy, post-compromise security, deniability and synchronization of messages add more layers of complexity when designing an end-to-end encryption protocol for groups. 
+
+Even if messaging applications offer end-to-end encryption for private chats, they are not always providing it for groups and the user needs to trust the server. Such applications are Telegram and Facebook Messenger, which are using encryption only on the transport layer. 
+
+There are three common ways in which this environment can be handled [4], and are described below. 
+
+In the pair-wise setting, the sender takes the secret key of each of the receiver, encrypts the message and sends it forward to the intended recipient, behaving like simple private chats. The properties named before are preserved and the groups could be practically invisible for the server, but it is aware that there are pair-wise channels. 
+
+Another method is that the sender uses different keys for each message, called encrypted message keys. The sender should choose a new random key for each message with which they encrypt it and send a copy to the recipients. Then the message keys are encrypted normally and sent through the pair-wise channel. The properties still hold,but the server will know the social graph. 
+
+Using shared group keys is another approach and this means that there must be a shared key agreed upon by each participant and the messages are encrypted and sent in a fan-out fashion. The key exchange might become more complex, but the sending mechanism is constant. The issue is that, in order to keep forward secrecy and post-compromise security, the keys must be changed regularly. The server is also aware of the group in this case. 
+
+**App comparison**
+
+In Signal, the initiator of the group sends a newly created group key to the other participants using the pair-wise channels and the session keys are derived using the double ratchet algorithm. New pekeys are regularly uploaded to the server by each client and the group key is changed when participants leave or enter the group. 
+
+Whatsapp's group encryption is similar (uses sender keys?), therefore both of these achieve the aforementioned properties. A difference is that Whatsapp collects metadata about the users. 
+
+Wire's implementation is also similar, but the users authentication is done with safety numbers, while in Signal and Whatsapp, they can scan QR codes. 
+
+iMessage uses the pair-wise method, which is inefficient. They use only the static keys, so the forward secrecy and post-compromise security properties are not satisfied and no way to authenticate the users is provided. 
+
+In Threema, messages are also sent through pair-wise channels but it provides no forward sececy and post-compromise security. Deniability is achieved through the shared secret and the users can authenticate using safety numbers. 
+
+---
+
+/place this somewhere else?
+
+[1]
+
+Asynchronous Ratchet Trees (ART) use a tree-based DH key exchange. It is good for groups with many members and it aims to keep the previously mentioned properties, in an asynchronous environment. 
+
+Authentication is done in two ways: using signatures, for the setup message and MAC for the rest of the messages. 
+
+**Design**
+
+They propose using prekeys and a setup key, to initialize the group tree. It is generated by the initiator and is used to derive the secret leaf keys for the rest of the participants, asynchronuously, using their private key, the prekeys of the receivers and the setup key. These, along with a new leaf key, form the tree. Then, the initiator broadcasts the identity and ephemeral keys used, the public setup key, the tree and signatures for these, signed using their identity key. 
+
+The participants can obtain their key from the tree and using it and the public keys if their copath (the sibling placed on the path to the root) will obtain the shared secret, or "tree key", which is the key at the root. 
+
+The participants need to regularly change their keys in order for the post-compromise security to hold. A member can change their leaf node and only broadcast it, the new setup key to the group and the public keys of all the nodes on the path to the root, message authenticated with a MAC with a key derived from the key from the previous stage. In this way, the keys form a hash chain.  
+
+- they propose two security analyses on the unauthenticated and authenticated versions key exchange protocols. 
+
+
+- this was written for the mls
+
+The participants can obtain their key from the tree and using it and the public keys if their copath (the sibling placed on the path to the root) will obtain the shared secret, or "tree key", which is the key at the root. Each member knows the private key of a node only if the member's leaf is a descendant of that node. If the node has information in it, the descendants know the private key of that node. [5]
+
+---
+
+- treekem [9]
+
+
+Another protocol proposal for MLS is called TreeKEM and is based on ARTs and multi-KEM. 
+
+Same operations are implemented, namely create, add, remove, update. Create is separated because it can be more efficient than the add operation, even if they are similar. 
+
+They establish a thread model, a compromise scenario, when the attacker compromises a device that is in a group and obtains all the secret keys. 
+
+They also stress the point that the MLS protocol needs to satisfy the properties: message secrecy and integrity, forward secrecy, post-compromise security. 
+
+With TreeKEM, the members would be organized in subgroups and the protocol messages could update more subgroups at once. /x  They can be arranged as left-balanced binary tree or n-ary trees. 
+
+TreeKEM uses a collision resistant hash function, a KDF and an authenticated encryption scheme. 
+
+A local state is defined containing the groups the device belongs to, authenticated encryption and secret keys for that group and the public keys of the siblings on the copath. 
+
+The key pairs are chosen such that they support the key encapsulation mechanism. 
+
+The leaf keys are newly generated and for the internal nodes, the key is the hash of the secret key of the last child that performed a group operation. The authenticated encryption key is derived from the sequence of keys at the root, using a chain of KDFs /x 
+
+In this way, concurrent operations are better supported. 
+
+And it might be better compared to ARTs. 
+
+---
+
+
+
+### MLS
+- https://messaginglayersecurity.rocks/mls-protocol/draft-ietf-mls-protocol.html [5]
+- https://datatracker.ietf.org/wg/mls/about/ [6]
+- 20. eval [7]
+
+To handle the end-to-end encrypted communication is groups, a new concept called Messaging Layer Security (MLS) was introduced [?]. It aims to provide a protocol that has the previously mentioned conditions: message confidentiality, integrity and authentication, membership authentication, asynchronicity, forward secrecy, post-compromise security and scalability [6] and which supports groups of size up to 50 000 participants [7]. 
+
+This was initially based on ARTs [1], but newer versions use an asynchronuous key encapsulation mechanism for the tree [9], which is an algorithm that generates and encapsulates the symmetric key used for encryption, using the public keys of the recipients, allowing the participants to handle key operations with costs of $O(log(n))$, $n$ being the size of the group. /x The difference is that they use a KDF instead of the hash function when computing the secret key of the parent. 
+
+Three main operations are defined regarding participants [5]: adding, updating the secret leaf key, removing. 
+
+The initiator creates an initial state (information that is stored by each client), sends add requests to the desired participants, commits a message that will add all the information to the group state and then creates a welcome message corresponding to the commit and sends it to the participants. Then, they can obtain the group state and the shared secret. Commit messages can be exchanged after the setup, when a new member is added or one is removed, and to keep post-compromise security and this is the time when the group state changes. 
+
+When adding new members, their keys are fetched form the server and an add message is sent to the group. Each update their state and the added member gets the welcome message. Subsequent messages are visible after receiving it.
+
+As pointed in [1], the participants need to regularly change their keys in order for the post-compromise security and forward secrecy properties to hold. A member can change their leaf node and only broadcast update and commit messages. 
+
+Removal is similar, a remove request and a commit message, so that the rest of the participants can update their state.
+
+Regarding the members' knownledge of the tree overview, they know the public keys of the participants, but they only know the private keys of the nodes in the same subgroup. 
+
+---
+
+[8]
+
+Introduces the concepts of internal and external group anonimity in Anonymous Asynchrinous Ratchet Trees (AART), which aims to protect the identities of the users. 
+
+Internal group anonimity - if the attacker has access to the secret key, they cannot distinguish the identity of the target message sender. So on update, the attacker should not see any relation between the victim and the position in the tree. 
+
+The initiator knows the position of each member, but the rest of the members only know their location. This is solved by randomly generating nodes, therefore the leaf keys are randomly generated as well and the link between the location and the identity of the sender is broken. 
+
+
+External group anonimity - the adversary should not be able to locate the user in a group if they have the ciphertext???
+
+In order to hide the identity of the recipient, the usage of one-time addresses and hiding the group's private key is proposed. 
+
+They also prove that AART is secure under IND-CCA, fowrad secrecy, post-compromise security and the aforementioned IGA and EGA.  
+
+---
+
+- 19, not 20. evaluation [7]
+
+Current implementations [7]:
+
+- MLS++ Cisco - https://github.com/cisco/mlspp
+- Molasses, Trail of bits - https://github.com/trailofbits/molasses
+- Melissa, Wire - https://github.com/wireapp/melissa
+
+
+**Group operations**
+
+- this will be integrated into the mls part
+
+
+There are four types of operations supported: welcome, addition, removal, update.
+
+Before the group is created, the users send initialization keys to the server, so other clients can request their information and start the group. 
+
+
+**Efficiency**
+
+- not sure
+
+[7] offers an efficiency comparison with the method used by Signal. For MLS, update and remove would have complexity of $O(log(n))$, group creation would run in $O(n)$ for the sender and $O(1)$ for the receivers, but it grows as the group scales. Signal's method requires $O(n)$ during creation for sender and receivers because every member needs to create a pair-wise channel with the other participants. 
+
+Handling the messages would cost $O(1)$ in MLS and $O(n)$ for Signal. 
+
+
+--- 
+
+- 19. signal thing [10]
+
+Information about the members is hidden from the server, but available to the participants. This information is encrypted and stored and the participants authenticate using a keyed verification anonymous credential (KVAC). It is based on MAC over a group of prime order. /x
+
+
+
+
+
+
+- talk about sgx for metadata and message queues [3/ 10-11]
+- in DH trees, the copath refers to the path from the node to the root and the sibling nodes on that path (they are not in the computations of the parent node)
+
+
+
+
+
+
+
+---
 
 - compared to one-to-one chats, group messaging becomes more complex and needs to keep track of all information about the users, such as their keys
 - group messaging protocols are implemented in a different way by each previously mentioned application or they are not supported at all
@@ -1780,7 +2053,13 @@ Compared to one-to-one chats, group messaging becomes more complex as the number
     - have private regions (enclaves) whose contents are protected and unable to be read or saved by any process (including those with higher priv) outside the enclave
     - encryption of some parts of the memory, actually
 
+
+
+
 **App comparison**
+
+- challenges 
+
 - signal
 - double ratchet procedure for authenticated key-exchange: long term + short term keys from each participant => shared key
 - key used in a key deriv ratchet protocol => ephemeral session keys
@@ -2213,6 +2492,8 @@ A padding oracle is a system that behaves differently depending on whetherthe pa
 - https://www.securemessagingapps.com/
 
 
-
+## KEM
+- https://en.wikipedia.org/wiki/Key_encapsulation
+- transmit symmetric keys using asymmetric algos
 
 

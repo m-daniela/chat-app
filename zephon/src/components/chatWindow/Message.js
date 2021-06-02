@@ -24,7 +24,7 @@ const Message = ({message}) => {
     const deleteUserMessage = () =>{
         const choice = confirmDialog("this message");
         if(choice){
-            deleteMessageChat(email, current, message.id)
+            deleteMessageChat(email, current.id, message.id)
                 .then(_ => dispatch(deleteMessage(message.id)))
                 .catch(err => console.log(err));
         }

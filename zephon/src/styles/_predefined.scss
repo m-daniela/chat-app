@@ -25,9 +25,10 @@
     --message_bg: #222222;
     --message_bg_current: #111;
     --input_bg: #3030307c;
+    --input_highlight: #343434;
     --highlights: rgba(255, 255, 255, .4);
     --shadows: rgba(0, 0, 0, .4);
-    --error: #dd0000;
+    --error: #c91a1a;
   
 }
 
@@ -36,12 +37,10 @@
     --primary_font: #020100;
     --secondary_bg: #edede6;
     --accent_bg: #e2e1dd;
-    --message_bg: #e2e3dd;
-    --message_bg_current: #c9dacb;
+    --message_bg: #dfdccf;
+    --message_bg_current: #dee0df;
     --input_bg: #30303030;
     --highlights: #30303030;
-    --shadows: rgba(0, 0, 0, .4);
-    --error: #dd0000;
 }
 
 
@@ -63,4 +62,10 @@
     padding: 15px;
     border: none;
     border-radius: 5px;
+    &:focus{
+        background-color: var(--input_highlight);
+    }
+    &:focus-visible{
+        outline-color: var(--input_highlight);
+    }
 }
