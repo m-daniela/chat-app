@@ -43,7 +43,7 @@ const Chat = ({close}) =>{
             onSubmit={(e) => searchUser(e)}>
             <label>
                 Chat name
-                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)} disabled={participants.length < 2}/>
+                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)} disabled={participants.length < 1}/>
             </label>
             <label>
                 Email

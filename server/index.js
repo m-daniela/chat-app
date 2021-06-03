@@ -159,6 +159,7 @@ io.on('connection', (socket) => {
   // broadcast the fact that a user
   // has left the group chat
   socket.on('user left', (message) => {
+    // TODO: might change it to "message" so it will be treated normally
     data.userLeftMessage(message)
     .then(res => socket.broadcast.to(message.room).emit("user left", res))
     .catch(err =>{
@@ -176,7 +177,8 @@ io.on('connection', (socket) => {
     const isEncrypted = chat.isEncrypted;
 
     data.createChat(name, receivers, date, isEncrypted)
-      .then(_ => io.emit("new chat"));
+      .then(_ => io.emit("new chat"))
+      .catch(err => console.log(err));
   });
 
 

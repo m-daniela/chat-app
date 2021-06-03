@@ -88,17 +88,12 @@ const ChatWindow = () => {
             // TODO: fix this
             // don't reload the messages when a new one is sent
             // state update issues here too 
-            const help = current.id;
-            console.log("out", message.room, current.id, help);
-
-            if (message.room === help){
-                console.log("in", message.room, current.id, help);
+            if (message.room === current.id){
 
                 dispatch(addMessage(message));
                 // things change here?
                 // dispatch(getMessagesThunk({email, conversation: current.id}));
             }
-            console.log("after", message.room, current.id, help);
 
 
         });
@@ -106,7 +101,6 @@ const ChatWindow = () => {
     }, [current, dispatch, socket]);
 
     // a user leaves the group chat
-    // TODO: add a notification to the group members
     useEffect(() =>{
         socket.on("user left", (res) =>{
             // reload the conversations
@@ -123,7 +117,7 @@ const ChatWindow = () => {
                 // dispatch(getMessagesThunk({email, conversation: current.id}));
             }
         });
-    }, [socket]);
+    }, [socket, participants]);
 
     // add a message
     // the message is encrypted and sent to the server

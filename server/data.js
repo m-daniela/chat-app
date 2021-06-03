@@ -54,18 +54,19 @@ const addUser = async (email) =>{
 // - date - creation date
 // - isEncrypted - boolean representing whether the conversation is encrypted
 const createChat = async (name, participants, date, isEncrypted) => {
-  
+  const newDate = convertToTimestamp(date);
+
   const message = {
     sender: "sys",
     text: "Start chatting", 
-    date: convertToTimestamp(date),
+    date: newDate,
     // attachment: false,
   }
 
   // TODO: change it to name !== undefined
   // and then test it
   console.log(name);
-  if (name === "" || name === undefined){
+  if (name === ""){
     
     const [recv1, recv2] = [...participants];
 
@@ -73,27 +74,30 @@ const createChat = async (name, participants, date, isEncrypted) => {
       name: recv1,
       isEncrypted,
       participants,
+      date: newDate
     }
 
     const chat2 = {
       name: recv2,
       isEncrypted,
       participants,
+      date: newDate
     }
 
     const chatId = await addConversationDatabase(recv1, chat2, message);
-    addConversationWithIdDatabase(chatId, recv2, chat1, message);
+    await addConversationWithIdDatabase(chatId, recv2, chat1, message);
   }
   else{
     const chat = {
       name,
       isEncrypted,
       participants,
+      date: newDate
     }  
 
     const chatId = await addConversationDatabase(participants[0], chat, message);
     for (const receiver of participants.slice(1)){
-      addConversationWithIdDatabase(chatId, receiver, chat, message);
+      await addConversationWithIdDatabase(chatId, receiver, chat, message);
     }
   }
 }
@@ -116,7 +120,7 @@ const removeParticipant = (chat, participant, user) =>{
     console.log("Participant removed", participant);
   }
   catch(err){
-    console.log("Participant removed", err);
+    console.log("Participant removed, something went wrong");
   }
   
 }
@@ -304,6 +308,7 @@ const getConversations = async(user) =>{
   .collection(cts.users)
   .doc(user)
   .collection(cts.conversations)
+  .orderBy("date")
   .get();
 
   
