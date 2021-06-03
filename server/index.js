@@ -1,3 +1,8 @@
+// for deployment
+app.use(express.static(path.join(__dirname, '../zephon/build')));
+app.get('*', (req, res) => { 
+  res.sendFile(path.join(__dirname + '../zephon/build/index.html')) 
+});
 
 require('dotenv').config();
 
