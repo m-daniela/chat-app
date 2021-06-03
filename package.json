@@ -3,6 +3,6 @@
         "frontend": "cd zephon && npm start",
         "server": "cd server && npm start",
         "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run frontend\"",
-        "heroku-postbuild": "cd zephon && npm install && npm run build"
+        "heroku-postbuild": "cd zephon && npm install && npm run build && cd ../server && npm install && npm run build"
     }
 }
