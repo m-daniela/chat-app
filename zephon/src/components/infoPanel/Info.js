@@ -11,6 +11,7 @@ import { ThirdPartyContext } from '../../utils/context/ThirdPartyContext';
 const Info = () => {
     const email = useSelector(state => state.user.email);
     const participants = useSelector(state => state.chat.participants);
+    const selected = useSelector(state => state.selected);
     const isEncrypted = useSelector(state => state.chat.isEncrypted);
     const dispatch = useDispatch();
     const {clear} = useContext(E3Context);
@@ -45,12 +46,19 @@ const Info = () => {
         <div className="info_panel">
             <Header title={"Info"}/>
             <span className={`side_container ${thirdPartyView ? "third_party" : ""}`}>{email}</span>
-            {participants.length !== 0 ? (<span className={`side_container ${thirdPartyView ? "third_party" : ""}`}>{isEncrypted ? "Encrypted" : "Not encrypted"}</span>) : <></>}
+            {selected !== "" ? 
+                <>
+                    {participants.length !== 0 ? (<span className={`side_container ${thirdPartyView ? "third_party" : ""}`}>{isEncrypted ? "Encrypted" : "Not encrypted"}</span>) : <></>}
             
-            <div className={`side_container participants ${thirdPartyView ? "third_party" : ""}`}>
-                {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
-                {participants?.map(element => <span key={element}>{element === email ? "You" : element}</span>)}
-            </div>
+                    <div className={`side_container participants ${thirdPartyView ? "third_party" : ""}`}>
+                
+                        {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
+                        {participants?.map(element => <span key={element}>{element === email ? "You" : element}</span>)}
+                    
+                
+                    </div>
+                </> : 
+                <></>}
             <span className="side_container side_item" onClick={toggleTheme}>Theme: {theme}</span>
             <span className="side_container side_item" onClick={toggleThirdPartyView}>Third party view: {thirdPartyView ? "on" : "off"}</span>
             <span className="side_container side_item" onClick={handleLogout}>Log out</span>

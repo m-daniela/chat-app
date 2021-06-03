@@ -30,9 +30,15 @@ const SideItem = ({element}) => {
                 .then(_ => {
                     dispatch(changeConversation(""));
                     dispatch(deleteConversation(id));
-                    const date = new Date();
-                    const receivers = participants.slice().filter(elem => elem !== email);
-                    socket.emit("user left", ({username: email, room: chatInformation.id, date, receivers}));
+
+                    // broadcast only when there are more users than yourself
+                    if (participants.length > 1){
+                        const date = new Date();
+                        const receivers = participants.slice().filter(elem => elem !== email);
+                        console.log("rahat", receivers);
+                        socket.emit("user left", ({username: email, room: chatInformation.id, date, receivers}));
+                    }
+                    
                 })
                 .catch(err => console.log(err));
         }

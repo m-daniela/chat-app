@@ -123,7 +123,19 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                 newMessages.push(message);
             } else{
                 try{
-                    const text = await eThree.authDecrypt(message.text, pks[message.sender]);
+                    let text;
+                    try{
+                        text = await eThree.authDecrypt(message.text, pks[message.sender]);
+                    }
+                    catch(err){
+                        // if the participant was removed from the list, get the key separately
+                        // and add it to the pks cached list
+                        const pks_sender = await eThree.findUsers(message.sender);
+                        console.log(pks_sender);
+                        pks[message.sender] = pks_sender;
+                        text = await eThree.authDecrypt(message.text, pks_sender);
+                    }
+                    
                     const newMessage = {
                         id: message.id,
                         sender: message.sender, 

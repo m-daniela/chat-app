@@ -5,7 +5,7 @@ import Header from '../common/Header';
 import { encryptFile, encryptMessage} from '../../utils/services/encryption';
 import { useSelector, useDispatch } from 'react-redux';
 import { SocketContext } from '../../utils/context/SocketContext';
-import { addMessage, getMessagesThunk } from '../../utils/reducers/redux';
+import { addMessage, getConversationsThunk, getMessagesThunk } from '../../utils/reducers/redux';
 import { E3Context } from '../../utils/context/E3Context';
 import firebase from "firebase";
 import { addMessageServer } from '../../utils/data/ServerCalls';
@@ -109,9 +109,15 @@ const ChatWindow = () => {
     // TODO: add a notification to the group members
     useEffect(() =>{
         socket.on("user left", (res) =>{
-            console.log("User left", res);
+            // reload the conversations
+            dispatch(getConversationsThunk({email}));
+            console.log("Merge, bravo");
+            console.log("User left", res.room, current);
+            // TODO: the selected conversation changes when 
+            // the user deletes it, like it happens for the 
+            // conversation onMessage
             if (res.room === current.id){
-
+                console.log("Message from the user");
                 dispatch(addMessage(res));
                 // things change here?
                 // dispatch(getMessagesThunk({email, conversation: current.id}));

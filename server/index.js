@@ -65,7 +65,6 @@ app.get('/virgil-jwt', requireAuthHeader, generateVirgilJwt);
 app.post("/chats", (req, res) => {
   console.log("Server POST /chats");
   const {user, room} = req.body;
-  console.log(req.body)
   if (room === ""){
     console.log("POST /chats: no conversation selected")
     res.json([]);
@@ -160,7 +159,6 @@ io.on('connection', (socket) => {
   // broadcast the fact that a user
   // has left the group chat
   socket.on('user left', (message) => {
-
     data.userLeftMessage(message)
     .then(res => socket.broadcast.to(message.room).emit("user left", res))
     .catch(err =>{

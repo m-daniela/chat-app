@@ -126,24 +126,34 @@ const removeParticipant = (chat, participant, user) =>{
 // receiver - name of the receiving user
 // message - the message object
 const userLeftMessage = async (message) => {
+  try{
+    const newMessage = {
+      sender: "sys",
+      text: `${message.username} has left the chat.`,
+      date: convertToTimestamp(message.date),
+    }
   
-  const newMessage = {
-    sender: "sys",
-    text: `${message.username} has left the chat.`,
-    date: convertToTimestamp(message.date),
+    console.log("Removing", message.receivers);
+    await removeParticipant(message.room, message.username, message.receivers[0]);
+    const messageId = await sendMessageDatabase(message.room, message.receivers[0], newMessage);
+
+    // skip this step when you one participant left
+    if (message.receivers.length !== 0){
+      for (const receiver of message.receivers.slice(1)){
+        await removeParticipant(message.room, message.username, receiver);
+        sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
+      }
+    }
+    
+    newMessage["id"] = messageId;
+    newMessage["room"] = message.room;
+  
+    return newMessage;
+  }catch(err){
+    console.log("Not removed?", err)
+    return {};
   }
-
-  const messageId = await sendMessageDatabase(message.room, message.receivers[0], newMessage);
-  // removeParticipant(message.room, message.username, message.receivers[0]);
-  for (const receiver of message.receivers.slice(1)){
-    sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
-    // removeParticipant(message.room, message.username, receiver);
-  }
-
-  newMessage["id"] = messageId;
-  newMessage["room"] = message.room;
-
-  return newMessage;
+  
 
 }
 
@@ -301,7 +311,6 @@ const getConversations = async(user) =>{
     const chat = snapshot.data();
     chat["id"] = snapshot.id;
     conversations.push(chat);
-    console.log(chat)
   });
 
   return conversations;
@@ -386,7 +395,6 @@ const deleteConversation = async (user, chat) =>{
 const join = (chatid, username, room) =>{
     const user = {chatid, username, room};
     users[chatid] = {chatid, username, room};
-    console.log("Join data", users)
     return user;
 
 }
