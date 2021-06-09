@@ -42,13 +42,13 @@ const MessageInput = ({addMessage, setAttachment}) => {
         <form className="message_input" onSubmit={e => onSendMessage(e)}>
             <label>
                 <AttachFileOutlinedIcon/>
-                <input type="file" onChange={onChangeAttachment}/>
+                <input id="attachment" type="file" onChange={onChangeAttachment}/>
             </label>
-            <input type="text"
+            <input id="message_input" type="text"
                 onChange={e => onChangeInput(e.target.value)}
                 placeholder={"Your message..."}
                 value={message}/>
-            <button type="submit"><SendIcon/></button>
+            <button id="send" type="submit"><SendIcon/></button>
         </form>
     );
 };

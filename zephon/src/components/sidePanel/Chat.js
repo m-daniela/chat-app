@@ -45,18 +45,19 @@ const Chat = ({close}) =>{
             onSubmit={(e) => searchUser(e)}>
             <label>
                 Chat name
-                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)} disabled={participants.length < 2}/>
+                <input id="chat_name" type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)} disabled={participants.length < 2}/>
             </label>
             <label>
                 Email
-                <input type="text" value={current} onChange={(e) => setCurrent(e.target.value)}/>
+                <input id="email" type="text" value={current} onChange={(e) => setCurrent(e.target.value)}/>
             </label>
             <div className="side_container buttons">
-                <button className="side_container" onClick={(e) => addMoreUsers(e)}>Add another email</button>
-                <button className="side_container" type="submit">Finish</button>
+                <button id="another_email" className="side_container" onClick={(e) => addMoreUsers(e)}>Add another email</button>
+                <button id="finish" className="side_container" type="submit">Finish</button>
             </div>
             <div className="side_container switch">
                 <Switch size={"small"} 
+                    id="encrypted" 
                     checked={isEncrypted} 
                     color={"primary"} 
                     onClick={(e) => handleEncryption(e)} />

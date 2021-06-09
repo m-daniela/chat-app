@@ -70,20 +70,20 @@ const Signup = () => {
             <h1><img src={eyes200}></img> <span>zephon</span></h1>
             <label>
                 Email
-                <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
+                <input id="email" type="email" required onChange={e => onChangeEmail(e.target.value)}/>
             </label>
             <span>{error.wrongEmail === "" ? "" : error.wrongEmail}</span>
             <label>
                 Password
-                <input type="password" required onChange={e => onChangePassword(e.target.value)}/>
+                <input id="password" type="password" required onChange={e => onChangePassword(e.target.value)}/>
             </label>
             <span>{error.wrongPass === "" ? "" : error.wrongPass}</span>
             <label>
                 Retype password
-                <input type="password" required onChange={e => checkPasswords(e.target.value)}/>
+                <input id="password_repeat" type="password" required onChange={e => checkPasswords(e.target.value)}/>
             </label>
             <span>{error.passNotMatching === "" ? "" : error.passNotMatching}</span>
-            <button type="submit" className="primary_button">Register</button>
+            <button id="register" type="submit" className="primary_button">Register</button>
             <Link to="/login">Have an account? Log in.</Link>
         </form>
     );

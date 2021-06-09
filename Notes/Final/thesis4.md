@@ -3,30 +3,44 @@ format: markdown
 title: End-to-End Encryption
 author: Moș Daniela
 mainfont: Times New Roman
+date: 2021
 papersize: a4
 linestretch: 1.5
 fontsize: 12pt
-output:
-    pdf_document:
-        template: main.tex
-        # includes:
-        #     in_header:
-        #         - style.sty
+toc: true
+lof: true
+geometry: "left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm"
+# output:
+#     pdf_document:
+#         template: main.tex
+#         # includes:
+#         #     in_header:
+#         #         - style.sty
 
-abstract: |
-    End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Section 1](#introduction) and more details are given in [Section 3](#existing-technologies), with some theoretical notions explained in [Section 2](#theoretical-aspects). 
+# abstract: |
+#     End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Section 1](#introduction) and more details are given in [Section 3](#existing-technologies), with some theoretical notions explained in [Section 2](#theoretical-aspects). 
 
-    The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Section 4](#technologies-used) and [Section 5](#the-application). 
+#     The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Section 4](#technologies-used) and [Section 5](#the-application). 
 
-    [Section 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
+#     [Section 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
 
-    \pagenumbering{gobble}
-    \newpage
+#     \pagenumbering{gobble}
+#     \newpage
 
 ---
+<!-- 
+\pagenumbering{arabic} -->
 
-\newpage
-\pagenumbering{arabic}
+<!-- # Abstract
+
+End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Section 1](#introduction) and more details are given in [Section 3](#existing-technologies), with some theoretical notions explained in [Section 2](#theoretical-aspects). 
+
+The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Section 4](#technologies-used) and [Section 5](#the-application). 
+
+[Section 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
+
+\pagenumbering{gobble}
+\newpage -->
 
 # Introduction
 
@@ -670,9 +684,9 @@ They also prove that AART is secure under IND-CCA, forward secrecy, post-comprom
 
 \newpage
 
-# Technologies used [^4]
+# Technologies used 
 
-The application is a full stack web application with the frontend created with React and Redux Toolkit, for state management, and both are JavaScript libraries. The styling is done with SCSS.
+The application [^4] is a full stack web application with the frontend created with React and Redux Toolkit, for state management. They are both JavaScript libraries. The styling is done with SCSS.
 
 The backend uses the express framework and the messages are sent in real-time through sockets, with the socket.io package. 
 
@@ -688,11 +702,33 @@ The key management and encryption process are handled by the VirgilSecurity plat
 
 ## General flow
 
-To use this application, the user needs to login with an existing account or create a new one with an email and a password. After a successful login or registration, an "Add a new chat" appears on the left, along with the list of chats tied to that accound, if any were added, sorted by creation date. 
+To use this application, the user needs to login with an existing account or create a new one with an email and a password. The forms are shown in Figure \ref{fig:login} and Figure \ref{fig:signup}. After a successful login or registration, an "Add a new chat" appears on the left, along with the list of chats tied to that accound, if any were added, sorted by creation date. 
 
-When the user clicks the button, a form will open in which they can enter the required details: chat name, in case of a group conversation (at least 2 participants), and the emails of the participants, one at a time by pressing "Add another email" after each written. Their addresses appear beneath the form as they are added. 
 
-The user can choose between encrypted and unencrypted unencrypted by clicking the button. Encrypted chats are selected by default, but this feature is aimed to show the risks of using the unencryted version, through the "third party view" feature. Based on this choice, the attachments are encrypted or not. 
+\begin{figure}[h!]
+  \includegraphics[width=\textwidth]{./Media/login.png}
+  \caption{Login form}
+  \label{fig:login}
+\end{figure}
+
+\begin{figure}[h!]
+  \includegraphics[width=\textwidth]{./Media/signup.png}
+  \caption{Signup form}
+  \label{fig:signup}
+\end{figure}
+
+
+When the user clicks the button, a form, like the one in Figure \ref{fig:newchat}, will open in which they can enter the required details: chat name, in case of a group conversation (at least 2 participants), and the emails of the participants, one at a time by pressing "Add another email" after each written. Their addresses appear beneath the form as they are added. 
+
+
+\begin{figure}[h!]
+  \includegraphics[width=0.5\textwidth]{./Media/add_chat.png}
+  \caption{New chat form}
+  \label{fig:newchat}
+\end{figure}
+
+
+The user can choose between encrypted and unencrypted unencrypted by pressing the switch. Encrypted chats are selected by default, but this feature is aimed to show the risks of using the unencryted version, through the "third party view" feature. Based on this choice, the attachments are encrypted or not. 
 
 Any conversation can be deleted by clicking the "X" button at the right of the chat name and the chat participants are notified. 
 
@@ -704,49 +740,126 @@ The right panel contains the logout button, the email address of the user, infor
 
 The third party view is a feature that enables the user to "see through the eyes of a third party": the server or someone who controls it, the database etc. The visible information is highlighted when this is set to true. It includes the payload - the messages, attachments, and metadata - participants, who sent the messages, the time and date. 
 
-
 The aim of this feature is to show the risks of having unencrypted chats and what vulnerable information is available to the server. Metadata, such as the sender, time and date, whether it contains an attachment or not, is data that can be used by attackers and service providers in order to obtain information about the users. 
 
 As previously discussed, the third could see the social graph and relations between the users and an adversary could mount certain attacks on the attachment messages, for example, if they know the structure of the message and the underlying algorithms can be controlled. 
 
-**Use case diagram**
+This feature is shown as a comparison between Figure \ref{fig:normal} and Figure \ref{fig:thirdparty}.
 
-![Use case diagram \label{usecase}](Media/Diagrams/usecase.png)
 
-## Implementation and code layout
+\begin{figure}
+    \includegraphics[width=\textwidth]{./Media/chat.png}
+    \caption{Normal view}
+    \label{fig:normal}
+\end{figure}
 
-The frontend uses React with functional components, but they can be seen as classes. The class diagram is present in Figure \ref{class_diagram}. 
+\begin{figure}
+    \includegraphics[width=\textwidth]{./Media/chat_enc.png}
+    \caption{Third party view}
+    \label{fig:thirdparty}
+\end{figure}
 
-When the user logs in, the credentials are checked via the Firebase instance initialized for the frontend. If the user registers for the first time, these are saved to the database. If these operations are successful, the user is redirected to the main chat page and login information is saved in the redux state tree. 
+<!-- \begin{figure}
+\subfloat[Caption pic1]{\label{fig:1}\includegraphics[width=\textwidth]{./Media/chat.png}} \\
+    \begin{subfig}[b]
+        \includegraphics[width=\textwidth]{./Media/chat.png}
+        \label{fig:normal}
+    \end{subfig}
 
-In order to access to the services from the VirgilSecurity platform, the client app asks the server for a JSON Web Token that is used to authenticate with the platform. It contains information about the user, application, signature, encoding etc. with which an `EThree` instance is initialized for the user. It provides encryption, decryption, public keys fetching and other operations. The code for this part is based on an example provided by Virgil Security documentation. 
+    \begin{subfig}[b]
+        \includegraphics[width=\textwidth]{./Media/chat_enc.png}
+        \label{fig:thirdparty}
+    \end{subfig}
+    \caption[Chat overview]{(a) The normal view, when the feature is disabled. (b) Third party view, when the feature is enabled.}
+\end{figure} -->
 
-After this, the user asks for the conversations, which are fetched from the database and are placed in the state tree. An example of a state tree is presented in Figure \ref{tree}.
 
-![State tree configuration \label{tree}](Media/statetree.png)
+A use case diagram of the application is shown in Figure \ref{fig:usecase}.
 
-When adding a new chat, a new conversation is initialized with a welcome message and the participants are notified using sockets, and it appears in their list. 
+\begin{figure}
+    \includegraphics[width=\textwidth]{./Media/Diagrams/usecase.png}
+    \caption{Use case diagram}
+    \label{fig:usecase}
+\end{figure}
 
-If the chat is encrypted, `isEncrypted` set to true, an extra step is performed to decrypt the messages using the `EThree` instance. It asks for the public keys of the current and previous participants, if they sent any messages and returns the list of decrypted messages. This process is done with `authDecrypt`. Notification messages, such as welcoming and leaving messages, are not encrypted. 
 
-After this, they are formatted and displayed in the main section. 
+## Implementation
 
-When sending a message and the chat is encrypted with `authEncrypt` and the ciphertext is sent to the server, to be saved in the database. The final message, with an ID from the database, is sent to the participants using sockets. If the chat is not encrypted, it is sent in plaintext. 
+The application has three parts: the frontend, the backend and the database. 
 
-The attachments are uploaded from the computer and saved in the Firebase Storage. If needed, they are encrypted with `encryptSharedFile` before. The key and the filepath object is turned into a JSON string and threated as a normal message. When displayed, these are extracted, the file is downloaded and then decrypted, if necessary, with `decryptSharedFile`. 
+## The Frontend
+
+The frontend uses React with functional components. A Firebase instance is initialized to handle user authentication and registration and the requests to the server are handled with sockets and the axios package [^6].
+
+[^6]: axios: [https://www.npmjs.com/package/axios](https://www.npmjs.com/package/axios)
+
+When the user logs in, the credentials are checked via the Firebase instance. If the user registers, these are saved to the database, in both the Authentication service and Cloud Firestore. If these operations are successful, the user is redirected to the main chat page and the login information is saved in the Redux state tree. 
+
+In order to gain access to the services from the VirgilSecurity platform and to initialize the E3Kit instance, the user needs to authenticate with the Virgil Cloud through a JWT. 
+
+Once this is done, the client will be able to use the encryption, decryption functions, ask for public keys of other users etc. This instance is saved in React Context, which handles global variable. Other variables that are stored in it are the socket instance, third party view and the theme. 
+
+Afterwards, the user asks for the conversations list, which are fetched through the server from the database and are placed in the state tree. An example of the final structure of a state tree is presented in Figure \ref{fig:tree}.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{./Media/statetree.png}
+    \caption{Example of a Redux state tree}
+    \label{fig:tree}
+\end{figure}
+
+
+When adding a new chat, a new conversation is initialized with a welcome message and the participants are notified through sockets. 
+
+If the `isEncrypted` flag is set to true for a chat, an extra step is performed to decrypt the messages using the `E3Kit` instance. It requests the public keys of the current and previous participants, if they sent any messages, and returns the list of decrypted messages. This process is done with `authDecrypt`, which takes as parameters the public keys and the ciphertext. Notification messages, such as welcoming and leaving messages, are not encrypted. 
+
+The messages are then formatted and displayed in the main section, as it can be seen in Figure \ref{fig:normal}.
+
+Before the messages are broadcast to each participant and shown in the message list, they are initially sent to the server in order to obtain an ID, with which they can be later identified. 
+
+To encrypt them, `authEncrypt` is called with the plaintext and the public keys of the other participants. This happens before it is sent to the server or saved in the database. If this step is not requested, i.e. the chat is not encrypted, they are sent in plaintext.
+
+Once the exchange is finished, the state tree is changed for each member and the message list is updated. 
+
+The attachments are uploaded from the computer through the file input field, encrypted with `encryptSharedFile` at the endpoint, if the chat is encrypted, and then saved in the Firebase Storage. The key and the file pointer JSON object is stringified and treated as a normal object. When they need to be displayed, they are decrypted using `decryptSharedFile` with the public key of the sender. 
 
 The authenticated encryption method is sign and encrypt for both normal messages and the attachments. It uses AES256 in GCM mode and SHA512 hashing. The documentation states that Ed25519 and ECDSA digital signatures schemes are supported. 
 
-When a message or a conversation is deleted, the server receives information about the user, such as username, conversation ID or message ID, and are deleted only for that user. When they leave the conversation, a notification is sent to the rest of the participants using sockets and a message stating this is saved in the database, unless the last participant deletes it. 
+When a message or conversation is deleted, it is removed locally from the state tree and a request is sent to the server and with the necessary information and it is deleted from the database. On leave, the other participants are notified through sockets, unless the last participant deletes it. 
 
 The "third party view" feature changes the way in which the messages are displayed, adding a different style to the message list and other available metadata. Encrypted data is only decrypted when it needs to be displayed, so when this feature is active, the switch happens without querying the data from the server again.  
 
 On logout, all the locally saved data is deleted and the state tree is cleared. 
 
+The functional components can be viewed as classes and a class diagram is presented in Figure \ref{fig:class}. Functions that do the server requests, database queries, encryption/ decryption and the Redux store are placed in separate files and are not represented in the diagram. 
 
-![Class diagram - frontend \label{class_diagram}](Media/Diagrams/class.png)
+\begin{figure}
+    \includegraphics[width=\textwidth]{./Media/Diagrams/class.png}
+    \caption{UML Class Diagram}
+    \label{fig:class}
+\end{figure}
 
-\newpage
+
+## The Backend
+
+The backend uses the express framework to handle requests from the frontend. A Firebase instance is initialized here too, in order to handle the Cloud Firestore and Firebase Storage operations. A socket is also listening for the requests from the frontend.  
+
+When the user tries to connect, the server generates the JSON Web Token (JWT) that is used to authenticate with the VirgilSecurity platform. It first requires an authentication header and then generated the token, which is sent as a response to the frontend. This code was taken and adapted from the official E3Kit documentation. 
+
+The socket keeps a map of users and their chats. It is updated when a user is "online" and when they go "offline". On message, it broadcasts the message to the specified chat. 
+
+When a new chat request is sent, it calls the function that adds it to the database and then broadcasts this to the online participants, to update their lists. 
+
+When a user leaves the chat, a similar process happens, the database is updated for the remaining participants, whom are notified. 
+
+The rest of the requests are handled by express, which forwards the work to the database and only passes back the response data. 
+
+### The Database
+
+
+
+## Testing the application
+
+I suppose. 
 
 
 # Conclusions

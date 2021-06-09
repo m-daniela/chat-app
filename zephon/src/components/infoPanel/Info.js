@@ -34,15 +34,11 @@ const Info = () => {
         
         if (theme){
             document.documentElement.setAttribute("data-theme", "dark");
-            // setTheme("light");
         }
         else{
             document.documentElement.setAttribute("data-theme", "light");
-            // setTheme("dark");
         }
         setTheme(!theme);
-        // localStorage.setItem("theme", theme);
-
     };
 
     return (
@@ -64,6 +60,7 @@ const Info = () => {
                 <></>}
             <div className="side_container side_item switch">
                 <Switch size={"small"} 
+                    id="theme" 
                     checked={theme} 
                     color={"primary"} 
                     onClick={toggleTheme} />
@@ -73,6 +70,7 @@ const Info = () => {
             </div>
             <div className="side_container side_item switch">
                 <Switch size={"small"} 
+                    id="thirdpartyview" 
                     checked={thirdPartyView} 
                     color={"primary"} 
                     onClick={toggleThirdPartyView} />
@@ -80,9 +78,7 @@ const Info = () => {
                     Third party view
                 </label>
             </div>
-            {/* <span className="side_container side_item" onClick={toggleTheme}>Theme: {theme}</span>
-            <span className="side_container side_item" onClick={toggleThirdPartyView}>Third party view: {thirdPartyView ? "on" : "off"}</span> */}
-            <span className="side_container side_item" onClick={handleLogout}>Log out</span>
+            <span id="logout" className="side_container side_item" onClick={handleLogout}>Log out</span>
         </div>
     );
 };

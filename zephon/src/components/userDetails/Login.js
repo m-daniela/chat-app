@@ -49,15 +49,15 @@ const Login = () => {
             <h1><img src={eyes200}></img> <span>zephon</span></h1>
             <label>
                 Email
-                <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
+                <input id="email" type="email" required onChange={e => onChangeEmail(e.target.value)}/>
             </label>
             <label>
                 Password
-                <input type="password" required onChange={e => onChangePassword(e.target.value)}/>
+                <input id="password" type="password" required onChange={e => onChangePassword(e.target.value)}/>
             </label>
             <span>{error === "" ? "": error}</span>
 
-            <button type="submit" className="primary_button">Log In</button>
+            <button id="login" type="submit" className="primary_button">Log In</button>
             <Link to="/register">New here? Register now.</Link>
         </form>
     );
