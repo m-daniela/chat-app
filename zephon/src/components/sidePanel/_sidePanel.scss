@@ -14,6 +14,14 @@
     }
 }
 
+.side_container.switch, .side_item.switch {
+  justify-content: flex-start;
+}
+
+.side_item.switch{
+  flex-direction: row;
+}
+
 button.side_item{
     padding-top: 20px;
     text-align: left;

@@ -59,6 +59,18 @@ button, label{
   color: var(--error);
 }
 
+.MuiSwitch-colorPrimary, .MuiSwitch-colorPrimary.Mui-checked{
+  color: var(--primary_font) !important;
+}
+.MuiSwitch-track{
+  background-color: var(--switch_track_inactive) !important;
+}
+
+.MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track{
+  color: var(--primary_font) !important;
+  background-color: var(--switch_track_active) !important;
+}
+
 // scrollbars
 
 * {

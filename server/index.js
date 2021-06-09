@@ -1,8 +1,8 @@
 // for deployment
-app.use(express.static(path.join(__dirname, '../zephon/build')));
-app.get('*', (req, res) => { 
-  res.sendFile(path.join(__dirname + '../zephon/build/index.html')) 
-});
+// app.use(express.static(path.join(__dirname, '../zephon/build')));
+// app.get('*', (req, res) => { 
+//   res.sendFile(path.join(__dirname + '../zephon/build/index.html')) 
+// });
 
 require('dotenv').config();
 
@@ -32,6 +32,10 @@ app.use(bodyParser.json());
 // the port will change on deployment
 const port = process.env.PORT || 5000;
 
+// get the conversations for the given user
+app.get("/test", (req, res) => {
+  console.log("It works");
+});
 
 // get the conversations for the given user
 app.post("/", (req, res) => {

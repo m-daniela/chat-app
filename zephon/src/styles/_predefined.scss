@@ -1,5 +1,6 @@
 
 :root{
+    
     // --primary_bg: #3c5e69;
     // --primary_font: #faf1e7;
     // --secondary_bg: #222725;
@@ -28,7 +29,9 @@
     --input_highlight: #343434;
     --highlights: rgba(255, 255, 255, .4);
     --shadows: rgba(0, 0, 0, .4);
-    --error: #c91a1a;
+    --error: #e43232;
+    --switch_track_active: rgba(255, 255, 255, .7);
+    --switch_track_inactive: rgba(255, 255, 255, .2);
   
 }
 
@@ -41,8 +44,14 @@
     --message_bg_current: #dee0df;
     --input_bg: #30303030;
     --highlights: #30303030;
+    --switch_track_active: #303030ab;
+    --switch_track_inactive: #30303031;
 }
 
+body, button, input{
+    // font-family: 'Raleway', sans-serif;
+    font-family: 'Assistant', sans-serif;
+}
 
 @mixin vertical_align{
     display: flex;

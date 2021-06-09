@@ -50,6 +50,6 @@ export const getDate = (format) => {
     const month = today.getMonth();
     const year = today.getFullYear();
 
-    return `${addZero(hour)}:${addZero(minutes)} ${addZero(day)}/${addZero(month + 1)}/${year}`;
+    return `${addZero(hour)}:${addZero(minutes)} -- ${addZero(day)}/${addZero(month + 1)}/${year}`;
 };
 

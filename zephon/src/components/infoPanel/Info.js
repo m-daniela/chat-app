@@ -4,6 +4,8 @@ import Header from '../common/Header';
 import { E3Context } from '../../utils/context/E3Context';
 import { clearChat, clearConversations, clearSelected, logout } from '../../utils/reducers/redux';
 import { ThirdPartyContext } from '../../utils/context/ThirdPartyContext';
+import { Switch } from '@material-ui/core';
+
 
 // Info
 // shows information about the user (email), the current chat (participants) and the logout button
@@ -16,7 +18,7 @@ const Info = () => {
     const dispatch = useDispatch();
     const {clear} = useContext(E3Context);
     const {thirdPartyView, toggleThirdPartyView} = useContext(ThirdPartyContext);
-    const [theme, setTheme] = useState("dark");
+    const [theme, setTheme] = useState(false);
 
     // delete and reset the data from the state and context
     const handleLogout = () =>{
@@ -30,15 +32,16 @@ const Info = () => {
     // toggle between light and dark theme
     const toggleTheme = () =>{
         
-        if (theme === "dark"){
-            document.documentElement.setAttribute("data-theme", "light");
-            setTheme("light");
+        if (theme){
+            document.documentElement.setAttribute("data-theme", "dark");
+            // setTheme("light");
         }
         else{
-            document.documentElement.setAttribute("data-theme", "dark");
-            setTheme("dark");
+            document.documentElement.setAttribute("data-theme", "light");
+            // setTheme("dark");
         }
-        localStorage.setItem("theme", theme);
+        setTheme(!theme);
+        // localStorage.setItem("theme", theme);
 
     };
 
@@ -59,8 +62,26 @@ const Info = () => {
                     </div>
                 </> : 
                 <></>}
-            <span className="side_container side_item" onClick={toggleTheme}>Theme: {theme}</span>
-            <span className="side_container side_item" onClick={toggleThirdPartyView}>Third party view: {thirdPartyView ? "on" : "off"}</span>
+            <div className="side_container side_item switch">
+                <Switch size={"small"} 
+                    checked={theme} 
+                    color={"primary"} 
+                    onClick={toggleTheme} />
+                <label>
+                    Theme
+                </label>
+            </div>
+            <div className="side_container side_item switch">
+                <Switch size={"small"} 
+                    checked={thirdPartyView} 
+                    color={"primary"} 
+                    onClick={toggleThirdPartyView} />
+                <label>
+                    Third party view
+                </label>
+            </div>
+            {/* <span className="side_container side_item" onClick={toggleTheme}>Theme: {theme}</span>
+            <span className="side_container side_item" onClick={toggleThirdPartyView}>Third party view: {thirdPartyView ? "on" : "off"}</span> */}
             <span className="side_container side_item" onClick={handleLogout}>Log out</span>
         </div>
     );

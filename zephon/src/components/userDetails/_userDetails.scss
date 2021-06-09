@@ -22,6 +22,26 @@ label{
 // }
 
 .custom_form{
+  h1{
+    font-weight: 300;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 1.5em;
+    img{
+      @include vertical_align;
+      margin: 0;
+      margin-right: 10px;
+      height: 100%;
+      filter: invert(80%);
+      background-size: contain;
+    }
+    span{
+      @include vertical_align;
+      margin: 0;
+      margin-bottom: 10px;
+    }
+  }
   width: 30%;
   margin: auto;
   padding: 30px 50px;
@@ -64,6 +84,7 @@ label{
   
   .primary_button{
     padding: 20px;
+    font-size: 18px;
     border: 1px solid var(--primary_font);
     border-radius: 5px;
   }

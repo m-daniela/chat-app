@@ -39,10 +39,11 @@ fontsize: 12pt
   - [Signal protocol](#signal-protocol)
     - [Extended Triple Diffie Hellamn](#extended-triple-diffie-hellamn)
     - [Double Ratchet](#double-ratchet)
-    - [EdDSA signatures](#eddsa-signatures)
+    - [XEdDSA signatures](#xeddsa-signatures)
     - [Sesame](#sesame)
     - [Sealed sender](#sealed-sender)
     - [Whatsapp](#whatsapp)
+    - [Whatsapp](#whatsapp-1)
   - [MTProto](#mtproto)
   - [Signcryption](#signcryption)
     - [iMessage](#imessage)
@@ -113,8 +114,6 @@ fontsize: 12pt
 
 # Abstract
 
-/edit 
-
 End-to-end encryption is intended to prevent data from being read by other parties, i.e. servers, service providers, the government, than the ones directly involved into a conversation. This approach has gained popularity in recent years in instant messaging applications and many of these have developed their own protocol or provided adaptations to an existing one. 
 
 The aim of this thesis is to present a synthesis of the most popular technologies, as well as the previous vulnerabilities present either in the protocols themselves or the applications implementing them. 
@@ -130,23 +129,11 @@ The aim of this thesis is to present a synthesis of the most popular technologie
 # Introduction
 [1]: [iMessage]()
 
-[2]: [Whatsapp whitepaper](https://scontent.whatsapp.net/v/t39.8562-34/122249142_469857720642275_2152527586907531259_n.pdf/WA_Security_WhitePaper.pdf?ccb=1-3&_nc_sid=2fbf2a&_nc_ohc=pLKbcESAck8AX95AjA-&_nc_ht=scontent.whatsapp.net&oh=73fbf3d0da3f6cae0b216e22b95cbd8b&oe=6079F899)
-
-[3]: [Messenger Starts Testing End-to-End Encryption with Secret Conversations](https://about.fb.com/news/2016/07/messenger-starts-testing-end-to-end-encryption-with-secret-conversations/)
-
 [4]: [Signal]()
 
-[5]: [Trevor Perrin - The XEdDSA and VXEdDSA Signature Schemes](https://www.signal.org/docs/specifications/xeddsa/xeddsa.pdf), 20.10.2016
 
-[6]: [Trevor Perrin, Moxie Marlinspike - The X3DH Key Agreement Protocol](https://www.signal.org/docs/specifications/x3dh/x3dh.pdf)*, 04.11.2016
-
-[7]: [Trevor Perrin, Moxie Marlinspike - Double Ratchet Algorithm](https://www.signal.org/docs/specifications/doubleratchet/doubleratchet.pdf), 20.11.2016
-
-[8]: [Moxie Marlinspike, Trevor Perrin - The Sesame Algorithm:  Session Management forAsynchronous Message Encryption](https://www.signal.org/docs/specifications/sesame/sesame.pdf), 14.04.2017
 
 [9]https://threema.ch/en/about 
-
-/edit
 
 As online communication gained more popularity, using instant messaging applications has become a standard in our quotidian lives. Therefore, the need for assurance that there is no third party spying on our conversations, either the government, the service provider or an attacker, grew even more, especially in states where free speech is constantly threatened.
 
@@ -158,7 +145,7 @@ But the cost of benefits is paid with a number of limitations. An example would 
 
 Also, backdoors are heavily requested by governments in order to protect the citizens and national security [?] and, therefore, spam and abuse becomes harder to control on end-to-end encrypted platforms. More will be discussed in [Section 2](#theoretical-aspects), along with a brief presentation of the cryptographic concepts used throughout the thesis. 
 
-Messaging apps using end-to-end encryption have been around since 2012, with iPhone's native messaging app iMessage[1] and Threema[9], then Signal[4], developed in 2013. This practice became more popular in 2016, when Whatsapp announced the introduction of end-to-end encryption by default in the application[2] and Facebook Messenger added the "secret chats" feature with similar properties[3]. 
+Messaging apps using end-to-end encryption have been around since 2012, with iPhone's native messaging app iMessage[1] and Threema[9], then Signal[4], developed in 2013. This practice became more popular in 2016, when Whatsapp announced the introduction of end-to-end encryption by default in the application[@whatsapp_whitepaper] and Facebook Messenger added the "secret chats" feature with similar properties [@facebook_signal], [@facebook]. 
 
 The purpose of this thesis is to create an overview of the end-to-end encryption protocols in popular instant messaging apps and their mechanisms. The topics that will be discussed are their current implementations and innovations in the field, as well as past security issues. The protocols analyzed are Signal, MTProto, Signcryption, Letter Sealing and Threema, in [Section 3](#existing-technologies). 
 
@@ -172,7 +159,7 @@ The implementation and the used frameworks and libraries are discussed at large 
 
 \newpage
 
-
+----
 
 - The list includes iMessage, Signal, Whatsapp, Facebook Messenger, Telegram, Threema, to name a few, and the protocols used by these will be analysed in this paper. 
 - This proccess involves public key encryption to share a secret between the users, a key exchange algorithm to safely exchange the keys and a symmetric key encryption algorithm that encrypts and decrypts the messages. 
@@ -260,7 +247,7 @@ An advantage of this type of algorithms is that they are more efficient in terms
 
 - /e image
 
-A widely used symmetric cipher in end-to-end encryption protocols is AES (Advanced Encryption Standard).
+A widely used symmetric cipher in end-to-end encryption protocols is AES.
 
 ---
 
@@ -300,38 +287,30 @@ Modern cryptosystems are not affected by this type of attack anymore.
 
 In the **known plaintext attack**, the attacker knows the plaintext and corresponding ciphertext ant its aim is to obtain the key. This type of attack works on simple ciphers. 
 
-
 **Side channel attacks** are more concerned on the way the computer system is implemented, not on the implementation of the algorithm itself. Usually physical, the information that can be used against a cryptosystem consists of power usage, the amount of time the process takes, sounds or electromagnetic radiation leaks.
 
 
-**Impersonation**
-
-An adversary can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key. In this way, the adversary can decrypt the message, read and/ or alter it before encrypting it with B's key and sending it forward. 
+**Impersonation** refers to an adversary that can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key. In this way, the adversary can decrypt the message, read, alter it before encrypting it with B's key and sending it forward. 
 
 This kind of attack can be mitigated using authentication, so guaranteeing that the recipient is the intended one. 
 
-**Chosen plaintext attack**
-- [wiki](https://en.wikipedia.org/wiki/Chosen-plaintext_attack)
-- [wiki, semantic security](https://en.wikipedia.org/wiki/Semantic_security)
+The adversary in a **chosen plaintext attack** chooses arbitrary plaintext and then is given the corresponding ciphertext. The intention is to reduce the security of the encryption scheme. 
 
-The adversary chooses arbitrary plaintext and then is given the corresponding ciphertext. The intention is to reduce the security of the encryption scheme. 
+This attack can be classified further into batch attacks and adaptive attacks. In case of a batch chosen plaintext attack, the adversary knows the plaintext before seeing the corresponding ciphertext, while in the adaptive version, the attacker can request more ciphertexts after seeing the ciphertext of corresponding plaintext. /x
 
-This attack can be classified further into batch attacks and adaptive attacks. In case of a batch chosen plaintext attack, the adversary knows the plaintext before seeing the corresponding ciphertext, while in the adaptive chosen ciphertext attack, the attacker can request more ciphertexts after seeing the ciphertext of corresponding plaintext. /x
+This vulnerability can be fixed by providing semantic security - the adversary should not be able to derive anything but negligible information about a plaintext message, given the ciphertext and the public key. This property is also called indistiguishability under chosen plaintext attack. 
 
-This vulnerability can be fixed by providing semantic security, meaning that the adversary should not be able to derive anything but negligible information about a plaintext message, given the ciphertext and the public key. This property is also called indistiguishability under chosen plaintext attack. 
-
-**Chosen ciphertext attack**
-- [wiki](https://en.wikipedia.org/wiki/Chosen-ciphertext_attack)
-
-In this type of attacks, the adversary has access to the decryptions of chosen ciphertexts and the intention is to obtain the privete key. 
+In **chosen ciphertext attacks**, the adversary has access to the decryptions of chosen ciphertexts and the intention is to obtain the privete key. 
 
 It can be split in two categories, too: indifferent or "lunchtime" attack and adaptive attack. 
-The lunchtime attack refers to the fact the the attacker can receive decryptions of any chosen ciphertext until a certain point. The term comes from the fact that the attacker has access to the user's device that can decrypt these ciphertexts, which was left unattended. 
+
+In a lunchtime attack, the attacker can receive decryptions of any chosen ciphertext until a certain point. The term comes from the fact that the attacker has access to the user's device (decryption oracle), which was left unattended. 
+
 In adaptive chosen ciphertext attacks, the adversary is only allowed to choose ciphertexts related to the target one and obtain enough information to decrypt it. 
 
 To avoid such attacks, the cryptosystem should not provide any decryption oracles, for example.
 
-**Brute force attacks** are the slowest ones. They are done by trying all the possible keys until the message is decrypted, hence the decryption key is obtained. 
+**Brute force attacks** are the slowest and consist of trying all the possible keys until the message is decrypted.
 
 
 ## Authentication
@@ -342,13 +321,9 @@ To avoid such attacks, the cryptosystem should not provide any decryption oracle
 
 Authentication is the process of proving the identity of an entity, called claimant, to a verifier and preventing impersonations. It might be done using certain credentials (a password) or with a digital certificate (in case of websites). 
 
-The process of entity authentication finishes with acceptance or rejection. Therefore, for three distinct parties, A, B honest and and a third party C, the following objectives can be defined: [2]
+The process of entity authentication finishes with acceptance or rejection. That is, if a party A authenticates to B, then B accepts the identity of A and none of them can impersonate the other to another party C. There is also an objective that if C tries to impersonate A, there is a neglijible change that B will authenticate A. 
 
-- if A successfully authenticates to B, then B accepts the identity of A
-- after a successful identity exchange between B and A, B cannot impersonate A to C
-- if C tries to impersonate A, there is a negligible change that B will authenticate A, even after a large number of authentication protocols between C and A and B.
-
-Another form of authentication is data origin authentication or message authentication. These are techniques that assure one party of the identity of the sender. Usually, the message has additional information attached so the receiver can determine it. 
+A form of authentication is data origin authentication or message authentication. These are techniques that assure one party of the identity of the sender. Usually, the message has additional information attached so the receiver can determine it. 
 
 ---
 
@@ -363,10 +338,13 @@ According to [3], there are two types of technologies used for messsage authenti
 
 - keyed hashing functions (hashing func with secret keys) => message auth codes (MAC) and pseudorandom func (PRF)
 
-MACs (Message authentication codes) are authentication tags created from the message and the secret key and protect the authenticity and integrity of the message. They use symmetric schemes, so the secret key must be known by both participants because it is also used to verify the MAC and to confirm that a message was not modified in transit. 
+MACs (Message authentication codes) are authentication tags created from the message and the secret key and they protect the authenticity and integrity of the message. They use symmetric schemes and the key is also used to verify the MAC and to confirm that a message was not modified in transit. 
 
-They are usually combined with a cipher and, in this way, the message's integrity, authenticity and confidentiality is kept.  
+They are usually combined with a cipher and, in this way, the message's integrity, authenticity and confidentiality hold. 
 
+MACs are secure when the attacker cannot forge a tag - creating it for a message when they don't know the key. 
+
+---
 
 **Attacks**
 
@@ -389,7 +367,12 @@ In [2], two types of attack vectors are presented: forgery attacks and replay at
 - pseudorandom functions sc/ 181 [1]
 - contemporary crypto/ 327 [2]
 
-Pseudorandom functions turn a message, using a secret key, into a seemingly random output. As defined in [2], a function f, $f:X \rightarrow Y$ is pseudorandom if it is randomly chosen from the set of all mappings from $X$ to $Y$. /x
+Pseudorandom functions turn a message, using a secret key, into a seemingly random output. They are not meant to be used on their own and they are present in key derivation schemes to generate cryptographic keys from a master key or a password. /x
+
+---
+
+
+As defined in [2], a function f, $f:X \rightarrow Y$ is pseudorandom if it is randomly chosen from the set of all mappings from $X$ to $Y$. /x
 
 They are considered stronger because the requirement that the output is indistinguishable from a random string is stronger than the unability to forge tags. [1]
 
@@ -406,6 +389,7 @@ They are considered stronger because the requirement that the output is indistin
 
 Hash-based MAC is a MAC which is obtained from a hash function, function that produces a fixed-size hash value out of random-sized data and they should be collision free, and are used by the end-to-end encryption protocols that will be analyzed later.
 Therefore, to compute it, one needs a cryptographic hash function, a secret key and the message.
+
 Similar to MACs, they are used to prove authenticity and integrity of the messages and their strenght depends on the strenght of the hash function.
 
 
@@ -417,7 +401,7 @@ Similar to MACs, they are used to prove authenticity and integrity of the messag
 
 Authenticated encryption (AE) is a mix between a cipher and a MAC and it is used to assure data confidentiality and authentication. 
 
-The combinations are different in terms of the order of the encryption and authentication, and the following three ways can be defined. The message is not accepted if the ciphertext or the tag was corrupted.
+The combinations are different in terms of the order of the encryption and authentication, and the following common three ways can be defined. The message is not accepted if the ciphertext or the tag was corrupted.
 
 **Encrypt and MAC**
 The ciphertext and the tag are computed separately. The recipient then decrypts the ciphertext and uses it to obtain the tag and compares it to the received tag.  
@@ -434,12 +418,10 @@ The tag is obtained from th eciphertext and the recipient computes the tag and o
 
 A version of AE is the authenticated encryption with associated data (AEAD). The authenticated data is processed by an authentication cipher but it is kept in plaintext. This is useful if you need certain data to be available, such as a header, but the payload needs to be encrypted. 
 
-Authentication ciphers use a secret key and a message to obtain the ciphertext and the tag together, making the process faster and more secure than the normal AE. The decryption phase uses the ciphertext and tag along with the key to obtain the plaintext and authenticate the data. 
-
 The output of an AEAD operation is the ciphertext, tag and the unencrypted associated data, obtained from the key, plaintext and same associated data. Thus, the tag depends on both the plaintext and associated data. 
 In order to decrypt and verify the message, the key and output parameters are needed. 
 
-Moreover, if the plaintext is empty, the algorithm can be considered a normal MAC. Similarly, if the associated data is missing, it becomes a normal authentication cipher. 
+Moreover, if the plaintext is empty, the algorithm can be considered a normal MAC. Similarly, if the associated data is missing, it becomes an authentication cipher, which use a secret key and the message to obtain the ciphertext and tag. Decryption uses the output and the key to obtain the message and authenticate the data. 
 
 
 
@@ -456,7 +438,11 @@ Moreover, if the plaintext is empty, the algorithm can be considered a normal MA
 
 Digital signatures are values that bind the identity of the originating entity to the contents of the message or document. They are used to verify the authenticity and integrity of the messages and to provide non-repudiation, meaning that the signer cannot successfully claim that they did not sign the message.
 
-The digital signature scheme is similar to public key encryption, and consists of the following algorithms:
+The digital signature scheme is similar to public key encryption, and consists of the following algorithms: key generation, when a public and a private key are generated, signing process with the private key and the message, and signature verification, when the receiver can check the authenticity of the message from the signature and public key. 
+
+---
+
+
 **Key generation** A public and a private key are generated. The private one is kept secret, while the other one is publicly available.
 **Signing process** The signature is produced using the private key of the signer and the message.
 **Signature verification process** From the public key of the sender, the message and the signature, the authenticity of the message can be either accepted or rejected. 
@@ -523,13 +509,10 @@ The need for this method arises from the fact that many messaging applications u
 ### Drawbacks
 
 #### Metadata
-[1] https://www.whatsapp.com/legal/updates/privacy-policy/?lang=en
-[2] https://www.bbc.com/news/technology-55634139
-[3] https://www.androidauthority.com/whatsapp-privacy-change-delay-1223909/ - to read
 
 An important drawback of end-to-end encryption is that metadata about the users or messages can be collected and it is accessible to the server. This information includes the time at which the user is online and for how long, when the message was sent, to whom, information about the device and so on. This data can be used to track the users' activity or be sold to advertising companies. 
 
-An example of the impact of metadata collection is Whatsapp's update of terms and services[1] in 2020. They announced that information regarding the location, browser information, device hardware and connection etc. is automatically collected. This resulted in a shift of the users to other applications considered more secure, like Signal and Telegram. [2]
+An example of the impact of metadata collection is Whatsapp's update of the privacy policy [@whatsapp_privacy] in 2020. They announced that information regarding the location, browser information, device hardware and connection etc. is automatically collected. This resulted in a shift of the users to other applications considered more secure, like Signal and Telegram. [@whatsapp_shift]
 
 Some apps have implemented ways to collect as litle metadata as possible. These will be addressed later, in [Section 3](#3-existing-technologies). 
 
@@ -553,7 +536,7 @@ The messages are only protected from possible eavesdroppers on the communication
 [3] https://data.consilium.europa.eu/doc/document/ST-12863-2020-INIT/en/pdf
 [4] https://www.boxcryptor.com/en/blog/post/e2ee-weakening-eu/?utm_medium=post&utm_source=newsletter&utm_campaign=en.newsletter.b2bb2c.awareness.politics&utm_content=e2ee.weakening
 
-The service providers might include, intentionally or not, ways to access the data by bypassing the encryption. These are called backdoors and have been highly requested by governments across the years. These weaknesses are mostly needed in order to protect public safety and to "protect citizens by investigating and prosecuting crime and safeguarding the vulnerable" [1].
+The service providers might include, intentionally or not, ways to access the data by bypassing the encryption. These are called backdoors and have been highly requested by governments across the years. These weaknesses are mostly needed in order to protect public safety and to "protect citizens by investigating and prosecuting crime and safeguarding the vulnerable" [@justice_dep].
 
 ---
 
@@ -567,32 +550,32 @@ https://www.cbsnews.com/news/paris-attacks-encrypted-messages-does-the-governmen
 
 ## AES
 - contemporary crypto/ 282
-- NIST paper
 - diagrams for the algo https://proprivacy.com/guides/aes-encryption
 - https://techjury.net/blog/what-is-aes/
 - https://cr.yp.to/antiforgery/cachetiming-20050414.pdf
 
 
-AES (Advanced Encryption Standard) is a symmetric block cipher, based on a substitution-permutation network, which uses keys of length 128, 192 or 256 bits to process data in blocks of 128 bits, introduced by NIST in 2001. It was approved by the NSA and is widely used in modern applications, due to its efficiency and security. 
+AES (Advanced Encryption Standard) is a symmetric block cipher, based on a substitution-permutation network, which uses keys of length 128, 192 or 256 bits to process data in blocks of 128 bits, introduced by NIST in 2001 [@aes]. It was approved by the NSA and is widely used in modern applications, due to its efficiency and security. 
 
-Cache timing side channel attacks are possible. 
+Cache timing side channel attacks are possible. /x??
 
 **Modus operandi**
 
 - cc/ 296
 - https://www.cryptosys.net/pki/manpki/pki_aesgcmauthencryption.html
 
-The following modes of operation are refered throughout the thesis: 
+The following modes of operation are referenced throughout the thesis: 
 
-**EBC** (Electronic Code book Mode) in which the plaintext is split into n-bit blocks which are encrypted. A padding is added if the block is shorter than the specified size. The same key is used for the same block, resulting in the same ciphertext. 
+**EBC** (Electronic Code book Mode) in which the plaintext is split into n-bit blocks which are encrypted and padding is added to complete the block, if necessary. The same key is used for the same block, resulting in the same ciphertext. 
 
-**CBC** (Cipherblock Chaining Mode) makes encryption dependant on the key and, previous message blocks and an initialization vector, so the identical plaintext blocks are mapped to different ciphetext blocks. With the initialization vector, the ciphertext is one block longer and if an error occurs in one block (such as transmission errors), it will be propagated to the others. 
+**CBC** (Cipherblock Chaining Mode) makes encryption dependant on the key, previous message blocks and an initialization vector, so the identical plaintext blocks are mapped to different ciphetext blocks. With the initialization vector, the ciphertext is one block longer and if an error occurs in one block (such as transmission errors), it will be propagated to the others. 
 
 **GCM** (Galois/ Counter mode) provides authenticated encryption and and authentication and integrity of the additional data. Takes as parameters the same as the CBC mode, the key, plaintext and and initialization vector and additional data as well. It returns the ciphertext and a MAC. 
 
 **IGE** (Inifinite Garble Mode) has the property of propagating the errors forward indefinitely. 
 
 ---
+
 
 **About the algorithm**
 
@@ -653,9 +636,8 @@ In the beginning, the input bytes are copied into the State and after the encryp
 
 ## Classical Diffie Hellamn
 - serious crypto/ 268 [1]
-- https://www.cs.jhu.edu/~rubin/courses/sp03/papers/diffie.hellman.pdf [2]
 
-Diffie Hellamn (1976)[2] is a key agreeent protocol that allows the participants to share a secret between them, with the exchanged information being public. The secret is turned into session keys and used as symmetric keys to encrypt and authenticate data or to be used as a secure channel, during the session[1 pg 273]. 
+Diffie-Hellamn [@dh] is a key agreeent protocol that allows the participants to share a secret between them, with the exchanged information being public. The secret is turned into session keys and used as symmetric keys to encrypt and authenticate data or to be used as a secure channel, during the session[1 pg 273]. 
 
 
 **The algorithm**
@@ -664,12 +646,11 @@ The mathematical function involves a big prime number $p$ and a base number/ gen
 
 To illustrate the algorithm, for two participants we have the numbers $a$ and $b$. Then each of the participants computes $A = g^a (mod) p$, $B = g^b (mod) p$ and makes these computations publicly available. The other participant takes this result and raises it to their private number and this will be the shared secret, so: $(g^a mod p)^b = (g^b (mod) p)^a = g^ab (mod) p$.
 
-**Security**
-
 The security of the Diffie Hellman protocol resides on the discrete logarithmic problem, which means that you need to recover $a$ from $g^a (mod) p$; this is possible for smaller values, but it is infeasible if the values are chosen correctly.
 
-The security goals that should be provided by this protocol are mutual authentication, no interference with the key exchange process, resistance to impersionation attacks based on a compromised ling-term key and forward secrecy. 
+The security goals that should be provided by this protocol are mutual authentication, no interference with the key exchange process, resistance to impersionation attacks based on a compromised long-term key and forward secrecy. 
 
+---
 
 - attack models, as named and defined in [1 / 275]
   - the eavesdropper - attacker observers the message exchange and can record, modify, drop, inject messages; to protect against, the protocol should not leak info
@@ -695,6 +676,7 @@ extra - non-dh key exchange: 3g and 4g communications with sim cards
 - https://www.iacr.org/cryptodb/archive/2006/PKC/3351/3351.pdf [4]
 - https://datatracker.ietf.org/doc/html/rfc7748 [5]
 - https://datatracker.ietf.org/doc/html/rfc8031
+- https://eprint.iacr.org/2017/293.pdf [4]
 
 - /e needed 
 
@@ -709,7 +691,7 @@ Addition is done by fixing the two points on the curve and draw a line through t
 
 If the points are the same, draw the tangent through that point until it intersects the curve again and the result is still the reflected point
 
-Multiplication consists of adding the point multiple times to itself. (Optimization - double and add method)
+Multiplication consists of adding the point multiple times to itself. There are optimization methods, such as double-and-add and Montgomery ladders. The latter is conseidered very fast [@montgomery] and more resistant to timing side-channel attacks. 
 
 
 
@@ -719,26 +701,35 @@ The Elliptic Curve Diffie-Hellman protocol is similar to the classical Diffie-He
 
 The public variables are the base point $P$ and the elliptic curve over a finite field $E(F_q)$. The participants need to choose a random integer $k_a$ and $k_b$, which are their private keys and compute $A = k_a * P$ and $B = k_b * P$ respectively. They then exchange the results, $A$ and $B$, and the shared secret is $k_a * k_b * P = k_a (k_b * P) = k_b (k_a * P)$.
 
-Two commonly used curves, which are considered secure and fast, are **Curve25519** and **Curve448** [5]. They are Montgomery curves and their equations are of the form $y^2 = x^3 + ax^2 + x$, where $a = 486662$ for Curve25519 and $a = 156326$ for Curve448. When used in ECDH protocol, the functions using the curves are reffered to as X25519 and X448. 
+The security relies of this algorithm on elliptic curve discrete logarithm problem. Instead of obtaining the power $a$ from $g^a$, one needs to find a $k$, if exists, such that $kP = Q$, where $P$, $Q$ are points on the elliptic curve over a finite field $F_q, q = p^n$, $p$ prime.
 
+Usually, the methods for solving this problem are slow, but there are certain types of curves that are vulnerable. 
 
-**ECDSA** 
+Attack models [2], [3] /x??
 
-The Elliptic Curve Digital Signature Algorithm is a digital signature scheme based on ECC and it relies on the ECDLP as well.  
+- pollard's rho method
+- baby step, giant step method - general
+- MOV method - for elliptic curves over finite fields described as F^x _q^m, when m is small
+- index calculus method
 
+Two commonly used curves, which are considered secure and fast, are **Curve25519** and **Curve448** [@ec]. They are Montgomery curves and their equations are of the form $y^2 = x^3 + ax^2 + x$, where $a = 486662$ for Curve25519 and $a = 156326$ for Curve448. When used in ECDH protocol, the functions using the curves are reffered to as X25519 and X448. 
+
+There is a digital signature scheme based on ECC, called Elliptic Curve Digital Signature Algorithm (ECDSA). Its security is also based on the ECDLP. 
+
+---
 
 
 **Security**
 
-- [details here + DH + ECC](./pdf/mit) [2]
 - https://ocw.mit.edu/courses/mathematics/18-704-seminar-in-algebra-and-number-theory-rational-points-on-elliptic-curves-fall-2004/projects/asarina.pdf[1]
-- course [3]
+- mit [2]
+- file:///C:/Users/mosda/AppData/Local/Temp/MussonTh.pdf [3]
 
 The security relies of this algorithm on elliptic curve discrete logarithm problem. Instead of obtaining the power $a$ from $g^a$, one needs to find a $k$, if exists, such that $kP = Q$, where $P$, $Q$ are points on the elliptic curve over a finite field $F_q, q = p^n$, $p$ prime.
 
 Usually, the methods for solving this problem are slow, but there are certain types of curves that are vulnerable. 
 
-Attack models [2], [3] /x
+Attack models [2], [3] /x??
 
 - pollard's rho method
 - baby step, giant step method - general
@@ -751,40 +742,26 @@ Attack models [2], [3] /x
 
 
 # Existing Technologies
-- about the technologies used in some of the popular end-to-end encrypted apps and a brief description of how they work
+
+In this section, some of the most popular end-to-end encryption protocols will be presented, along with the security analyses conducted throughout the time and their findings.  
 
 
 ## Signal protocol
-- [Signal protocol - wiki](https://en.wikipedia.org/wiki/Signal_Protocol)
-- [Signal docs](https://signal.org/docs/) 
-- x3dh https://signal.org/docs/specifications/x3dh/ [1]
-- double ratchet https://signal.org/docs/specifications/doubleratchet/ [2]
-- xeddsa https://signal.org/docs/specifications/xeddsa/ [3]
-- OTR https://otr.cypherpunks.ca/ [4] - not really referenced
-- v1? https://www.signal.org/blog/asynchronous-security/ [5]
-- v2 https://www.signal.org/blog/advanced-ratcheting/ [6]
-- axolotl https://web.archive.org/web/20140907055327/https://github.com/trevp/axolotl/wiki [7]
-- v3 https://www.signal.org/blog/just-signal/ [8]
-- wapp https://www.signal.org/blog/whatsapp/ [9]
-- wapp 2 https://www.signal.org/blog/whatsapp-complete/ [10]
-- fb https://www.signal.org/blog/facebook-messenger/ [11] - use this for the introduction
-- [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf) [12]
-- https://signal.org/blog/private-groups/ [13]  this is from 2014, maybe there is something newer
 
 Pros: double ratchet algorithm, sealed sender feature, improvements on cryptographic primitives. 
 
 
 The Signal protocol is one of the leading end-to-end encryption protocols at the moment. The applications using this protocol are Signal, Whatsapp, Facebook Messenger (Secret chats), Skype (Private conversations) and Wire. 
 
-Initialy implemented in 2013 for TextSecure, the predecessor of the Signal app, it was developed by Open Whisper Systems, they have improved the Off The Record Messaging (OTR) cryptographic protocol in order to offer both asynchronicity and forward secrecy[5]. The asynchronous behaviour was achieved by sending a set of previously generated keys, called prekeys, which could be then accessed by the users, making the key exchange more efficient.
+Initialy implemented in 2013 for TextSecure, the predecessor of the Signal app, it was developed by Open Whisper Systems, they have improved the Off The Record Messaging (OTR) cryptographic protocol in order to offer both asynchronicity and forward secrecy [@forward_secrecy]. The asynchronous behaviour was achieved by sending a set of previously generated keys, called prekeys, which could be then accessed by the users, making the key exchange more efficient.
 
 OTR uses ephemeral key exchanges to offer perfect forward secrecy and this is achieved by a new Diffie-Hellman key exchange for each message. This property assures the user that, if the private keys are compromised, the previous messages cannot be decrypted by an adversary. The static public keys then take the role of authenticating the users. 
 
-The second version, in 2014, added new improvements to the ratcheting algorithm by using the SCIMP's way of obtaining the message key by hashing the last message, therefore obtaining chains of keys and using up to 10 different types. [6], [12] It was initially called Axolotl Ratchet [7], but it was later renamed to Double Ratchet algorithm. 
+The second version, in 2014, added new improvements to the ratcheting algorithm by using the SCIMP's way of obtaining the message key by hashing the last message, therefore obtaining chains of keys and using up to 10 different types [@ratchet], [@cohn_gordon]. It was initially called Axolotl Ratchet [@axolotl], but it was later renamed to Double Ratchet algorithm. 
 
-A third version rolled out in 2016 and they renamed the application to Signal [8]. In the same year, the interest of using end-to-end encrypted applications increased after Whatsapp announced that they are now supporting the Signal protocol. [9?][10]
+A third version rolled out in 2016 and they renamed the application to Signal [@signal_v3]. In the same year, the interest of using end-to-end encrypted applications increased after Whatsapp announced that they are now supporting the Signal protocol. [@whatsapp_signal] [@whatsapp_signal_complete]
 
-Group messaging uses pairwise messaging by sending the encrypted message to each member. [13]
+Group messaging uses pairwise messaging by sending the encrypted message to each member. [@private_groups] /x? this is on textsecure
 
 ---
 
@@ -833,23 +810,14 @@ Group messaging uses pairwise messaging by sending the encrypted message to each
 ---
 
 ### Extended Triple Diffie Hellamn
-- x3dh https://signal.org/docs/specifications/x3dh/ [1]
 
 /simplify
 
-Extended Triple Diffie-Hellamn (X3DH) is the key exchange protocol used by Signal and provides forward secrecy and deniability. It was designed for asynchronous communications, so the users need to provide some information to the server so that the others can establish the secret key without both being online. 
+Extended Triple Diffie-Hellamn (X3DH) [@x3dh] is the key exchange protocol used by Signal and provides forward secrecy and deniability. It was designed for asynchronous communications, so the users need to provide some information to the server so that the others can establish the secret key without both being online. 
 
 The algorithm needs an elliptic curve, either X25519 or X448, a hash function, SHA 256 or SHA 512, the information identifying the application and, additionally, an encoding function for the public key. 
 
-Each user has a set of key pairs as follows: 
-
-- long-term identity key - each party has one and they are public
-- ephemeral key pair - generated at each run with the public key
-- signed prekeys and a set of one-time prekeys - these are sent to the server so that the other party can establish the key exchange
-- the shared secret is a 32 byte secret key and is obtained using a HMAC based key derivation function on the Diffie-Hellman shared secret 
-
-+using Montgomery ladder to be more resistant to timing side channel attacks
-
+Each user has a set of key pairs, including: long-term identity key, which is public, ephemeral key pair that is generated at each run, signed prekeys and a set of one-time prekeys, they are present to the server and the other users can fetch them to initiate the key exchange and the shared secret is a 32 byte secret key and is obtained using a HMAC based key derivation function on the Diffie-Hellman shared secret.
 
 To prepare the setting, the communication will have 3 parties: the users, A (sender) and B (receiver), and the server.  
 
@@ -885,15 +853,11 @@ The parties should not put their trust in the server, because it can refuse mess
 
 The current authentication scheme does not prevent unknown key share attacks or identity misbinding, but more identification information can be added as associated data. 
 
-
-
 ### Double Ratchet
-- [double ratchet](./pdf/papers/signal/docs/doubleratchet.pdf) [1]
-
 
 After the shared secret is obtained, the parties are using the Double ratchet algorithm to exchange messages. The new keys are derived and combined with DH values sent along with the messages, so they are protected if the previous or future keys are compromised.  
 
-This algorithm uses KDFs (key derivation functions) to form KDF chains. They use as input and output key parts of the output of another KDF. In this way, resilience, forward security and break-in recovery, as stated in [1]. 
+This algorithm uses KDFs (key derivation functions) to form KDF chains. They use as input and output key parts of the output of another KDF. In this way, resilience, forward security and break-in recovery, as stated in [@ratchet_pdf]. 
 
 Each party has three chains for each session: root, sending and receiving. 
 
@@ -910,34 +874,18 @@ Therefore, these two ratchets form the Double Ratchet algorithm. It can be initi
 Security risks could arise from the stored or recovered message keys, obtained after deletion. 
 
 
-### EdDSA signatures
-- [xeddsa](./PDF/Signal/xeddsa.pdf)
+### XEdDSA signatures
 
-The signature scheme is defined on twisted Edwards curves. 
-
-- create and verify EdDSA signatures using the key pair defined for X25519 or X448
-- this scheme is defined as xeddsa with the extension vxeddsa, which provides a verifiable random function(VRF)
-- signatures are defined on [twisted Edwards curves](https://en.wikipedia.org/wiki/Twisted_Edwards_curve) and use the SHA 512 hash function
-
-- the input parameters for the signature algorithm are the (Montgomery) private key mod integer q, the message and 64 bytes of secure random data and for the verification algorithm: the (Montgomery) public key, the message and the signature 
-
-- the signatures are randommized 
-- signing time is constant
-- it is considered safe to use the same key pair to produce the signatures
+The signature scheme, XEdDSA, with the extension VXEdDSA, [@xeddsa] is defined on twisted Edwards curves. With them, a single key pair format can be used for both the signatures and ECDH, or even the same keys. 
 
 
 ### Sesame
-- [sesame](./pdf/papers/signal/docs/sesame.pdf)
 
-Sesame is an algorithm used for session management and was developed for the asynchronous and multi-device setting. 
-
-- this is referenced in one of the security analyses
+Sesame [@sesame] is an algorithm used for session management and was developed for the asynchronous and multi-device setting. 
 
 ### Sealed sender
-- [sealed sender](./pdf/papers/signal/18.%20Technology%20preview%20Sealed%20sender%20for%20Signal%20-%20signal-org-blog-sealed-sender-.pdf)
 
-
-This feature is available in the Signal app and it aims to provide sender anonimity by hiding the identity of the sender from the service provider. This is achieved by including the sender's identity in the message payload so that the receiver can decrypt it and identify the sender. 
+The Seaked Sender [@sealed_sender] feature is available in the Signal app and it aims to provide sender anonimity by hiding the identity of the sender from the service provider. This is achieved by including the sender's identity in the message payload so that the receiver can decrypt it and identify the sender. 
 
 To prevent spoofing, the users have a certificate that attests their identity, which are periodically changed. They contain the public identity key and the expiration date. This can be included in messages, so the receivers can check its validity. 
 
@@ -946,25 +894,51 @@ But the users can enable this for anyone who isn't in their contacts list, so th
 
 The messages are encrypted in a normal fashion, and then they are encrypted again, along with the sender certificate. 
 
+### Whatsapp
+
+Whatsapp implements the Signal protocol for its end-to-end encrypted chats and voice calls. According to the whitepaper [@whatsapp_whitepaper], the application follows the same protocol and the key pairs are generated over Curve25519. A difference can be seen regarding group chats, where a "server-side fan-out" method is used to send the encrypted messages to the participants. This method uses pairwise encrypted channels and Sender Keys. /x??
+
+To send the first message, the group chat initiator needs to randomly generate a 32 byte chain key and a signature key pair. These are then mixed and create a sender key message and the key is encrypted and sent to each of the participants. 
+
+The rest of the messages are encrypted with AES256 in CBC mode and they are signed afterwards with the signature key and are sent to the server, that will distribute the message to the recievers. The message keys are derived from the chain key. 
+
+The attachments are encrypted with AES256 in CBC mode with a random IV. The MAC is computed using HMAC-SHA 256 and is appended to the ciphertext. The encryption key, HMAC key, hash of the encrypted blob and the pointer to the blob are sent in a normally encrypted message to the recipient, who fetches the keys and the blob and verifies the hash and MAC before it can be decrypted. 
+
 
 **Security analyses**
 
-- 14 https://eprint.iacr.org/2014/904.pdf [3]
-
-TextSecure was vulnerable to UKS (unknown key share) attacks, which target a communication session between two honest users at key exchange; one of the users thinks that they shared key with the recipient, but the recipient is unknowingly sharing the key with the attacker. The mitigation proposed is by adding the identities of the parties in the authentication tag. 
+TextSecure [@frosch] was vulnerable to UKS (unknown key share) attacks, which target a communication session between two honest users at key exchange. In a UKS attack one of the users thinks that they shared key with the recipient, but the recipient is unknowingly sharing the key with the attacker. The mitigation proposed is by adding the identities of the parties in the authentication tag. 
 
 Also, they go further with the authentication issue and propose that the party could prove that they know the secret key corresponding to the long-term identity key.
 
+According to [@cohn_gordon], these attacks are still possible in the Signal protocol, since the key derivation is not based on the identities of the users, but the applications implementing the protocol can prevent it by adding them to the initially exchanged messages. 
 
-- [16 analysis](./pdf/papers/Signal/16.%2019.%20r%20-%20A%20Formal%20Security%20Analysis%20of%20the%20Signal%20Messaging%20Protocol%20-%202016-1013.pdf) [1]
+They also review the X3DH key exchange protocol and the double ratchet algorithm of Signal and point out the novelties introduced in their cryptographic core and claimed, such as forward secrecy, post-compromise security and message key authentication. 
 
+They define the key update of the double ratchet [@ratchet_pdf] as a tree of stages, which are the key exchanges and ratchet steps. Having multiple stages in a session, or chat between two parties, the protocol can be seen as a multi-stage AKE. 
 
-This paper analyses the multi-stage authenticated key exchange protocol of Signal and points out the novelties introduced in their cryptographic core, including the ratcheting algorithm and the implied secrecy and authentication with forward security and future secrecy. 
+They conclude that the it is secure under the assumptions that all KDFs are random oracles and that it is hard to compute the shared secret when having access to a decisional Diffie-Hellman oracle, meaning that given the parts making the shared secret from each party, it is hard to distinguish the result from any random element from the underlying group.  
 
-It is also stated that unknown key share attacks [3] are still possible in the Signal protocol, since the key derivation is not based on the identities of the users, but the applications implementing the protocol can prevent it by adding them to the initially exchanged messages. 
+Later, the deniability of the X3DH protocol [@x3dh] is challenged in [@vatandas] and [@dion], claiming that authentication is not enough to provide it. They prove offline deniability in the random oracle model and this theorem holds even without the long term public keys being registered. 
 
-- since this is the "first" paper talking about this, I'll link it to future work somehow
-- references to this paper in [2]/ 17
+An automated and manual analysis was conducted in 2019 on the Java implementations of the server and the protocol and the Android Signal application [@dion].
+
+The testing method used were fuzz testing techniques, but found no over-read vulnerabilities. 
+
+They have also analysed the Sesame algorithm [@sesame] manually, but found that the session recovery feature was not implemented in the application. 
+They tested app restoration, with or without backup, when the account was deleted and when it was kept. In the first case, the messages cannot be sent but in the second, they are delivered but they never reached the restored account. Therefore, this might be an exploitable vulnerability. 
+
+They also point out that, once the device is compromised, forward secrecy and future secrecy do not hold. Moreover, there is no guarantee that secret data, such as message keys, is completely deleted from the device so an attacker could obtain this information. 
+
+Regarding the deniability property, they consider that it does not hold since you still need to athenticate with the server, but claim that this issue is solved by using the Sealed Sender feature [@sealed_sender] from the Signal app.
+
+But this is not enough, as pointed in [@martiny]. They state that you can create a link between two users, using statistical disclosure attacks on the feature and message timings, with the help of metadata (delivery receipts) and assuming that the recipient is likely to respond immediately after they received a message. Therefore, obtaining the identity of the sender might be possible in a relatively small number of messages. 
+
+The proposed solution is to implement a similar scheme, but scaled for conversations. In this way, the identity of the sender is protected during the whole lifespan of the conversation. 
+
+A security analysis was conducted on WhatsApp as well [@whatsapp_security] when the protocol implementation was introduced in the app in 2016. They report the lack of a threat model in the whitepaper and the problem of MITM attacks, because, once the session is established, the same is used for the rest of the conversation, unless external events take place, such as app reinstallation or device change. 
+
+MITM attacks are a recurring issue but many applications provide QR scanning or fingerprint comparison in order to verify the other users. 
 
 ---
 
@@ -986,7 +960,7 @@ It is also stated that unknown key share attacks [3] are still possible in the S
 
 This research studies the security claims of the protocol and the Java implementation of the protocol, Android application and the server. It also aims to discover buffer over-read vulnerabilities (Heartbleed bug) using different types of fuzz testing on the simplified server code and the messaging process?. 
 
-They have also analysed the Sesame algorithm manually, but found that the session recovery feature is not implemented in the application. They present four cases: app restoration with and without backup after the account was deleted and without deleting it. They found out that, in the first two cases, the other party cannot send messages once the account was deleted, whereas, in the last two, the messages are sent but not delivered to the other party, therefore, they are lost and this could leave place for other attacks. 
+They have also analysed the Sesame algorithm [sesame] manually, but found that the session recovery feature is not implemented in the application. They present four cases: app restoration with and without backup after the account was deleted and without deleting it. They found out that, in the first two cases, the other party cannot send messages once the account was deleted, whereas, in the last two, the messages are sent but not delivered to the other party, therefore, they are lost and this could leave place for other attacks. 
 
 Forward and future secrecy are also challenged, being too weak regarding the code implementation and the case in which the device is compromised. Also, data is not completely deleted from the device and then an attacker could retrieve the previously saved and used keys to break these properties.   
 
@@ -1131,22 +1105,22 @@ MITM attacks are a recurring issue but many applications provide QR scanning or 
 - https://core.telegram.org/techfaq#q-do-you-use-ige-ige-is-broken [6]
 
 
-The MTProto protocol was created in 2013 for the Telegram messaging app. End-to-end encryption is not enabled by default and it is only supported for private chats and this is usually considered a (serious) drawback in app comparison [?]. 
+The MTProto protocol was created in 2013 for the Telegram messaging app. End-to-end encryption is not enabled by default and it is only supported for private chats and this is usually considered a (serious) drawback in app comparison. 
 
-In 2017, the protocol was upgraded from MTProto 1.0 to MTProto 2.0, which uses SHA256, padding when computing the message key and dependance on the authorization key. 
+In 2017, the protocol was upgraded from MTProto 1.0 to MTProto 2.0, which uses SHA256, padding when computing the message key and is dependant on the authorization key. 
 
-Normal chats, or cloud chats, are only encrypted between the client and the server. For message encryption, AES256 in IGE mode [6] and an IV are used and the key is obtained from a combination between the middle 128 bits of the SHA256 hash of the message, padding, message id etc. and 32 bytes from the authorization key. 
+Normal chats, or cloud chats, are only encrypted between the client and the server. For message encryption, AES256 in IGE mode [@mtproto_faq] and an IV are used and the key is obtained from a combination between the middle 128 bits of the SHA256 hash of the message, padding, message id etc. and 32 bytes from the authorization key. 
 
 The authorization key is shared by the client and the server using a Diffie-Hellman key exchange. They are 2048 bits long and the server key is a RSA key that is kept on the server and rarely changed. 
 
-The message is then sent along with a header containing the authentication key idetifier and the message key. To keep backward compatibility between the versions, the key identifier is composed of the lower 64 bits of the SHA1 hash of the authorization key. [2] /x
+The message is then sent along with a header containing the authentication key idetifier and the message key. To keep backward compatibility between the versions, the key identifier is composed of the lower 64 bits of the SHA1 hash of the authorization key. [@mtproto_desc] /x
 
 For the secret chats, the message key also depends on the secret chat key. 
-The keys are generated and exchanged using the Diffie-Hellman protocol and they are 256 bytes long. To ensure forward secrecy, the users initiate the re-keying protocol after 100 encrypted and decrypted messages or after it was in use for more tha a week and the old keys are deleted. [5]
+The keys are generated and exchanged using the Diffie-Hellman protocol and they are 256 bytes long. To ensure forward secrecy, the users initiate the re-keying protocol after 100 encrypted and decrypted messages or after it was in use for more tha a week and the old keys are deleted. [@mtproto_pfs]
 
-The messages are encrypted using AES256 in IGE mode and an 256 bit IV, where the encryption key is obtained from the hash of the message key. The message key is the middle bits obtained from parts of the shared secret, plaintext message and some random padding. The encryption key fingerprint and the message key are, also, added over the ciphertext. [3] To decrypt, the steps from creating the ciphertext and keys are taken in reverse order. 
+The messages are encrypted using AES256 in IGE mode and an 256 bit IV, where the encryption key is obtained from the hash of the message key. The message key is the middle bits obtained from parts of the shared secret, plaintext message and some random padding. The encryption key fingerprint and the message key are, also, added over the ciphertext. [@mtproto_e2ee] To decrypt, the steps from creating the ciphertext and keys are taken in reverse order. 
 
-For files, they are encrypted with one-time keys and are save on the server. They are randomly generated 256 bit AES keys and IVs and will be used to encrypted the files using AES256 in IGE mode as well. 
+For files, they are encrypted with one-time keys and are saved on the server. They are randomly generated 256 bit AES keys and IVs and will be used to encrypted the files using AES256 in IGE mode as well. 
 
 If a client still uses MTProto 1.0, the other client will downgrade to the previous version.
 
@@ -1163,23 +1137,23 @@ If a client still uses MTProto 1.0, the other client will downgrade to the previ
 - https://core.telegram.org/techfaq#q-do-you-use-ige-ige-is-broken [7]
 
 
-Telegram was actively criticised for using weak or lesser known criptographic primitives in [1], [3], [4] and for having a "home grown" protocol, but they claim that this combinaton provides better "delivery time and stability" [6] or that the primitives are "not broken in their implementation" [7]. In the following, the known and serious vulnerabilities are presented, along with possible mitigations. 
+Telegram was actively criticised for using weak or lesser known criptographic primitives in [@mtproto_cca], [@crypto_fails], [@hayk] and for having a "home grown" protocol, but they claim that this combinaton provides better "delivery time and stability" [@mtproto_faq] or that the primitives are "not broken in their implementation" [mtproto_faq]. In the following, the known and serious vulnerabilities are presented, along with possible mitigations. 
 
-This paper [1] explores two theoretical attacks showing that MTProto is not IND CCA secure and it does not satisfy the properties of authenticated encryption because the length or the content of the padding is not checked for integrity during decryption. /x Therefore, one can create two different ciphertexts that decrypt to the same plaintext.
+This paper [@mtproto_cca] explores two theoretical attacks showing that MTProto is not IND CCA secure and it does not satisfy the properties of authenticated encryption because the length or the content of the padding is not checked for integrity during decryption. /x Therefore, one can create two different ciphertexts that decrypt to the same plaintext.
 
 The first attack is done by adding a random block, larger than the block length, at the end. Since the padding is not included in the authentication funtion nor its size is checked, the message decrypts normally. In this case, a length check is recommended. 
 
 The second one involves subtitition of the last block of the cipher. This attack has significantly lower chances of success, but it is still not secure. To mitigate this, they suggest adding the pading when the MAC is computed. 
 
-The lack of authenticated encryption and general weaknesses in the authentication mechanism are mentioned in [2], [3], [4] also. In [2], the possibility of a MITM attack is illustrated, using an unofficial command line interface for Telegram on Linux. 
+The lack of authenticated encryption and general weaknesses in the authentication mechanism are mentioned in [@telegram_auth], [@crypto_fails], [@hayk] also. In [@telegram_auth], the possibility of a MITM attack is illustrated, using an unofficial command line interface for Telegram on Linux. 
 
 The client verifies the server using a fingerprint, which is the first 128 bits of the SHA 1 hash of the server's public key. The MITM could generate a fingerprint with the same first 128 bits, so that the server could not detect the attack. ?> This would work if the victim installs a modified app, but this is helped by the aforementioned weakness.  
 
-These issues were fixed in MTProto 2.0[?], so the protocol is now considered secure against IND CCA [5]. The fingerprint is 288 bits long and the hashing function was changed to SHA256, but a MITM attack is still possible if the users do not verify each other by comparing the fingerprints.
+These issues were fixed in MTProto 2.0[?], so the protocol is now considered secure against IND CCA [@miculan]. The fingerprint is 288 bits long and the hashing function was changed to SHA256, but a MITM attack is still possible if the users do not verify each other by comparing the fingerprints.
 
-However, [4] pointed out that third parties could observe metadata about the users, such as the moment when they are online or offline, only by having them saved in the contacts list, which is shared with the server. In this way, an observer could guess the moment when two users might be communicating. A feature that disables this was added and is used in other applications too. 
+However, [@hayk] pointed out that third parties could observe metadata about the users, such as the moment when they are online or offline, only by having them saved in the contacts list, which is shared with the server. In this way, an observer could guess the moment when two users might be communicating. A feature that disables this was added and is used in other applications too. 
 
-The automatic symbolic verification from 2020 [5] concluded that possible vulnerabilities can arise from insufficient checks and verifications, side-channel attacks or faulty user behaviour. 
+The automatic symbolic verification from 2020 [@miculan] concluded that possible vulnerabilities can arise from insufficient checks and verifications, side-channel attacks or faulty user behaviour. 
 
 It is stated that the messages remain secret after the re-keying proccess, even if the authorization keys where compromised, but if the session key is recovered, the past 100 messages or the ones exchanged in the past two weeks can be decrypted, so the form of forward secrecy employed by the protocol is kept. 
 
@@ -1243,18 +1217,15 @@ The study shows that third parties could observe metadata about the users, such 
 
 Pros: reduces encryption + signature cost
 
-This protocol was introduced in 1997 [1] and it combines the features of both digital signature and encryption, in a public key setting. Its aim is to decrease the cost of previously used signature then encrypt schemes and to optimize the procedure. 
+This protocol was introduced in 1997 [@zheng] and it combines the features of both digital signature and encryption, in a public key setting. Its aim is to decrease the cost of previously used signature then encrypt schemes and to optimize the procedure. 
 
-The total cost, then, can be considered the sum of costs of each operation and using this combined approach would reduce it with "50% in computational cost and 85% in communication overhead", keeping the security definitions offered by the two operations, namely sending an authenticated and secure message [1].
+The total cost, then, can be considered the sum of costs of each operation and using this combined approach would reduce it with "50% in computational cost and 85% in communication overhead", keeping the security definitions offered by the two operations, namely sending an authenticated and secure message [@zheng].
 
-The protocol would contain two algorithms, namely signcryption and unsigncryption, with the properties:
-
-- unique unsigncryptability - the signcrypted message is recovered using the unsigncryption algorithm
-- security - the properties of a secure encryption scheme and secure digital signature are fulfilled: confidentiality, unforgeability, non-repudiation, integrity
-- efficiency - as mentioned before, smaller computational cost.
+The protocol would contain two algorithms, signcryption and unsigncryption, with the properties: unique unsigncryptability, where the signcrypted message is recovered using the unsigncryption algorithm, 
+security - the properties of a secure encryption scheme and secure digital signature are fulfilled: confidentiality, unforgeability, non-repudiation, integrity and efficiency, through smaller computational cost.
 
 
-A security analysis of signcryption was conducted in 2002? [2].
+A security analysis of signcryption was conducted in 2002? [@adr].
 
 - two definitions, depending on the adversary: outsider or insider
 - signcryption is defined for the public key setting, being the equivalent of authenticated encryption is in the symmetric encryption
@@ -1270,7 +1241,10 @@ A security analysis of signcryption was conducted in 2002? [2].
 
 **Security**
 
-- adr
+[@adr] analyses the security of the Signcryption protocol and introduce a new concept, called commit then encrypt then sign, which would do the encryption and signature algorithms in parallel.
+
+For the security of the protocol, they give two atta
+
 
 They compare ets, ste with e&s and introduce something called commit then encrypt and sign, which would do the two operations in parallel.
 
@@ -1337,13 +1311,13 @@ Insider security properties of privacy and authenticity hold if the induced
 - [How iMessage sends and receives messages securely](https://support.apple.com/fr-fr/guide/security/sec70e68c949/web) [4]
 
 
-Apple's iMessage chat application and FaceTime use the signcryption protocol in order to support end-to-end encryption for messages, attachments and video calling. [1] These can be automatically deleted after a certain period or backed up in iCloud, where, as they state in the documentation, the data is also kept encrypted. If the device is locked with a password, the local messages are encrypted until it is unlocked. 
+Apple's iMessage chat application and FaceTime use the signcryption protocol in order to support end-to-end encryption for messages, attachments and video calling. [@imessage] These can be automatically deleted after a certain period or backed up in iCloud, where, as they state in the documentation, the data is also kept encrypted. If the device is locked with a password, the local messages are encrypted until it is unlocked. 
 
 Also, the messages that are not sent are kept on the server for 30 days. Along with this, other data that is stored or collected include information about iMessage and FaceTime, device configurations and phone numbers and email addresses. 
 
-After the iMessage service is turned on, the user receives the signing and encryption keys. The encryption keys are and RSA 1280 bit key and an elliptic curve 256 bit key over NIST P-256 curve while the signature key is based on an ECDSA algorithm. The private keys are saved in the device's keychain and the public ones are sent to the Apple server. [3]
+After the iMessage service is turned on, the user receives the signing and encryption keys. The encryption keys are and RSA 1280 bit key and an elliptic curve 256 bit key over NIST P-256 curve while the signature key is based on an ECDSA algorithm. The private keys are saved in the device's keychain and the public ones are sent to the Apple server. [@imessage_sec1]
 
-The messages are encrypted with AES in CTR mode. To obtain the key, the sender randomly generates an 88 bit value that will be the key to a HMAC-SHA256 hash function that computes a 40 bit hash from the public keys of the sender and receiver and the message. These together will be the 128 encryption key. This is also encrypted using RSA OEAP or an ECIES and the encrypted message and message key are hashed with SHA1 and signed with ECSDA. [4] 
+The messages are encrypted with AES in CTR mode. To obtain the key, the sender randomly generates an 88 bit value that will be the key to a HMAC-SHA256 hash function that computes a 40 bit hash from the public keys of the sender and receiver and the message. These together will be the 128 encryption key. This is also encrypted using RSA OEAP or an ECIES and the encrypted message and message key are hashed with SHA1 and signed with ECSDA. [@imessage_sec2] 
 
 In case that the message is too big or an attachment is included, these will be encryped with AES in CTR mode with a randomly generated 256 bit encryption key and will be saved on the server. The key, the pointer to the attachment and SHA1 hash of these are normally encrypted. 
 
@@ -1377,24 +1351,33 @@ Group encryption employs a pairwise encryption method by repeating the encryptio
 - [cca](./pdf/papers/iMessage/17.%20Chosen%20Ciphertext%20Attacks%20on%20Apple%20iMessage%20-%20imessage.pdf)
 - https://www.gnu.org/software/gzip/ [2]
 
-The paper shows practical adaptive chosen ciphertext attacks on the application, which allows the attacker to retrospectively decrypt certain payloads if one of the parties is online. This attack targets messages with gzip compressed data and can be run through the Apple's server. The messages are containing attachments, which provide the AES decryption key for the file and the link to the resource in the database, to be downloaded.  
+Practical adaptive chosen ciphertext attacks on the previous version of the application are presented by Garman et al. [@garman], which allows the attacker to retrospectively decrypt certain payloads if one of the parties is online. This attack targets messages with gzip [^1] compressed data and can be run through the Apple's server. The messages contain attachment information, such as the decryption key for the file and the link to the resource. 
 
-Some limitations are also specified, including the Apple server, which, if compromised, the whole iMessage infrastructure is compromised too, and the application doesn't provide any authenticity verification for the keys received from the server. Older versions don't support certificate pinning and all these could lead to MITM attacks. 
+[^1]: [gzip](https://www.gnu.org/software/gzip/) is a program for data compression which it uses LZ77 and Huffman coding 
 
-Moreover, the protocol uses non-standard cryptographic practices and it uses ECDSA as means of keeping data integrity and not an authenticated encryption algorithm. This makes the application vulnerable to practical CCA. 
+The encrypted messages' authenticity is provided using digital signatures instead of MACs or AEAD, which is not recommended. Moreover, portions of the ciphertext are not included in the RSA ciphertext, therefore, the attacker can change them, leading to CCAs. 
 
-Also, it doesn't provide forward secrecy and the replay attacks are possible. 
+Using the CRC, cyclic redundancy check, checksum of the compressed ciphertext, the attacker can adapt and modify the message and sent it to the victim to decrypt. With this approach, the adversary can point to a controlled account by changing the sender id and extract information about the compression and ciphertext, to obtain the key. 
 
-The attack model proposed targets the digital signature method used to provide ciphertext authenticity and the gzip compresion format for the ciphertexts. The attacker can modify and send the ciphertext, which is not contained in the RSA ciphertext, to the victim to decrypt, employing the chosen ciphertext attack. The validity of the tampered message is checked with the CRC, cyclic redundancy check, from the gzip compression format, therefore the attacker can adapt and modify the compressed ciphertext accordingly.  
+Moreover, if the adversary can bypass TLS or compromise the servers, the attack can be done remotely.
 
-`gzip` is a program used for data compression [2] and it uses LZ77 and Huffman coding. 
+Other limitations are specified, including the centralized Apple server, which, if compromised, the whole iMessage infrastructure is compromised too, the application not providing authenticity verification for the keys from the server, no certificate pinning for older versions, no forward secrecy and no protection against replay attacks.
 
-Using this approach, the adversary then can change the id of the sender to point to the controlled account and information about the Huffman table can be extracted. In this way, the key can be obtained. 
-
-They also found out that if the adversary can bypass TLS or compromise the servers, the attack can be done remotely.
+Moreover, the protocol uses non-standard cryptographic practices and it uses ECDSA as means of keeping data integrity and not an authenticated encryption algorithm. This makes the application vulnerable to practical CCAs. 
 
 They recommend that, besides using a more analyzed protocol, Apple should implement manual key verification, periodically change the message key pairs to keep forward secrecy and to protect the users against CCA and replay attacks by keeping a list of previously received RSA messages. 
 Also, they should change the message layout and add the sender and receiver id fields into the message. 
+
+Analyses on the signcryption schemes were conducted by [@adr] and adapted by [@bellare] on iMessage. 
+
+[@adr] defines a two types of security: insider and outsider. In the outsider setting, the attacker only knows the public information, while in the insider one, the attacker is a legitimate user and is one of the parties. 
+
+They formulate theorems for encrypt-then-sign, sign-then-encrypt and a newly introduced one, commit-then-encrypt-and-sign, which allows parallelizing the two operations. They also prove them to be secure under the correct assumptions. /x?
+
+In [@bellare], the EMDK scheme is formalized. It takes as parameters the message and returns a key and the ciphertext and to decrypt, the algorithm uses the key and the ciphertext. 
+
+With the definitions from [@adr], Bellare et al. prove the security of of iMessage's signcryption and the EMDK scheme. 
+
 
 ---
 
@@ -1434,7 +1417,7 @@ The communication between the client and the server side is based on the SPDY pr
 
 For the symmetric encryption, AES GCM is used and the 128 bit keys are derive using a HMAC based key derivation function. Each encryption operation uses a nonce, which is computed from the IV, a sequence number and a marker. /x 
 
-The keys for the communication between the server and the client, ECDH and ECDSA, are static and they are saved on the server and on the user's device. The client and the server create a forward secure symmetric key and IV which will be used as a secure channel [3], after they establish a handshake using ephemeral ECDH keys. The signature is based on an ECDSA algorithm. 
+The keys for the communication between the server and the client, ECDH and ECDSA, are static and they are saved on the server and on the user's device. The client and the server create a forward secure symmetric key and IV which will be used as a secure channel [@line_whitepaper], after they establish a handshake using ephemeral ECDH keys. The signature is based on an ECDSA algorithm. 
 
 ---
 
@@ -1459,9 +1442,9 @@ The key exchange, encryption and decryption processes are similar to the ones de
 
 The VOIP calls are end-to-end encrypted too and they use secp256r1 and the call requests are the medium for generating a shared secret using ephemeral keys. The VOIP session key and salt are obtained from the HMAC-SHA512 value of the shares secret and call id. 
 
-End-to-end encryption is provided for text and location messages for private chats, group chats and 1-to-1 video and audio calls. The attachments are only encrypted in transit between the client and the server, as well as stickers and group calls. [1] Also, forward secrecy is available only for the client-server communication. 
+End-to-end encryption is provided for text and location messages for private chats, group chats and 1-to-1 video and audio calls. The attachments are only encrypted in transit between the client and the server, as well as stickers and group calls. [@line_enc] Also, forward secrecy is available only for the client-server communication. 
 
-According to the whitepaper [3], message metadata and endpoint identifiers are available to the server. 
+According to the whitepaper [@line_whitepaper], message metadata and endpoint identifiers are available to the server. 
 
 
 **Security analyses**
@@ -1471,11 +1454,11 @@ According to the whitepaper [3], message metadata and endpoint identifiers are a
 
 /simplify?
 
-The initial version was vulnerable to replay attacks [1] and had weak authentication processes [1], [2] on both private and group chats. 
+The initial version was vulnerable to replay attacks [@espinoza] and had weak authentication processes [@espinoza], [@isobe] on both private and group chats. 
 
-LINE does not use a standard authentication scheme. They compute the MAC without any secret information and the same key is used for both encryption (AES 256 CBC) and MAC (AES 256 EBC). This leads to forgery attacks [2], since the adversary can precompute hash values of ciphertexts, intercept messages between the victims and extract the associated data, ciphertext and tag, compare the collisions and create a forged message, without knowing the key. 
+LINE does not use a standard authentication scheme. They compute the MAC without any secret information and the same key is used for both encryption (AES 256 CBC) and MAC (AES 256 EBC). This leads to forgery attacks [@isobe], since the adversary can precompute hash values of ciphertexts, intercept messages between the victims and extract the associated data, ciphertext and tag, compare the collisions and create a forged message, without knowing the key. 
 
-The attacks on the group messages exploit a vulnerability in the key derivation phase. The keys are derived from a symmetric key, IV and the public key of the initiator. The shared secret is computed from the group key and the user's public key, therefore a malicious user can impersonate another participant by providing their public key and obtaining the shared secret. The malicious user's keys are derived from the shared secret, salt and public key and the message is threated as if it were from the victim and is brodcast to the group members. This happens because the message is not authenticated and this was pointed out in [1] as well.
+The attacks on the group messages exploit a vulnerability in the key derivation phase. The keys are derived from a symmetric key, IV and the public key of the initiator. The shared secret is computed from the group key and the user's public key, therefore a malicious user can impersonate another participant by providing their public key and obtaining the shared secret. The malicious user's keys are derived from the shared secret, salt and public key and the message is threated as if it were from the victim and is brodcast to the group members. This happens because the message is not authenticated and this was pointed out in [@espinoza] as well.
 
 In the forgery attack, the malicious user bypasses the transport encryption and derives the keys from the shared group key, the vicitm's public key, salt from the intercepted message. The message can be then decrypted, modified, re-encrypted and a new tag is appended and is broadcast. The victim sees the unmodified message, so the attack is not visible to the victim. 
 
@@ -1488,7 +1471,7 @@ If the attacker impersonates A, a message from A to B can be redirected to B, wh
 
 To avoid this, a key confirmation phase should be present and the associated data should be included when computing the authentication tag. 
 
-The replay attacks proposed in [1] are done by replacing the body of the payload, in transit, because the MAC key is the same as the one used for encryption and associated data (message number, sender and receiver) is not authenticated. The payload contains the encrypted message, MAC and a salt, and, when these are replaced, the LEGY HMAC /x is also replaced. To avoid replay attacks, the mentioned associated data should be taken into consideration. 
+The replay attacks proposed in [@espinoza] are done by replacing the body of the payload, in transit, because the MAC key is the same as the one used for encryption and associated data (message number, sender and receiver) is not authenticated. The payload contains the encrypted message, MAC and a salt, and, when these are replaced, the LEGY HMAC /x is also replaced. To avoid replay attacks, the mentioned associated data should be taken into consideration. 
 
 Forward secrecy is only available between the client and the server. If the server is compromised, it is enough to obtain the private key of one of the parties in order to be able to decrypt previous messages, since they are not protected by ephemeral session keys. 
 
@@ -1674,11 +1657,11 @@ In case of forward secrecy, which is only available between the client and the s
 
 Pros: a better way to handle the user metadata by giving the client the choice on how they can be identified and no conversations logs are saved, the messages and attachments are deleted on delivery/ decryption.  
 
-The application was released in 2012 [2]. 
+Threema was released in 2012 and it has an encryption layer for transport and one for end-to-end encryption and they are enabled by default. The cryptographic primitives used are provided by the NaCl library [^3].
 
-It has an encryption layer for transport and one for end-to-end encryption and they are enabled by default. The cryptographic primitives used are provided by the NaCl library.
+[^3]: https://nacl.cr.yp.to/
 
-When the user is registered, the device and the server perform a key exchange over Curve25519 and the public key of the user is saved on the server and bound to an ID. 
+When the user is registered, the device and the server perform a key exchange over Curve25519 and the public key of the user is saved on the server and bound to an ID. [@threema_whitepaper]
 
 After this, the user can choose what information bound to the public key and how other users can identify and verify them. This approach is organized on levels: ID only, an email address or a phone number that is checked with the recipient's contacts list or manual verification via the QR code. 
 
@@ -1690,7 +1673,7 @@ Attachments are encrypted with a random key using XSalsa20 and authenticated wit
 
 In group encryption, the messages are individually encrypted and sent to each of the members. The social graph is not known to the server. 
 
-Also, after a message was delivered, it is deleted from the server and metadata about the communicating users are not saved (such as who talks to whom). [4]
+Also, after a message was delivered, it is deleted from the server and metadata about the communicating users are not saved (such as who talks to whom). [@threema_faq]
 
 On the client-server communication side, the application uses three servers. On the communication between the chat server ant the client, a custom protocol is used, while the others, directory, containing public keys, email addresses, phone numbers etc., and the media servers rely on HTTPS. 
 
@@ -1709,13 +1692,13 @@ Additionally, this scheme also provides non-reupudiability and it can prevent re
 
 These security analyses underline vulnerabilities which are more device-related than regarding the primitives or the implementation. 
 
-[1] shows that files with sensitive information could be sent, such as key.dat, which contains the private keys of the uesr, or that logs with parts of the password could be backed up with Threema Safe, making them vulnerable. 
+[@ising] shows that files with sensitive information could be sent, such as key.dat, which contains the private keys of the uesr, or that logs with parts of the password could be backed up with Threema Safe, making them vulnerable. 
 
-Even if the app is locked with a PIN, on Android, the last open chat could've been seen from the screenshot saver feature, pointed out in [2] as well, or messages could be sent using Google Assistant. On iOS, there was a missing public key pinning in the HTTPS request, which could allow MITM attacks. 
+Even if the app is locked with a PIN, on Android, the last open chat could've been seen from the screenshot saver feature, pointed out in [@cure53] as well, or messages could be sent using Google Assistant. On iOS, there was a missing public key pinning in the HTTPS request, which could allow MITM attacks. 
 
-Moreover, [1] showed that the applications do not ask for too many permissions, many being optional or generally needed, such as access to voice recording or the phone state in case of incoming calls. 
+Moreover, [@ising] showed that the applications do not ask for too many permissions, many being optional or generally needed, such as access to voice recording or the phone state in case of incoming calls. 
 
-
+---
 
 
 - the applications are open source
@@ -1853,40 +1836,135 @@ Moreover, [1] showed that the applications do not ask for too many permissions, 
 - Asynchronous Decentralized Key Managementfor Large Dynamic Groups - https://prosecco.gforge.inria.fr/personal/karthik/pubs/treekem.pdf [2]
 - [2020 - Anonymous Asynchronous Ratchet Tree Protocol for Group Messaging](./PDF/Papers/20.%20Anonymous%20Asynchronous%20Ratchet%20Tree%20Protocol%20for%20-%20sensors-21-01058.pdf) [3]
 - Challenges in E2E Encrypted Group Messaging [4]
-- sensors [8]
 
+Compared to one-to-one chats, group messaging becomes more cumbersome as the number of participants grows and you want to keep the properties in the two party setting. Therefore, confidentiality, integrity, authentication, forward secrecy, post-compromise security, deniability,  synchronicity and scalability [@mls_about] add more layers of complexity when designing an end-to-end encryption protocol for groups. 
 
-- info is available in [this blog post](./pdf/Papers/Groups/signal-org-blog-private-groups-.pdf) too
+Even if messaging applications offer end-to-end encryption for private chats, it is not always the case for groups. Such applications are Telegram and Facebook Messenger, which are using encryption only on the transport layer, so the users need to trust the server. 
 
-Compared to one-to-one chats, group messaging becomes more cumbersome as the number of participants grows and when you want to keep the properties in the two party setting. Therefore, confidentiality, integrity, authentication, forward secrecy, post-compromise security, deniability and synchronization of messages add more layers of complexity when designing an end-to-end encryption protocol for groups. 
+There are three common ways in which this environment can be handled [@silde], and are described below. 
 
-Even if messaging applications offer end-to-end encryption for private chats, they are not always providing it for groups and the user needs to trust the server. Such applications are Telegram and Facebook Messenger, which are using encryption only on the transport layer. 
+In the pair-wise setting, the sender takes the secret key of each of the receiver, encrypts the message and sends it forward to the intended recipient, behaving like simple private chats. The properties named before are preserved and the groups could be practically invisible for the server, but it is aware of the pair-wise connections. 
 
-There are three common ways in which this environment can be handled [4], and are described below. 
+Another method is called encrypted message keys and the sender uses different keys for each message. The sender should choose a new random key for each message with which they encrypt it and send a copy to the recipients. Then the message keys are encrypted normally and sent through the pair-wise channel. The properties still hold, but the server will know the social graph. 
 
-In the pair-wise setting, the sender takes the secret key of each of the receiver, encrypts the message and sends it forward to the intended recipient, behaving like simple private chats. The properties named before are preserved and the groups could be practically invisible for the server, but it is aware that there are pair-wise channels. 
+Shared group keys is another approach. There must be a shared key agreed upon by each participant and the messages are encrypted and sent in a fan-out fashion. The key exchange might become more complex and if you want to keep the aforementioned properties, the keys must be changed regularly, but the sending mechanism is constant. The server is also aware of the group structure. 
 
-Another method is that the sender uses different keys for each message, called encrypted message keys. The sender should choose a new random key for each message with which they encrypt it and send a copy to the recipients. Then the message keys are encrypted normally and sent through the pair-wise channel. The properties still hold,but the server will know the social graph. 
-
-Using shared group keys is another approach and this means that there must be a shared key agreed upon by each participant and the messages are encrypted and sent in a fan-out fashion. The key exchange might become more complex, but the sending mechanism is constant. The issue is that, in order to keep forward secrecy and post-compromise security, the keys must be changed regularly. The server is also aware of the group in this case. 
 
 **App comparison**
 
-In Signal, the initiator of the group sends a newly created group key to the other participants using the pair-wise channels and the session keys are derived using the double ratchet algorithm. New pekeys are regularly uploaded to the server by each client and the group key is changed when participants leave or enter the group. 
+In Signal, the initiator of the group sends a newly created group key to the other participants using the pair-wise channels and the session keys are derived using the double ratchet algorithm. The group key is changed when participants leave or enter the group. 
 
-Whatsapp's group encryption is similar (uses sender keys?), therefore both of these achieve the aforementioned properties. A difference is that Whatsapp collects metadata about the users. 
+Whatsapp's and Wire's group encryption is similar (wapp uses sender keys?), therefore both of these achieve the aforementioned properties. A difference is that Whatsapp collects metadata about the users. 
 
-Wire's implementation is also similar, but the users authentication is done with safety numbers, while in Signal and Whatsapp, they can scan QR codes. 
+iMessage uses the pair-wise method, which is inefficient. They use only the static keys, so the forward secrecy and post-compromise security properties are not satisfied. 
 
-iMessage uses the pair-wise method, which is inefficient. They use only the static keys, so the forward secrecy and post-compromise security properties are not satisfied and no way to authenticate the users is provided. 
+In Threema, messages are also sent through pair-wise channels but it provides no forward sececy and post-compromise security. Deniability is achieved through the shared secret. 
 
-In Threema, messages are also sent through pair-wise channels but it provides no forward sececy and post-compromise security. Deniability is achieved through the shared secret and the users can authenticate using safety numbers. 
+### MLS
+- https://messaginglayersecurity.rocks/mls-protocol/draft-ietf-mls-protocol.html [5]
+- https://datatracker.ietf.org/wg/mls/about/ [6]
+- 20. eval [7]
+
+To handle the end-to-end encrypted communication is groups, a new concept, called Messaging Layer Security (MLS), was introduced [?]. It aims to provide a protocol that has the aforementioned conditions and which supports groups with up to 50 000 participants [@mls_eval]. 
+
+Initially based on ARTs [@cohn_gordon_groups], newer versions use a modified version of TreeKEM [@treekem]. These two will be presented below. 
+
+
+**ART**
+
+Asynchronous Ratchet Trees (ART) [@cohn_gordon_groups] use a tree-based DH key exchange. It is good for groups with many members and it aims to keep the previously mentioned properties, in an asynchronous environment. 
+
+Authentication is done in two ways: using signatures, for the setup message and MAC for the rest of the messages. 
+
+The group tree is initialized using prekeys and a setup key. It is generated by the initiator and is used to derive the secret leaf keys for the rest of the participants, asynchronuously, using their private key, the prekeys of the receivers and the setup key. These, along with a new leaf key, form the tree. Then, the initiator broadcasts the identity and ephemeral keys used, the public setup key, the tree and signatures for these, signed using their identity key. 
+
+The participants can obtain their key from the tree and using it and the public keys if their copath (the sibling placed on the path to the root) will obtain the shared secret which is the key at the root. 
+
+The participants need to regularly change their keys to keep post-compromise security. A member can change their leaf node and only broadcast it, the new setup key to the group and the public keys of all the nodes on the path to the root, message authenticated with a MAC with a key derived from the key from the previous stage. In this way, the keys form a hash chain.  
+
+- they propose two security analyses on the unauthenticated and authenticated versions key exchange protocols. 
+
+
+**Treekem**
+
+Another protocol proposal for MLS is called TreeKEM [@treekem] which is based on ARTs and multi-KEM and it tries to model an asynchronous descentralized protocol, with a local and a global state. 
+
+With TreeKEM, the members are organized in subgroups to parallelize the updates. They can be arranged as left-balanced binary tree or n-ary trees. As cryptographic primitives, it uses a collision resistant hash function, a KDF and an authenticated encryption scheme.
+
+Locally, a state is defined containing at least the groups the device belongs to, the group members, the secret and public keys and the subgroups. The protocol should support the operations: create, add, remove and update, for both the sender and receiver. 
+
+These operations involve changing the state of the group and generate new public keys every time, they can be considered key encapsulation mechanisms. They are algorithms that generate and encapsulates the symmetric key used for encryption, using the public keys of the recipients, allowing the participants to handle key operations with lower costs. Therefore, key pairs are chosen such that they support the key encapsulation mechanism.
+
+The protocol also needs to synchronize the local states with the global state and keep consistency. In this way, concurrent operations are better supported. 
+
+The leaf keys are newly generated and th key for the internal node is the hash of the secret key of the last child that performed a group operation. For MLS, a KDF is used instead. The AE key is derived from the root, usind a KDF. 
+
+It also handles the storage requirements better, since the receiver needs to do the operations in $O(1)$, but the sender still needs $O(n)$. 
+
+
+**Design of MLS**
+
+Three main operations are defined regarding participants [@mls]: adding, updating the secret leaf key, removing. 
+
+The initiator creates an initial state (information that is stored by each client), sends add requests to the desired participants, commits a message that will add all the information to the group state and then creates a welcome message corresponding to the commit and sends it to the participants. Then, they can obtain the group state and the shared secret. Commit messages can be exchanged after the setup, when a new member is added or one is removed, and to keep post-compromise security and this is the time when the group state changes. 
+
+When adding new members, their keys are fetched form the server and an add message is sent to the group. Each update their state and the added member gets the welcome message. Only subsequent messages are visible after receiving it.
+
+As pointed in [@cohn_gordon_groups], the participants need to regularly change their keys in order for the post-compromise security and forward secrecy properties to hold. A member can change their leaf node and only broadcast update and commit messages. 
+
+Removal is similar, a remove request and a commit message, so that the rest of the participants can update their state.
+
+Regarding the members' knownledge of the tree overview, they know the public keys of the participants, but they only know the private keys of the nodes in the same subgroup. 
+
+- add comparison between signal and mls [@mls_eval]
+
+Moreover, companies like Cisco, Trail of Bits and Wire have started implementations based on this concept. [^2] 
+
+[^2]: Their implementations are available here [Cisco - MLS++](https://github.com/cisco/mlspp), [Trail of Bits - Molasses](https://github.com/trailofbits/molasses), and [Wire - Melissa](https://github.com/wireapp/melissa). 
+
+
+The list of security properties does not include user anonimity, which is the aim of Anonymous Asynchronous Ratchet Trees (AART) [@aart]. 
+
+In the paper, they define two concepts: Internal Group Anonimity, meaning that the members cannot locate messages senders other than themselves and External Group Anonimity, in which an external attacker cannot bind the users to the groups. 
+
+According to previous definitions of ARTs, the initiator knows the position of each member, but the rest of the members only know their location. This is solved by randomly generating nodes, therefore the leaf keys are randomly generated as well and the link between the location and the identity of the sender is broken. 
+
+In order to hide the identity of the recipient, the usage of one-time addresses and hiding the group's private key is proposed. 
+
+They also prove that AART is secure under IND-CCA, forward secrecy, post-compromise security and the aforementioned IGA and EGA.  
+
+---
+
+- 19, not 20. evaluation [7]
+
+
+
+
+**Group operations**
+
+- this will be integrated into the mls part
+
+
+There are four types of operations supported: welcome, addition, removal, update.
+
+Before the group is created, the users send initialization keys to the server, so other clients can request their information and start the group. 
+
+
+**Efficiency**
+
+- not sure
+
+[7] offers an efficiency comparison with the method used by Signal. For MLS, update and remove would have complexity of $O(log(n))$, group creation would run in $O(n)$ for the sender and $O(1)$ for the receivers, but it grows as the group scales. Signal's method requires $O(n)$ during creation for sender and receivers because every member needs to create a pair-wise channel with the other participants. 
+
+Handling the messages would cost $O(1)$ in MLS and $O(n)$ for Signal. 
+
+
 
 ---
 
 /place this somewhere else?
 
-[1]
+[@cohn_gordon_groups]
 
 Asynchronous Ratchet Trees (ART) use a tree-based DH key exchange. It is good for groups with many members and it aims to keep the previously mentioned properties, in an asynchronous environment. 
 
@@ -1938,72 +2016,10 @@ And it might be better compared to ARTs.
 
 
 
-### MLS
-- https://messaginglayersecurity.rocks/mls-protocol/draft-ietf-mls-protocol.html [5]
-- https://datatracker.ietf.org/wg/mls/about/ [6]
-- 20. eval [7]
 
-To handle the end-to-end encrypted communication is groups, a new concept called Messaging Layer Security (MLS) was introduced [?]. It aims to provide a protocol that has the previously mentioned conditions: message confidentiality, integrity and authentication, membership authentication, asynchronicity, forward secrecy, post-compromise security and scalability [6] and which supports groups of size up to 50 000 participants [7]. 
-
-This was initially based on ARTs [1], but newer versions use an asynchronuous key encapsulation mechanism for the tree [9], which is an algorithm that generates and encapsulates the symmetric key used for encryption, using the public keys of the recipients, allowing the participants to handle key operations with costs of $O(log(n))$, $n$ being the size of the group. /x The difference is that they use a KDF instead of the hash function when computing the secret key of the parent. 
-
-Three main operations are defined regarding participants [5]: adding, updating the secret leaf key, removing. 
-
-The initiator creates an initial state (information that is stored by each client), sends add requests to the desired participants, commits a message that will add all the information to the group state and then creates a welcome message corresponding to the commit and sends it to the participants. Then, they can obtain the group state and the shared secret. Commit messages can be exchanged after the setup, when a new member is added or one is removed, and to keep post-compromise security and this is the time when the group state changes. 
-
-When adding new members, their keys are fetched form the server and an add message is sent to the group. Each update their state and the added member gets the welcome message. Subsequent messages are visible after receiving it.
-
-As pointed in [1], the participants need to regularly change their keys in order for the post-compromise security and forward secrecy properties to hold. A member can change their leaf node and only broadcast update and commit messages. 
-
-Removal is similar, a remove request and a commit message, so that the rest of the participants can update their state.
-
-Regarding the members' knownledge of the tree overview, they know the public keys of the participants, but they only know the private keys of the nodes in the same subgroup. 
 
 ---
 
-[8]
-
-Introduces the concepts of internal and external group anonimity in Anonymous Asynchrinous Ratchet Trees (AART), which aims to protect the identities of the users. 
-
-Internal group anonimity - if the attacker has access to the secret key, they cannot distinguish the identity of the target message sender. So on update, the attacker should not see any relation between the victim and the position in the tree. 
-
-The initiator knows the position of each member, but the rest of the members only know their location. This is solved by randomly generating nodes, therefore the leaf keys are randomly generated as well and the link between the location and the identity of the sender is broken. 
-
-
-External group anonimity - the adversary should not be able to locate the user in a group if they have the ciphertext???
-
-In order to hide the identity of the recipient, the usage of one-time addresses and hiding the group's private key is proposed. 
-
-They also prove that AART is secure under IND-CCA, fowrad secrecy, post-compromise security and the aforementioned IGA and EGA.  
-
----
-
-- 19, not 20. evaluation [7]
-
-Current implementations [7]:
-
-- MLS++ Cisco - https://github.com/cisco/mlspp
-- Molasses, Trail of bits - https://github.com/trailofbits/molasses
-- Melissa, Wire - https://github.com/wireapp/melissa
-
-
-**Group operations**
-
-- this will be integrated into the mls part
-
-
-There are four types of operations supported: welcome, addition, removal, update.
-
-Before the group is created, the users send initialization keys to the server, so other clients can request their information and start the group. 
-
-
-**Efficiency**
-
-- not sure
-
-[7] offers an efficiency comparison with the method used by Signal. For MLS, update and remove would have complexity of $O(log(n))$, group creation would run in $O(n)$ for the sender and $O(1)$ for the receivers, but it grows as the group scales. Signal's method requires $O(n)$ during creation for sender and receivers because every member needs to create a pair-wise channel with the other participants. 
-
-Handling the messages would cost $O(1)$ in MLS and $O(n)$ for Signal. 
 
 
 --- 
@@ -2209,25 +2225,27 @@ Information about the members is hidden from the server, but available to the pa
 
 ## General flow
 
-To use this application, the user can login to an existing account or create a new one with an email and a password. After a successful login or registration, an "Add a new chat" appears on the left, along with the list of chats tied to that accound, if any added. 
+To use this application, the user can login to an existing account or create a new one with an email and a password. After a successful login or registration, an "Add a new chat" appears on the left, along with the list of chats tied to that accound, if any were added, sorted by creation date. 
 
-When the user clicks on the button, a form will open in which they can enter the required details: chat name, in case of a group conversation (more than 3 participants), and the emails of the participants, one at a time. Their addresses appear beneath the form as they are added. 
+When the user clicks the button, a form will open in which they can enter the required details: chat name, in case of a group conversation (at least 2 participants), and the emails of the participants, one at a time by pressing "Add another email" after each of them. Their addresses appear beneath the form as they are added. 
 
-The user can choose to have the chat encrypted or unencrypted by clicking the button. Encrypted chats are selected by default, but this feature is aimed to show the risks of having unencrypted chats, through the "third party view" feature. Once this is selected, the attachments are left unencrypted as well. 
+The user can choose to have the chat encrypted or unencrypted by clicking the button. Encrypted chats are selected by default, but this feature is aimed to show the risks of using the unencryted version, through the "third party view" feature. Based on this choice, the attachments are encrypted or not. 
 
-Any conversation can be deleted by clicking the "X" button at the right of the chat name and the group participants are notified. 
+Any conversation can be deleted by clicking the "X" button at the right of the chat name and the chat participants are notified. 
 
-To access the chats, the user clicks on one from the left side. The messages are automatically decrypted and the attachments are shown - either the images or as a path to the file. A download prompt appears when they are clicked and the user can save them locally. 
+To access the chats, the user clicks on their name. The messages are automatically decrypted and the attachments are shown - either the images or as a path to the file. A download prompt appears when they are clicked and the user can save them locally. 
 
-Text messages and attachments can be sent using the input from the bottom and can be deleted by pressing the "X" button from the top right corner of each message. 
+The input at the bottom is for the text messages and the attachments can be added by clicking the attachment symbol and are sent by pressing the send button. They can be deleted as well. 
 
-The right panel contains the logout button, the email of the user, information about the currently selected chat, such as the participants, if the chat is encrypted and switches for the theme and the third party view. 
+The right panel contains the logout button, the email address of the user, information about the currently selected chat, such as the participants, if the chat is encrypted and switches for the theme and the third party view. 
 
 The user can choose between a dark and a light theme. 
 
 The third party view is a feature that enables the user to "see through the eyes of a third party": the server or someone who controls it, the database etc. The visible information is highlighted when this is set to on and it includes the payload - the messages, attachments, and metadata - participants, who sent the messages, the time and date. 
 
-In this way, the users can see what information is more vulnerable can be accessed by the server. 
+The aim of this feature is to show the risks of having unencrypted chats and what vulnerable information is available to the server. Metadata, such as the sender, time and date, whether it contains an attachment or not is data that can be used by attackers and service providers in order to obtain information about the users. 
+
+As previously discussed, the third could see the social graph and relations between the users and an attacker could mount certain attacks on the attachment messages, for example, if they know the structure of the message and the underlying algorithms can be controlled. 
 
 
 ![Use case diagram](Media/Diagrams/usecase.png)
@@ -2252,13 +2270,36 @@ hash - sha256 https://github.com/VirgilSecurity/virgil-crypto-javascript/blob/de
 - https://developer.virgilsecurity.com/docs/e3kit/fundamentals/jwt/ [1]
 
 
-The application is a full stack web application with the frontend created with React and Redux Toolkit for state management and the styling with SCSS. For the backend, Node.js, express and socket.io are used to communicate with the frontend. The accounts and the user data is stored in Firebase and the key management and encryption and decryption process are handled by the VirgilSecurity framework. 
+The application is a full stack web application with the frontend created with React, Redux Toolkit for state management and the styling with SCSS.
+The backend uses Node.js and express and the real-time communication uses sockets with the socket.io package. The accounts and the user data is stored in Firebase and the key management and encryption and decryption process are handled by the VirgilSecurity framework. 
 
-When the user logs in, the credentials are checked via the Firebase instance initialized for the frontend. If the user registers for the first time, the details are saved to the database. If these operations are successful, the user is redirected to the main chat page and information such as the email, uid and the the fact that it is logged in is saved in the redux state tree. 
+When the user logs in, the credentials are checked via the Firebase instance initialized for the frontend. If the user registers for the first time, these are saved to the database. If these operations are successful, the user is redirected to the main chat page and login information is saved in the redux state tree. 
 
-In order to have access to the services from the Virgil Security platform, the client app asks the server for a JSON Web Token that is used to authenticate with the platform. [1] It contains information about the user and application, signature, encoding etc. 
+In order to access to the services from the VirgilSecurity platform, the client app asks the server for a JSON Web Token that is used to authenticate with the platform. It contains information about the user, application, signature, encoding etc. with which an `EThree` instance is initialized for the user. It provides encryption, decryption, public keys fetching and other operations. The code for this part is based on an example provided by Virgil Security documentation. 
 
-After this is retrieved, the user's token is saved in the context and will allow various operations and requests to the key server.  
+After this, the user asks for the conversations, which are fetched from the database and are placed in the state tree. 
+
+![State tree configuration](Media/statetree.png)
+
+When adding a new chat, a new conversation is initialized with a welcome message and the participants are notified using sockets, and it appears in their list. 
+
+If the chat is encrypted, `isEncrypted` set to true, an extra step is performed to decrypt the messages using the `EThree` instance. It asks for the public keys of the current and previous participants, if they sent any messages and returns the list of decrypted messages. This process is done with `authDecrypt`. Notification messages, such as welcoming and leaving messages, are not encrypted. 
+
+After this, they are formatted and displayed in the main section. 
+
+When sending a message and the chat is encrypted with `authEncrypt` and the ciphertext is sent to the server, to be saved in the database. The final message, with an ID from the database, is sent to the participants using sockets. If the chat is not encrypted, it is sent in plaintext. 
+
+The attachments are uploaded from the computer and saved in the Firebase Storage. If needed, they are encrypted with `encryptSharedFile` before. The key and the filepath object is turned into a JSON string and threated as a normal message. When displayed, these are extracted, the file is downloaded and then decrypted, if necessary, with `decryptSharedFile`. 
+
+When a message or a conversation is deleted, the server receives information about the user, such as username, conversation ID or message ID, and are deleted only for that user. When they leave the conversation, a notification is sent to the rest of the participants using sockets and a message stating this is saved in the database, unless the last participant deletes it. 
+
+The "third party view" feature changes the way in which the messages are displayed, adding a different style to the message list and other available metadata. Encrypted data is only decrypted when it needs to be displayed, so when this feature is active, the switch happens without querying the data from the server again.  
+
+On logout, all the locally saved data is deleted and the state tree is cleared. 
+
+ 
+
+---
 
 Next, the conversations of the user are loaded from the database and saved in the state tree as well. When one is selected, the currently selected conversation name is changed and the messages corresponding to the email and conversation are fetched from the database.  
 
@@ -2329,11 +2370,84 @@ Message encryption for groups uses the same functions and they are threated in a
 On logout, all the locally saved data and the store are cleared and the user is sent to the login page. 
 
 
-
-
-
-
 # Conclusions
+
+In this thesis, I have presented an overview of the popular messaging applications and protocols, along with their past known issues and the new algorithms that they introduced. 
+
+While these applications aim to provide a secure messaging experience, some of them have used or still use outdated or non-standard  cryptographic algorithms, like MTProto's AES in IGE mode. Also, combining secure ones in an insecure fashion, paired with weak authentication and verification schemes, like using digital signatures instead of MACs or an AEAD scheme (iMessage), or MACs using the same key as the one for message encryption (Line), could lead to more vulnerabilities, like chosen ciphertext attacks, message forgery, replay attacks, unknown key share attacks, impersonation. 
+
+Moreover, forward secrecy has become an important requirement for end-to-end encrypted protocols, but it is not always achieved on the communication level, as it is the case for Threema, Line and iMessage. 
+
+With the accompanying application, the risks of using unencrypted communications are illustrated, as well as metadata availability to the third parties. This can be extended to metadata collection, lack of default privacy and the issues that can arise from compromising centralized servers. 
+
+Some of these issues were solved by most applications in newer versions, but others still need to rely on the users to verify each other and to enable the end-to-end features, like is the case for Telegram and Facebook Messenger. 
+
+Also, novel techniques were developed to protect the privacy and anonimity of the users and provide more efficient algorithms, such as the Double Ratchet algorithm, on which the MLS protocol proposals are based, X3DH protocol, joined signature and encryption, Sealed sender and verification levels instead of requiring personal information. 
+
+Therefore, end-to-end encryption is a growing field, as more research is done and analyses are being conducted, and many companies move towards including and impruving such features in their messaging applications. 
+
+
+
+
+
+
+
+
+
+Signal:
+- good:
+- bad:
+  - uks - this can be fixed by adding the 
+  - deniability - not enough using authentication
+  - not using the session recovery feature from sesame
+  - device compromised, forward secrecy and all that is gone
+  - metadata - delivery receipts
+  - mitm on wapp because it uses the same session
+
+Telegram:
+- good:
+- bad: 
+  - non-standard algos, 
+  - outdated (sha128), 
+  - was not indcca secure (weak auth and verification), 
+  - mitm, - not enough verification
+  - metadata, - the time users are online
+  - keys changed too rare, so the past 100 messages can be recovered,
+  - untrustworthy server
+
+
+Signcryption
+- good: lower cost 
+- bad: 
+  - cca attacks on the gzip compressed messages because they used digital signatures instead of macs or aead to authenticated the messages, 
+  - centralized server, 
+  - no forward secrecy, 
+  - no message replay attack prevention
+
+Line: 
+- good:
+- bad: 
+  - replay attacks, 
+  - no standard auth scheme - MAC with no additional info, then it uses the same key as the encryption scheme => forgery attacks, replay attacks, 
+  - aditional data is not auth
+  - vulnerability on the key derivation scheme (impersionation attack possible), 
+  - UKS - no key confirmation at the exchange, 
+  - no forward secrecy on the end-to-end lvl (network only)
+
+
+Threema:
+- good: verification lvls - they don't ask for the email or phone number, public key pinning to protect agains mitm
+- bad: forward secrecy on the network lvl only
+
+
+- issues at the application lvl: sending files that should stay hidden (containig passwords and private keys), applications asking for permissions, centralized servers, deleted data that is not really deleted
+
+- groups - the group implementations provided by the applications are not always effective, so the efforts to make a new protocol MLS are being made now
+
+- the application: metadata + encryption through the third party view
+- the risks of having such 
+
+
 
 # References
 - []: 

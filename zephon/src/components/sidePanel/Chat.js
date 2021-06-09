@@ -1,6 +1,7 @@
 import React, {useContext, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { SocketContext } from '../../utils/context/SocketContext';
+import { Switch } from '@material-ui/core';
 
 // Chat
 // the form for the private and group chat
@@ -33,8 +34,9 @@ const Chat = ({close}) =>{
     };
 
     const handleEncryption = (e) =>{
-        e.preventDefault();
+        e.target.checked = !isEncrypted;
         setIsEncrypted(!isEncrypted);
+        
     };
 
     return (
@@ -43,7 +45,7 @@ const Chat = ({close}) =>{
             onSubmit={(e) => searchUser(e)}>
             <label>
                 Chat name
-                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)} disabled={participants.length < 1}/>
+                <input type="text" value={newChat} onChange={(e) => setNewChat(e.target.value)} disabled={participants.length < 2}/>
             </label>
             <label>
                 Email
@@ -53,8 +55,16 @@ const Chat = ({close}) =>{
                 <button className="side_container" onClick={(e) => addMoreUsers(e)}>Add another email</button>
                 <button className="side_container" type="submit">Finish</button>
             </div>
+            <div className="side_container switch">
+                <Switch size={"small"} 
+                    checked={isEncrypted} 
+                    color={"primary"} 
+                    onClick={(e) => handleEncryption(e)} />
+                <label>
+                    Encrypted
+                </label>
+            </div>
             
-            <button className="side_container" onClick={(e) => handleEncryption(e)}>{isEncrypted ? "Encrypted" : "Not Encrypted"}</button>
             <div className="side_container participants">
                 {participants.length !== 0 ? <span key={1}>Participants</span> : <></>}
                 {participants?.map(element => <span key={Math.random()}>{element === email ? "You" : element}</span>)}

@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { register as signup } from '../../utils/reducers/redux';
 import { E3Context } from '../../utils/context/E3Context';
 import { e3register } from '../../utils/services/encryption';
+import eyes200 from "./eyes200.png";
+
 
 // Sign up
 // sign up logic
@@ -65,6 +67,7 @@ const Signup = () => {
     
     return (
         <form className="custom_form" onSubmit={e => onSubmitAction(e)}>
+            <h1><img src={eyes200}></img> <span>zephon</span></h1>
             <label>
                 Email
                 <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
@@ -81,7 +84,7 @@ const Signup = () => {
             </label>
             <span>{error.passNotMatching === "" ? "" : error.passNotMatching}</span>
             <button type="submit" className="primary_button">Register</button>
-            <Link to="/login">Have an account? log in</Link>
+            <Link to="/login">Have an account? Log in.</Link>
         </form>
     );
 };

@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { getConversationsThunk, login } from '../../utils/reducers/redux';
 import { E3Context } from '../../utils/context/E3Context';
 import { e3login } from '../../utils/services/encryption';
+import eyes200 from "./eyes200.png";
 
 
 // Login
@@ -45,6 +46,7 @@ const Login = () => {
 
     return (
         <form className="custom_form" onSubmit={e => onSubmitAction(e)}>
+            <h1><img src={eyes200}></img> <span>zephon</span></h1>
             <label>
                 Email
                 <input type="email" required onChange={e => onChangeEmail(e.target.value)}/>
@@ -56,7 +58,7 @@ const Login = () => {
             <span>{error === "" ? "": error}</span>
 
             <button type="submit" className="primary_button">Log In</button>
-            <Link to="/register">New here? register now</Link>
+            <Link to="/register">New here? Register now.</Link>
         </form>
     );
 };
