@@ -95,9 +95,16 @@ export const getPublicKey = (email, eThree, setPublicKey) => {
 export const encryptMessage = async (participants, eThree, message) =>{
 
     try{
-        const pks = await eThree.findUsers(participants);
-        const enc = await eThree.authEncrypt(message, pks);
-        return enc;
+        if (participants.length === 0){
+            const enc = await eThree.authEncrypt(message);
+            return enc;
+        }
+        else{
+            const pks = await eThree.findUsers(participants);
+            const enc = await eThree.authEncrypt(message, pks);
+            return enc;
+        }
+        
     }
     catch (e) {
         console.log(e);
@@ -116,7 +123,6 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
 
     try{
         const pks = await eThree.findUsers(participants);
-        
         const newMessages = [];
         for (const message of messages){
             if (message.sender === "sys"){
@@ -131,7 +137,6 @@ export const getDecryptedMessages = async (participants, eThree, messages) =>{
                         // if the participant was removed from the list, get the key separately
                         // and add it to the pks cached list
                         const pks_sender = await eThree.findUsers(message.sender);
-                        console.log(pks_sender);
                         pks[message.sender] = pks_sender;
                         text = await eThree.authDecrypt(message.text, pks_sender);
                     }

@@ -6,10 +6,19 @@
 \usepackage{graphicx}                           % images
 \usepackage{url}                                % links
 \usepackage[nottoc, notlof, notlot]{tocbibind}  % table of contents style
-\usepackage[unicode]{hyperref}                  % references from the table of contents
+%\usepackage[unicode]{hyperref}                  % references from the table of contents
 \usepackage{etoolbox,ifthen} 	                % ifthen type of commands
 \usepackage{kvoptions}	                        % define key/value pairs as options for packages and classes
 \def\UrlBreaks{\do\/\do-\do?}
+\usepackage{xurl}
+\usepackage[
+  breaklinks = true,
+  unicode = true,
+  urlcolor = blue,
+  colorlinks = true,
+  linkcolor = blue]{hyperref}
+\usepackage{breakurl}
+\Urlmuskip=0mu plus 1mu
 
 
 % package options
@@ -87,7 +96,7 @@ SPECIALIZATION \@specialization \\
 
 \begin{flushleft}
 {\Large\textbf{
-\ifbool{@eng}{Supervisor}{Supervisor} \\ \@supervisor
+\ifbool{@eng}{Supervisor}{Supervisor}\\ \@supervisor
 }}
 \end{flushleft}
 
@@ -105,6 +114,63 @@ SPECIALIZATION \@specialization \\
 {\Large{\the\year}}
 \end{center}
 
+\newpage
+
+
+% ---- ro below
+
+\begin{center}
+{\Large\textbf{
+UNIVERSITATEA BABEŞ-BOLYAI CLUJ-NAPOCA \\
+FACULTATEA DE MATEMATICǍ ŞI INFORMATICǍ \\
+SPECIALIZAREA INFORMATICǍ\\
+}}
+\end{center}
+
+\vspace{10em}
+
+\begin{center}
+{\Huge\textbf{
+\ifbool{@lic}{LUCRARE DE LICEN\c T\u A}{}
+}}
+\end{center}
+
+\vspace{3em}
+
+\begin{center}
+{\huge\textbf{Criptarea End-to-End}}
+\end{center}
+
+\vspace{10em}
+
+\begin{flushleft}
+{\Large\textbf{
+Conducător științific\\ {Prof. Dr. Crivei Septimiu}
+}}
+\end{flushleft}
+
+\vspace{3em}
+
+\begin{flushright}
+{\Large\textit{
+Absolvent\\ \@author
+}}
+\end{flushright}
+
+\vfill
+
+\begin{center}
+{\Large{\the\year}}
+\end{center}
+
+
+\begin{center}
+{BABEŞ-BOLYAI UNIVERSITY CLUJ-NAPOCA}
+\end{center}
+
+
 \end{titlepage}
 }
+
+% ---------------
 

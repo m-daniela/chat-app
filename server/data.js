@@ -60,7 +60,7 @@ const createChat = async (name, participants, date, isEncrypted) => {
     sender: "sys",
     text: "Start chatting", 
     date: newDate,
-    // attachment: false,
+    attachment: false,
   }
 
   // TODO: change it to name !== undefined
@@ -86,6 +86,7 @@ const createChat = async (name, participants, date, isEncrypted) => {
 
     const chatId = await addConversationDatabase(recv1, chat2, message);
     await addConversationWithIdDatabase(chatId, recv2, chat1, message);
+    
   }
   else{
     const chat = {
@@ -94,7 +95,9 @@ const createChat = async (name, participants, date, isEncrypted) => {
       participants,
       date: newDate
     }  
-
+    // const convoRef = await createChatReference(chat, message);
+    // deleteConvoRef(convoRef);
+    // chat["convoRef"] = convoRef
     const chatId = await addConversationDatabase(participants[0], chat, message);
     for (const receiver of participants.slice(1)){
       await addConversationWithIdDatabase(chatId, receiver, chat, message);
@@ -135,6 +138,7 @@ const userLeftMessage = async (message) => {
       sender: "sys",
       text: `${message.username} has left the chat.`,
       date: convertToTimestamp(message.date),
+      attachment: false
     }
   
     console.log("Removing", message.receivers);
@@ -157,8 +161,28 @@ const userLeftMessage = async (message) => {
     console.log("Not removed?", err)
     return {};
   }
-  
+}
 
+
+const createChatReference = async (chatInformation, message) =>{
+  try{
+
+    // create the reference
+    const convoRef = await db
+      .collection(cts.conversations)
+      .doc();
+    await convoRef
+      .set(chatInformation);
+    await convoRef
+      .collection(cts.messages)
+      .add(message);
+
+    return convoRef;
+  }
+  catch(err) {
+    console.log("Add Conversation DB: ", err);
+    return {};
+  }
 }
 
 // add a conversation to the database

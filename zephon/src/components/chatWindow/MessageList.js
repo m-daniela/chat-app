@@ -45,9 +45,9 @@ const MessageList = () => {
         <div className={`message_list ${thirdPartyView ? "third_party" : ""}`}>
             {
                 thirdPartyView ? 
-                    messages.map(elem => <Message key={elem.id} message={elem}/>)
+                    messages?.map(elem => <Message key={elem.id} message={elem}/>)
                     :
-                    newMessages.map(elem => <Message key={elem.id} message={elem}/>)
+                    newMessages?.map(elem => <Message key={elem.id} message={elem}/>)
             }
         </div>
     );

@@ -7,9 +7,15 @@ date: 2021
 papersize: a4
 linestretch: 1.5
 fontsize: 12pt
+# bibliography: bibliography.bib
+# citation_package: biblatex
+# csl: alpha.csl
 toc: true
 lof: true
 geometry: "left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm"
+header-includes: |
+    \usepackage{xurl}
+    \def\UrlBreaks{\do\/\do-\do?}
 # output:
 #     pdf_document:
 #         template: main.tex
@@ -18,11 +24,11 @@ geometry: "left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm"
 #         #         - style.sty
 
 # abstract: |
-#     End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Section 1](#introduction) and more details are given in [Section 3](#existing-technologies), with some theoretical notions explained in [Section 2](#theoretical-aspects). 
+#     End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Chapter 1](#introduction) and more details are given in [Chapter 3](#existing-technologies), with some theoretical notions explained in [Chapter 2](#theoretical-aspects). 
 
-#     The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Section 4](#technologies-used) and [Section 5](#the-application). 
+#     The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Chapter 4](#technologies-used) and [Chapter 5](#the-application). 
 
-#     [Section 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
+#     [Chapter 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
 
 #     \pagenumbering{gobble}
 #     \newpage
@@ -33,40 +39,44 @@ geometry: "left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm"
 
 <!-- # Abstract
 
-End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Section 1](#introduction) and more details are given in [Section 3](#existing-technologies), with some theoretical notions explained in [Section 2](#theoretical-aspects). 
+End to end encryption has become more popular and used by various chat applications, but little analysis has been conducted. In this thesis, I will present some of the popular protocols along with an overview of past or present vulnerabilities. Among these, novel algorithms and techniques are also discussed, along with efforts made in oreder to increase their effectiveness and security. A brief introduction of the topic is given in [Chapter 1](#introduction) and more details are given in [Chapter 3](#existing-technologies), with some theoretical notions explained in [Chapter 2](#theoretical-aspects). 
 
-The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Section 4](#technologies-used) and [Section 5](#the-application). 
+The application aims to provide a comparative overview between encrypted and unencrypted chats using a feature called "third party view", as well as risks of the lack of protection for user and message metadata. More about the technologies used and the application is available in [Chapter 4](#technologies-used) and [Chapter 5](#the-application). 
 
-[Section 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
+[Chapter 6](#conclusions) is reserved for the conclusions and a final overview of the discussed notions. 
 
 \pagenumbering{gobble}
 \newpage -->
 
 # Introduction
 
-As online communication gained more popularity, using instant messaging applications has become a standard in our quotidian lives. Therefore, the users need assurance that their conversations remain private and that there is no third party spying on them. 
+As online communication gained more popularity, using instant messaging applications has become a standard in our quotidian lives. Therefore, the users need assurance that their conversations remain private and that they are not interceped and spied on. 
 
-Messaging applications with end-to-end encryption have been around since 2012, with iPhone's iMessage and Threema, then Signal in 2013. This practice became more popular in 2016, when Whatsapp announced the introduction of end-to-end encryption by default in the application[@whatsapp_whitepaper] and Facebook Messenger added the Secret Chats feature with similar properties [@facebook_signal], [@facebook]. Also, Signal was given constatly given endorsement throughout the time [@snowden], [@elon].
+Messaging applications with end-to-end encryption have been around since 2012, with iPhone's iMessage and Threema, then Signal in 2013. This practice became more popular in 2016, when Whatsapp announced the introduction of end-to-end encryption by default in the application[@whatsapp_whitepaper] and Facebook Messenger added the Secret Chats feature with similar properties [@facebook_signal], [@facebook]. Also, Signal has received constant endorsement throughout the time [@snowden], [@elon].
 
 End-to-end encryption is used to protect the privacy of the messages sent between two or more participants, as they are in transit or at rest, with the intended recipients being the only ones that can decrypt and read the messages. Thus, the third parties, like service providers, servers, governments etc. interested in intercepting the data sent are unable to see the actual plaintext and there is no need for the users to trust them. Also, the messages' contents are protected against possible data breaches. 
 
 Moreover, compliance with regulations regarding data privacy and security becomes easier for the service providers. 
 
-But the cost of benefits is paid with a number of limitations. An example would be user matadata collection, which can be used for surveillance, detecting the social graph, advertising. This issue was tackled by Signal with its Sealed Sender feature[@sealed_sender]. 
+But the cost of benefits is paid with a number of limitations. An example would be user matadata collection, which can be used for surveillance, detecting the social graph, advertising. This issue was tackled by Signal with its Sealed Sender feature [@sealed_sender]. 
 
-Also, backdoors are heavily requested by governments in order to protect the citizens and national security [@justice_dep], [@eu] and, therefore, spam and abuse becomes harder to control on end-to-end encrypted platforms. More will be discussed in [Section 2](#theoretical-aspects), along with a brief presentation of the cryptographic concepts used throughout the thesis.
+Also, spam, abuse and criminal activity become harder to control on end-to-end encrypted platforms, therefore backdoors are heavily requested by governments in order to protect the citizens and national security [@justice_dep], [@eu]. More will be discussed in [Chapter 2](#theoretical-aspects), along with a brief presentation of the cryptographic concepts used throughout the thesis.
 
-The aim of this thesis is to create an overview of the end-to-end encryption protocols in popular instant messaging apps and their mechanisms and to explore the ways in which they handle various issues, including the aforementioned ones. The topics that will be discussed are their current implementations and innovations in the field, as well as past security issues. The protocols analyzed are Signal, MTProto, Signcryption, Letter Sealing and Threema, in [Section 3](#existing-technologies). 
+The aim of this thesis is to create an overview of the end-to-end encryption protocols in popular instant messaging apps. These protocols are Signal, MTProto, Signcryption, Letter Sealing and Threema. The analyses will start with a general presentation of how they work and a bit of version history, then the novel technologies that they are implementing. For each protocol, security issues regarding the protocols themselves or the applications using them are addressed, along with their results and proposed solutions. The updates made to the protocols and applications are also highlighted in this section. 
 
-The final section, [Section 6](#conclusions) is reserved for a final comparison and conclusions. 
+These are available in [Chapter 3](#existing-technologies). At the end, a similar approach is adopted for group messaging, with an overview of the current state of the Messaging Layer Security (MLS) protocol. 
+
+The last chapter, [Chapter 6](#conclusions), is reserved for a final comparison between the protocols and conclusions. 
 
 ## The application
 
-The application is a web-based instant messaging application which provides end-to-end encryption, by default, for both private and group chats. It supports sending text messages and attachments. 
+I have developed a messaging application along with this thesis and its objective is to highlight the implications of using unencrypted applications and the availability of metadata. 
 
-In order to illustrate the differences between end-to-end encrypted and unencrypted messaging applications, on a simplified scale, the user can initiate unencrypted chats with other users. To have a better view of the implications of this, they can choose to "see through a third party's view", which shows what is available to the server and anyone controlling it, including metadata and messages in plaintext, for unencrypted chats. 
+It is a web-based instant messaging application which provides end-to-end encryption for text messages and attachments, by default, for both private and group chats. 
 
-The frameworks, libraries and platforms that were used for this application are presented in [Section 4](#technologies-used) and details about the implementation and aplication are given in [Section 5](#the-application).
+In order to illustrate the differences between end-to-end encrypted and unencrypted messaging applications, on a simplified scale, the user can initiate unencrypted chats with other users. To have a better view of the implications of this, they can use the feature called "third party view", which shows what is available to the server and anyone controlling it. This includes the message and user metadata and, for the unencrypted conversations, the messages in plaintext. 
+
+The frameworks, libraries and platforms that were used for this application are presented in [Chapter 4](#technologies-used) and details about the implementation and aplication are given in [Chapter 5](#the-application).
 
 
 \newpage
@@ -74,7 +84,7 @@ The frameworks, libraries and platforms that were used for this application are 
 
 # Theoretical Aspects
 
-In this chapter, some of the main concepts that will be used throughout the thesis are presented. More information is given in [Section 3][#existing-technologies]. 
+In this chapter, some of the main concepts that will be used throughout the thesis are briefly discussed. More information is given in [Chapter 3](#existing-technologies). 
 
 
 ## Symmetric key encryption
@@ -100,7 +110,7 @@ The **ciphertext only attack** involves an attacker who has access to the cipher
 
 In the **known plaintext attack**, the attacker has the plaintext and corresponding ciphertext and its aim is to obtain the key. This type of attack works on simple ciphers. 
 
-**Impersonation** refers to an adversary that can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key. In this way, the adversary can decrypt the message, read, alter it before encrypting it with B's key and sending it forward. This kind of attack can be mitigated using authentication. 
+**Impersonation** refers to an adversary that can place themselves in the communication between two parties, A and B, and send their public key such that A thinks it was B's public key. In this way, the adversary can decrypt the message, read, alter it before encrypting it with B's key and sending it forward. Authentication can be used to mitigate this kind of attack. 
 
 The adversary in a **chosen plaintext attack** chooses arbitrary plaintext and then is given the corresponding ciphertext. The intention is to reduce the security of the encryption scheme and it can be mitigated by providing semantic security, meaning that the adversary should not be able to obtain other that negligible information from the ciphertext. This property is also called indistiguishability under chosen plaintext attacks. 
 
@@ -148,9 +158,9 @@ Similar to MACs, they are used to prove authenticity and integrity of the messag
 
 ### Authenticated encryption
 
-Authenticated encryption (AE) is a mix between a cipher and a MAC and it is used to assure data confidentiality and authentication. 
+Authenticated encryption (AE) is a mix between a cipher and a MAC and it is used to assure data confidentiality and authentication. The message is not accepted if the ciphertext or the tag was corrupted.
 
-The combinations are different in terms of the order of the encryption and authentication, and the following common three ways can be defined. The message is not accepted if the ciphertext or the tag was corrupted.
+The combinations are different in terms of the order of the encryption and authentication, and the following common three ways can be defined. 
 
 **Encrypt and MAC**
 The ciphertext and the tag are computed separately. The recipient then decrypts the ciphertext and uses it to obtain the tag and compares it to the received tag.  
@@ -195,7 +205,7 @@ An important drawback of end-to-end encryption is that metadata about the users 
 
 An example of the impact of metadata collection is Whatsapp's update of the privacy policy [@whatsapp_privacy] in 2020. They announced that information regarding the location, browser information, device hardware and connection etc. is automatically collected. This resulted in a shift of the users to other applications considered more secure, like Signal and Telegram[@whatsapp_shift]. 
 
-Some apps are trying reducing the metadata collection and these will be addressed later, in [Section 3](#3-existing-technologies). 
+The solutions regarding this issue that were adopted or proposed will be addressed in [Chapter 3](#3-existing-technologies). 
 
 #### Man-in-the-middle attacks
 
@@ -226,9 +236,9 @@ The following modes of operation are referenced throughout the thesis:
 
 **CBC** (Cipherblock Chaining Mode) makes encryption dependant on the key and previous message blocks and an initialization vector, so the identical plaintext blocks are mapped to different ciphetext blocks. With the initialization vector, the ciphertext is one block longer and if an error occurs in one block (such as transmission errors), it will be propagated to the others. 
 
-**GCM** (Galois/ Counter mode) provides authenticated encryption and and authentication and integrity of the additional data. Takes as parameters the same as the CBC mode, the key, plaintext and and initialization vector and additional data as well. It returns the ciphertext and a MAC. 
+**GCM** (Galois/ Counter Mode) provides authenticated encryption and and authentication and integrity of the additional data. Takes as parameters the same as the CBC mode, the key, plaintext and and initialization vector and additional data as well. It returns the ciphertext and a MAC. 
 
-**IGE** (Inifinite Garble Mode) has the property of propagating the errors forward indefinitely. 
+**IGE** (Inifinite Garble Extension Mode) has the property of propagating the errors forward indefinitely. 
 
 ## Classical Diffie Hellamn
 
@@ -253,7 +263,7 @@ Addition is done by fixing the two points on the curve and draw a line through t
 
 If the points are the same, draw the tangent through that point until it intersects the curve again and the result is still the reflected point
 
-Multiplication consists of adding the point multiple times to itself. There are optimization methods, such as double-and-add and Montgomery ladders. The latter is conseidered very fast [@montgomery] and more resistant to timing side-channel attacks. 
+Multiplication consists of adding the point multiple times to itself. There are optimization methods, such as double-and-add and Montgomery ladders. The latter is conseidered faster [@montgomery] and more resistant to timing side-channel attacks. 
 
 **ECDH key exchange protocol**
 
@@ -275,9 +285,9 @@ There is a digital signature scheme based on ECC, called Elliptic Curve Digital 
 
 # Existing Technologies
 
-In this section, some of the most popular end-to-end encryption protocols will be presented, along with the security analyses conducted throughout the time and their findings.  
+In this chapter, some of the most popular end-to-end encryption protocols will be discussed, along with the security analyses conducted throughout the time and their findings.  
 
-## Signal protocol
+## Signal
 
 The Signal protocol is one of the leading end-to-end encryption protocols at the moment. The applications using this protocol are Signal, Whatsapp, Facebook Messenger (Secret chats), Skype (Private conversations) and Wire. 
 
@@ -339,7 +349,7 @@ The other chains advance with each message and the output is used as encryption 
 
 To avoid this, the messages are numbered such that the ratchet can store the message keys until they arrive.  
 
-The break-in recovery and resilience roperties are satisfied by the usage of KDF chains. 
+The break-in recovery and resilience properties are satisfied by the usage of KDF chains. 
 
 Therefore, these two ratchets form the Double Ratchet algorithm. It can be initialized with the secret key from the X3DH  exchange and the associated data will be used as input for encryption and decryption functions. The signed ephemeral key and corresponding private key of the recipient can be the initial key pair of the ratchet.
 
@@ -361,7 +371,7 @@ The Seaked Sender [@sealed_sender] feature is available in the Signal app and it
 
 To prevent spoofing, the users have a certificate that attests their identity, which are periodically changed. They contain the public identity key and the expiration date. This can be included in messages, so the receivers can check its validity. 
 
-Another issue that needs to be taken into account is abuse. The users derive a delivery token from the profile key and it is registered to the service. If the parties are contacts, then their profiles, end-to-end encrypted, are shared, making the process of sealed sender become easier. 
+Another issue that needs to be taken into account is abuse. The users derive a delivery token from the profile key and it is registered to the service. If the parties are contacts, then their profiles, end-to-end encrypted, are shared, making the process of sealed sender easier. 
 But the users can enable this for anyone who isn't in their contacts list, so there is no need to check the delivery token. Therefore increasing the risk of spam and abuse. 
 
 The messages are encrypted in a normal fashion, and then they are encrypted again, along with the sender certificate. 
@@ -387,7 +397,7 @@ According to [@cohn_gordon], these attacks are still possible in the Signal prot
 
 They also review the X3DH key exchange protocol and the double ratchet algorithm of Signal and point out the novelties introduced in their cryptographic core, such as forward secrecy, post-compromise security and message key authentication. 
 
-They define the key update of the double ratchet [@ratchet_pdf] as a tree of stages, which are the key exchanges and ratchet steps. Having multiple stages in a session, or chat between two parties, the protocol can be seen as a multi-stage AKE. 
+They define the key update of the double ratchet [@ratchet_pdf] as a tree of stages, which are the key exchanges and ratchet steps. Having multiple stages in a session, or chat, between two parties, the protocol can be seen as a multi-stage AKE. 
 
 They conclude that the it is secure under the assumptions that all KDFs are random oracles and that it is hard to compute the shared secret when having access to a decisional Diffie-Hellman oracle, meaning that given the parts making the shared secret from each party, it is hard to distinguish the result from any random element from the underlying group.  
 
@@ -397,7 +407,7 @@ An automated and manual analysis was conducted in 2019 on the Java implementatio
 
 The testing method used were fuzz testing techniques, but found no over-read vulnerabilities. 
 
-They have also analysed the Sesame algorithm [@sesame] manually, but found that the session recovery feature was not implemented in the application. 
+They have also analysed the Sesame algorithm [@sesame] manually, but found that the session recovery feature was not implemented in the Signal application. 
 They tested app restoration, with or without backup, when the account was deleted and when it was kept. In the first case, the messages cannot be sent but in the second, they are delivered but they never reached the restored account. Therefore, this might be an exploitable vulnerability. 
 
 They also point out that, once the device is compromised, forward secrecy and future secrecy do not hold. Moreover, there is no guarantee that secret data, such as message keys, is completely deleted from the device so an attacker could obtain this information. 
@@ -426,7 +436,7 @@ The authorization key is shared by the client and the server using a Diffie-Hell
 The message is then sent along with a header containing the authentication key idetifier and the message key. To keep backward compatibility between the versions, the key identifier is composed of the lower 64 bits of the SHA1 hash of the authorization key[@mtproto_desc]. 
 
 For the secret chats, the message key also depends on the secret chat key. 
-The keys are generated and exchanged using the Diffie-Hellman protocol and they are 256 bytes long. To ensure forward secrecy, the users initiate the re-keying protocol after 100 encrypted and decrypted messages or after it was in use for more tha a week and the old keys are deleted [@mtproto_pfs]. 
+The keys are generated and exchanged using the Diffie-Hellman protocol and they are 256 bytes long. To ensure forward secrecy, the users initiate the re-keying protocol after 100 encrypted and decrypted messages or after it was in use for more than a week and the old keys are deleted [@mtproto_pfs]. 
 
 The messages are encrypted using AES256 in IGE mode and an 256 bit IV, where the encryption key is obtained from the hash of the message key. The message key is the middle bits obtained from parts of the shared secret, plaintext message and some random padding. The encryption key fingerprint and the message key are, also, added over the ciphertext [@mtproto_e2ee]. To decrypt, the steps from creating the ciphertext and keys are taken in reverse order. 
 
@@ -436,7 +446,7 @@ If a client still uses MTProto 1.0, the other client will downgrade to the previ
 
 ### Security analyses
 
-Telegram was actively criticised for using weak or lesser known criptographic primitives in [@mtproto_cca], [@crypto_fails], [@hayk] and for having a "home grown" protocol, but they claim that this combinaton provides better "delivery time and stability" [@mtproto_faq] or that the primitives are "not broken in their implementation" [mtproto_faq]. In the following, the known and serious vulnerabilities are presented, along with possible mitigations. 
+Telegram was actively criticised for using weak or lesser known criptographic primitives in [@mtproto_cca], [@crypto_fails], [@hayk] and for having a "home grown" protocol, but they claim that this combinaton provides better "delivery time and stability" [@mtproto_faq] or that the primitives are "not broken in their implementation" [@mtproto_faq]. In the following, the known and serious vulnerabilities are presented, along with possible mitigations. 
 
 [@mtproto_cca] explores two theoretical attacks showing that MTProto is not IND CCA secure and it does not satisfy the properties of authenticated encryption because the the padding is not checked for integrity during decryption. Therefore, one can create two different ciphertexts that decrypt to the same plaintext.
 
@@ -446,7 +456,7 @@ The second one involves subtitition of the last block of the cipher. This attack
 
 The lack of authenticated encryption and general weaknesses in the authentication mechanism are mentioned in [@telegram_auth], [@crypto_fails], [@hayk] also. In [@telegram_auth], the possibility of a MITM attack is illustrated using an unofficial command line interface for Telegram on Linux. 
 
-The client verifies the server using a fingerprint, which is the first 128 bits of the SHA 1 hash of the server's public key. The MITM could generate a fingerprint with the same first 128 bits, so that the server could not detect the attack. This attack would work if the victim installs a modified app, but this is helped by the aforementioned weakness.  
+The client verifies the server using a fingerprint, which is the first 128 bits of the SHA 1 hash of the server's public key. The MITM could generate a fingerprint with the same first 128 bits, so that the server could not detect the attack. This attack is possible if the victim install a modified app, but it is facilitated by the aforementioned weakness. 
 
 These issues were fixed in MTProto 2.0, so the protocol is now considered secure against IND CCA [@miculan]. The fingerprint is 288 bits long and the hashing function was changed to SHA256, but a MITM attack is still possible if the users do not verify each other by comparing the fingerprints.
 
@@ -465,10 +475,8 @@ This protocol was introduced in 1997 [@zheng] and it combines the features of bo
 
 The total cost, then, can be considered the sum of costs of each operation and using this combined approach would reduce it with "50% in computational cost and 85% in communication overhead", keeping the security definitions offered by the two operations, namely sending an authenticated and secure message [@zheng].
 
-The protocol would contain two algorithms, signcryption and unsigncryption, with the properties: unique unsigncryptability, where the signcrypted message is recovered using the unsigncryption algorithm, 
+The protocol would contain two algorithms, signcryption and unsigncryption, with the following properties: unique unsigncryptability, where the signcrypted message is recovered using the unsigncryption algorithm, 
 security - the properties of a secure encryption scheme and secure digital signature are fulfilled: confidentiality, unforgeability, non-repudiation, integrity and efficiency, through smaller computational cost.
-
-
 
 ### iMessage
 
@@ -494,7 +502,7 @@ Practical adaptive chosen ciphertext attacks on the previous version of the appl
 
 The encrypted messages' authenticity is provided using digital signatures instead of MACs or AEAD, which is not recommended. Moreover, portions of the ciphertext are not included in the RSA ciphertext, therefore, the attacker can change them, leading to CCAs. 
 
-Using the CRC, cyclic redundancy check, checksum of the compressed ciphertext, the attacker can adapt and modify the message and sent it to the victim to decrypt. With this approach, the adversary can point to a controlled account by changing the sender id and extract information about the compression and ciphertext, to obtain the key. 
+Using the CRC (cyclic redundancy check) checksum of the compressed ciphertext, the attacker can adapt and modify the message and sent it to the victim to decrypt. With this approach, the adversary can point to a controlled account by changing the sender id and extract information about the compression and ciphertext, to obtain the key. 
 
 Moreover, if the adversary can bypass TLS or compromise the servers, the attack can be done remotely.
 
@@ -520,7 +528,9 @@ With the definitions from [@adr], Bellare et al. prove the security of iMessage'
 
 The Letter Sealing end-to-end encryption scheme was developed for the messaging app LINE in 2015. From 2016, it is enabled by default and covers text and location messages and voice calls. A more secure version was introduced in 2019, but in order to support the previous one, the encryption algorithms are downgraded. 
 
-The communication between the client and the server side is based on the SPDY protocol with a 0-RTT handshake protocol and the encryption uses the secp256k1 curve for the key exchange and server identity verification. 
+The communication between the client and the server side is based on the SPDY protocol [^7] with a 0-RTT handshake protocol and the encryption uses the secp256k1 curve for the key exchange and server identity verification. 
+
+[^7]: [https://dev.chromium.org/spdy/spdy-whitepaper](https://dev.chromium.org/spdy/spdy-whitepaper)
 
 For the symmetric encryption, AES GCM is used and the 128 bit keys are derive using a HMAC based key derivation function. Each encryption operation uses a nonce from the initialization vector, a sequence number and a marker. 
 
@@ -547,7 +557,7 @@ The initial version was vulnerable to replay attacks [@espinoza] and had weak au
 
 LINE does not use a standard authentication scheme. They compute the MAC without any secret information and the same key is used for both encryption (AES 256 CBC) and MAC (AES 256 EBC). This leads to forgery attacks [@isobe], since the adversary can precompute hash values of ciphertexts, intercept messages between the victims and extract the associated data, ciphertext and tag, compare the collisions and create a forged message, without knowing the key. 
 
-The attacks on the group messages exploit a vulnerability in the key derivation phase. The shared secret is computed from the group key and the user's public key, therefore a malicious user can impersonate another participant by providing their public key and obtaining the shared secret. The malicious user's keys are derived from the shared secret, salt and public key and the message is threated as if it were from the victim and is brodcast to the group members. This happens because the message is not authenticated and this was pointed out in [@espinoza] as well.
+The attacks on the group messages exploit a vulnerability in the key derivation phase. The shared secret is computed from the group key and the user's public key, therefore a malicious user can impersonate another participant by providing their public key and obtaining the shared secret. The malicious user's keys are derived from the shared secret, salt and public key and the message is treated as if it were from the victim and is brodcast to the group members. This happens because the message is not authenticated and was pointed out in [@espinoza] too.
 
 In the forgery attack, the malicious user bypasses the transport encryption and derives the keys from the shared group key, the vicitm's public key, salt from the intercepted message. The message can be then decrypted, modified, re-encrypted and a new tag is appended and is broadcast. The victim sees the unmodified message, so the attack is not visible to the victim. 
 
@@ -596,7 +606,7 @@ Additionally, this scheme also provides non-reupudiability and it can prevent re
 
 These security analyses underline vulnerabilities which are more device-related than regarding the primitives or the implementation. 
 
-[@ising] shows that files with sensitive information could be sent, such as key.dat, which contains the private keys of the uesr, or that logs with parts of the password could be backed up with Threema Safe, making them vulnerable. 
+[@ising] shows that files with sensitive information could be sent, such as `key.dat`, which contains the private keys of the uesr, or that logs with parts of the password could be backed up with Threema Safe, making them vulnerable. 
 
 Even if the app is locked with a PIN, on Android, the last open chat could've been seen from the screenshot saver feature, pointed out in [@cure53] as well, or messages could be sent using Google Assistant. On iOS, there was a missing public key pinning in the HTTPS request, which could allow MITM attacks. 
 
@@ -647,7 +657,7 @@ These operations involve changing the state of the group and generate new public
 
 The protocol also needs to synchronize the local states with the global state and keep consistency. In this way, concurrent operations are better supported. 
 
-The leaf keys are newly generated and th key for the internal node is the hash of the secret key of the last child that performed a group operation. For MLS, a KDF is used instead. The AE key is derived from the root, usind a KDF. 
+The leaf keys are newly generated and the key for the internal node is the hash of the secret key of the last child that performed a group operation. For MLS, a KDF is used instead. The AE key is derived from the root, usind a KDF. 
 
 It also handles the storage requirements better, since the receiver needs to do the operations in $O(1)$, but the sender still needs $O(n)$. 
 
@@ -686,15 +696,17 @@ They also prove that AART is secure under IND-CCA, forward secrecy, post-comprom
 
 # Technologies used 
 
-The application [^4] is a full stack web application with the frontend created with React and Redux Toolkit, for state management. They are both JavaScript libraries. The styling is done with SCSS.
+The application is a full stack web application with the frontend created with React and Redux Toolkit, for state management. They are both JavaScript libraries. The styling is done with SCSS.
 
 The backend uses the express framework and the messages are sent in real-time through sockets, with the socket.io package. 
 
 For data management, the application uses services from Firebase, a web and mobile applications development platform. These are Authentication, for accounts, Cloud Firestore NoSQL database for user data, conversations, messages, and Storage, for attachments. 
 
-The key management and encryption process are handled by the VirgilSecurity platform. The end-to-end logic of the application is developed with its E3Kit framework. 
+In Cloud Firestore, the data is organized in documents, which are records with a representation similar to JSON and identified by an ID, and collections, which are containers for the documents. 
 
-[^4]: React: [https://reactjs.org/](https://reactjs.org/), Redux Toolkit: [https://redux-toolkit.js.org/](https://redux-toolkit.js.org/), express: [https://expressjs.com/](https://expressjs.com/), VirgilSecurity: [https://developer.virgilsecurity.com/docs/e3kit/](https://developer.virgilsecurity.com/docs/e3kit/), socket.io: [https://socket.io/](https://socket.io/), Firebase: [https://firebase.google.com/](https://firebase.google.com/)
+The key management and encryption process are handled by the VirgilSecurity platform. The end-to-end logic of the application is developed with its E3Kit framework. [^4]
+
+[^4]: More details are available on their official webpages. React: [https://reactjs.org/](https://reactjs.org/), Redux Toolkit: [https://redux-toolkit.js.org/](https://redux-toolkit.js.org/), express: [https://expressjs.com/](https://expressjs.com/), VirgilSecurity: [https://developer.virgilsecurity.com/docs/e3kit/](https://developer.virgilsecurity.com/docs/e3kit/), socket.io: [https://socket.io/](https://socket.io/), Firebase: [https://firebase.google.com/](https://firebase.google.com/)
 
 \newpage
 
@@ -718,14 +730,17 @@ To use this application, the user needs to login with an existing account or cre
 \end{figure}
 
 
-When the user clicks the button, a form, like the one in Figure \ref{fig:newchat}, will open in which they can enter the required details: chat name, in case of a group conversation (at least 2 participants), and the emails of the participants, one at a time by pressing "Add another email" after each written. Their addresses appear beneath the form as they are added. 
-
-
 \begin{figure}[h!]
+  \centering
   \includegraphics[width=0.5\textwidth]{./Media/add_chat.png}
   \caption{New chat form}
   \label{fig:newchat}
 \end{figure}
+
+When the user clicks the button, a form, like the one in Figure \ref{fig:newchat}, will open in which they can enter the required details: chat name, in case of a group conversation (at least 2 participants), and the emails of the participants, one at a time by pressing "Add another email" after each written. Their addresses appear beneath the form as they are added. 
+
+
+
 
 
 The user can choose between encrypted and unencrypted unencrypted by pressing the switch. Encrypted chats are selected by default, but this feature is aimed to show the risks of using the unencryted version, through the "third party view" feature. Based on this choice, the attachments are encrypted or not. 
@@ -742,7 +757,7 @@ The third party view is a feature that enables the user to "see through the eyes
 
 The aim of this feature is to show the risks of having unencrypted chats and what vulnerable information is available to the server. Metadata, such as the sender, time and date, whether it contains an attachment or not, is data that can be used by attackers and service providers in order to obtain information about the users. 
 
-As previously discussed, the third could see the social graph and relations between the users and an adversary could mount certain attacks on the attachment messages, for example, if they know the structure of the message and the underlying algorithms can be controlled. 
+As previously discussed, the third party could see the social graph and relations between the users and an adversary could mount attacks similar to the one presented by Garman et al. [@garman] on the attachment messages, for example, if they know the structure of the message and the underlying algorithms can be controlled. 
 
 This feature is shown as a comparison between Figure \ref{fig:normal} and Figure \ref{fig:thirdparty}.
 
@@ -787,11 +802,19 @@ A use case diagram of the application is shown in Figure \ref{fig:usecase}.
 
 The application has three parts: the frontend, the backend and the database. 
 
-## The Frontend
+### The Frontend
 
-The frontend uses React with functional components. A Firebase instance is initialized to handle user authentication and registration and the requests to the server are handled with sockets and the axios package [^6].
+The frontend uses React with functional components for the UI elements. A Firebase instance is initialized to handle user authentication and registration and the requests to the server are handled with sockets and the axios package [^6]. 
 
-[^6]: axios: [https://www.npmjs.com/package/axios](https://www.npmjs.com/package/axios)
+[^6]: [https://www.npmjs.com/package/axios](https://www.npmjs.com/package/axios)
+
+The functional components can be viewed as classes, with the structure from Figure \ref{fig:class}. Functions that handle the server requests, database queries, encryption and decryption and the Redux store are placed in separate files and are not represented in the diagram. 
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{./Media/Diagrams/class.png}
+    \caption{UML Class Diagram}
+    \label{fig:class}
+\end{figure}
 
 When the user logs in, the credentials are checked via the Firebase instance. If the user registers, these are saved to the database, in both the Authentication service and Cloud Firestore. If these operations are successful, the user is redirected to the main chat page and the login information is saved in the Redux state tree. 
 
@@ -826,26 +849,18 @@ The authenticated encryption method is sign and encrypt for both normal messages
 
 When a message or conversation is deleted, it is removed locally from the state tree and a request is sent to the server and with the necessary information and it is deleted from the database. On leave, the other participants are notified through sockets, unless the last participant deletes it. 
 
-The "third party view" feature changes the way in which the messages are displayed, adding a different style to the message list and other available metadata. Encrypted data is only decrypted when it needs to be displayed, so when this feature is active, the switch happens without querying the data from the server again.  
+The "third party view" feature changes the way in which the messages are displayed, adding a different style to the message list and other available metadata. Encrypted data is only decrypted when it needs to be displayed, so when this feature is active, the switch happens without fetching the data from the server again.  
 
-On logout, all the locally saved data is deleted and the state tree is cleared. 
-
-The functional components can be viewed as classes and a class diagram is presented in Figure \ref{fig:class}. Functions that do the server requests, database queries, encryption/ decryption and the Redux store are placed in separate files and are not represented in the diagram. 
-
-\begin{figure}
-    \includegraphics[width=\textwidth]{./Media/Diagrams/class.png}
-    \caption{UML Class Diagram}
-    \label{fig:class}
-\end{figure}
+On logout, the locally saved data is deleted and the state tree is cleared. 
 
 
-## The Backend
+### The Backend
 
 The backend uses the express framework to handle requests from the frontend. A Firebase instance is initialized here too, in order to handle the Cloud Firestore and Firebase Storage operations. A socket is also listening for the requests from the frontend.  
 
 When the user tries to connect, the server generates the JSON Web Token (JWT) that is used to authenticate with the VirgilSecurity platform. It first requires an authentication header and then generated the token, which is sent as a response to the frontend. This code was taken and adapted from the official E3Kit documentation. 
 
-The socket keeps a map of users and their chats. It is updated when a user is "online" and when they go "offline". On message, it broadcasts the message to the specified chat. 
+A map of users is also saved and it is updated when a user is "online" and when they go "offline". On message, the socket broadcasts the message to the specified chat. 
 
 When a new chat request is sent, it calls the function that adds it to the database and then broadcasts this to the online participants, to update their lists. 
 
@@ -853,30 +868,59 @@ When a user leaves the chat, a similar process happens, the database is updated 
 
 The rest of the requests are handled by express, which forwards the work to the database and only passes back the response data. 
 
+In case of groups, the messages are sent in a server-side fan-out fashion. 
+
 ### The Database
 
+The database is hosted by Firebase. The authentication details - emails, passwords, are stored in the Authentication service and listed in the Cloud Firestore service too, along with the chat information: conversations, their names, participants, messages etc. The files are stored in Firebase Storage. 
 
+Each user has a collection of conversations. In it, they have conversations, identified by IDs, with the following fields: name, isEncrypted flag, date, a list of participants and a collection of messages. Then each message has an ID, sender, text and date. The structure is similar to the one below:
 
-## Testing the application
-
-I suppose. 
+```
+{
+    "users": [
+        "user1": {
+            "conversations": [
+                "conversationID1": {
+                    "name": "conversation name", 
+                    "isEncrypte": true, 
+                    "date": "timestamp",
+                    "participants": ["participant1", "participant2"],
+                    "messages": [
+                        "messageID": {
+                            "date": "timestamp",
+                            "sender": "participant2",
+                            "text": "text"
+                        },
+                        ...
+                    ]
+                },
+                "conversationID2": {
+                    ...
+                }]},
+        ...]
+    
+}
+```
 
 
 # Conclusions
 
-In this thesis, I have presented an overview of the popular messaging applications and protocols, along with their past known issues and the new algorithms that they introduced. 
+In this thesis, I have presented an overview of the popular end-to-end encrypted messaging applications and their underlying protocols, these being Signal, MTProto, Signcryption, Letter Sealing and Threema. Past and present vulnerabilities were discussed for each protocol and applications that implement them in a separate section, along with possible solutions.
 
-While these applications aim to provide a secure messaging experience, some of them have used or still use outdated or non-standard  cryptographic algorithms, like MTProto's AES in IGE mode. Also, combining secure ones in an insecure fashion, paired with weak authentication and verification schemes, like using digital signatures instead of MACs or an AEAD scheme (iMessage), or MACs using the same key as the one for message encryption (Line), could lead to more vulnerabilities, like chosen ciphertext attacks, message forgery, replay attacks, unknown key share attacks, impersonation. 
+While these applications aim to provide a secure messaging experience, some of them have used or still use outdated or non-standard cryptographic algorithms, like MTProto's AES in IGE mode. Also, combining secure ones in an insecure fashion, paired with weak authentication and verification schemes, like using digital signatures instead of MACs or an AEAD scheme (iMessage), or MACs using the same key as the one for message encryption (Line), could lead to more vulnerabilities, like chosen ciphertext attacks, message forgery, replay attacks, unknown key share attacks, impersonation. 
 
 Moreover, concepts like forward secrecy have become an important requirement for end-to-end encrypted protocols, but it is not always achieved on the communication level, as it is the case for Threema, Line and iMessage. 
 
-With the accompanying application, the risks of using unencrypted communications are illustrated, as well as metadata availability to the third parties. On a larger scale, this can be extended to metadata collection, lack of default privacy and the issues that can arise from compromising centralized servers. 
+With the accompanying messaging application that I have developed along with the thesis, the risks of using unencrypted communications are illustrated, as well as metadata availability to the third parties. The user could choose unencrypted conversations and, to see the implications, they could activate a feature called "third party view". The vulnerable data is highlighted and it includes message and user metadata, such as when the message was sent, by and to whom, if it has an attachment, and the messages in ciphertext or plaintext (for the unencrypted conversations). 
+
+On a larger scale, it is clear that this can be extended to metadata collection, and more problems could arise from the lack of message privacy, especially when compromising centralized servers. 
 
 Some of these issues were solved by most applications in newer versions, but others still need to rely on the users to verify each other or to enable the end-to-end features, like is the case for Telegram and Facebook Messenger. 
 
-The novel techniques developed to protect the privacy and anonimity of the users and provide more efficient algorithms were also presented. These include the Double Ratchet algorithm, on which the MLS protocol proposals are based, X3DH protocol, joined signature and encryption, Sealed sender and verification levels instead of requiring personal information. 
+The novel techniques developed to protect the privacy and anonimity of the users and provide more efficient algorithms were also in the spotlight. These include the Double Ratchet algorithm, on which the MLS protocol proposals are based, X3DH protocol, joined signature and encryption, Sealed sender and verification levels instead of requiring personal information. 
 
-Therefore, we can conclude that end-to-end encryption is a growing field, as more research is done and analyses are being conducted, and many companies move towards including and improving such features in their messaging applications. 
+Therefore, we can conclude that end-to-end encryption is a growing field, as more research is done, analyses are being conducted and many companies move towards including and improving such features in their messaging applications. Hence the evolution of this domain can be tied to both the past experiences and future innovations, and must also pay attention to common mistakes, in order to offer better products. 
 
 # References
 

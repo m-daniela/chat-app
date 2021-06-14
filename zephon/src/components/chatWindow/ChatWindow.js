@@ -105,6 +105,7 @@ const ChatWindow = () => {
         socket.on("user left", (res) =>{
             // reload the conversations
             dispatch(getConversationsThunk({email}));
+            // dispatch(getMessagesThunk({current}));
             console.log("Merge, bravo");
             console.log("User left", res.room, current);
             // TODO: the selected conversation changes when 
@@ -113,6 +114,7 @@ const ChatWindow = () => {
             if (res.room === current.id){
                 console.log("Message from the user");
                 dispatch(addMessage(res));
+                dispatch(getMessagesThunk({email, conversation: res.room}));
                 // things change here?
                 // dispatch(getMessagesThunk({email, conversation: current.id}));
             }
