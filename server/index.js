@@ -6,7 +6,6 @@
 
 require('dotenv').config();
 
-const {logger} = require("./utils/logger");
 const data = require("./data");
 const {generateVirgilJwt} = require("./authentication/jwtToken");
 const {requireAuthHeader} = require("./authentication/validation");
@@ -34,12 +33,13 @@ const port = process.env.PORT || 5000;
 
 // get the conversations for the given user
 app.get("/test", (req, res) => {
-  console.log("It works");
+  console.log("GET /test");
+
 });
 
 // get the conversations for the given user
 app.post("/", (req, res) => {
-  logger("Server", "POST /")
+  console.log("POST /");
   const user = req.body.user;
   if (user){
     data.getConversations(user).then(data => res.json(data));
@@ -50,7 +50,7 @@ app.post("/", (req, res) => {
 // add a user to the database if it is not there
 // already and ask for the jwt
 app.post("/auth", (req, res) =>{
-  logger("Server", "POST /auth")
+  console.log("POST /auth");
   try{
     const email = req.body.user;
     if (email !== undefined || email !== null){
@@ -60,7 +60,7 @@ app.post("/auth", (req, res) =>{
     }
   }
   catch(err){
-    logger("Server", "POST /auth", err)
+    console.log("POST /auth", err);
   }
   
 })
@@ -137,6 +137,7 @@ const server = app.listen(port, () => {
   console.log('listening on *:5000');
 });
 
+// initialize the socket
 const io = require('socket.io')(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -144,6 +145,7 @@ const io = require('socket.io')(server, {
   }
 });
 
+// socket interactions
 io.on('connection', (socket) => {
   console.log('user connected');
 
@@ -156,8 +158,6 @@ io.on('connection', (socket) => {
   // send a message to a room
   // broadcast the message to everyone but the sender
   // and add it to the database
-  // type - the number of participants in the chat
-  // TODO: find a better way to handle this
   socket.on('message', (message) => {
     const user = data.current(socket.id);
     console.log("Broadcast", user.username, message.room)
@@ -168,7 +168,6 @@ io.on('connection', (socket) => {
   // broadcast the fact that a user
   // has left the group chat
   socket.on('user left', (message) => {
-    // TODO: might change it to "message" so it will be treated normally
     data.userLeftMessage(message)
     .then(res => socket.broadcast.to(message.room).emit("user left", res))
     .catch(err =>{

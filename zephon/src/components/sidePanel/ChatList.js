@@ -22,10 +22,6 @@ const ChatList = () => {
 
     useEffect(() =>{
         socket.on("new chat", () => {
-            // not the best choice - this will add the chat with the same name
-            // same for the group
-            // dispatch(addConversation(newChat.chatName));
-            console.log("new chat");
             dispatch(getConversationsThunk({email}));
         });
         // eslint-disable-next-line

@@ -12,10 +12,20 @@ import { ThirdPartyContext } from '../../utils/context/ThirdPartyContext';
 const Attachment = ({attachment, sender}) => {
     const [url, setUrl] = useState("");
     const {token} = useContext(E3Context);
-    const {thirdPartyView} = useContext(ThirdPartyContext);
     const isEncrypted = useSelector(state => state.chat.isEncrypted);
     const {fileKey, filename} = JSON.parse(attachment);
 
+    useEffect(() => {
+        if(isEncrypted){
+            downloadAndDecrypt();
+        }
+        else{
+            downloadOnly();
+        }
+        // eslint-disable-next-line
+    }, [isEncrypted]);
+
+    // download and decrypt the file from the database
     const downloadAndDecrypt = () => {
         downloadFile(filename)
             .then((url) => {
@@ -37,6 +47,7 @@ const Attachment = ({attachment, sender}) => {
             });
     };
 
+    // download the file from the database
     const downloadOnly = () =>{
         downloadFile(filename)
             .then((url) => {
@@ -45,26 +56,26 @@ const Attachment = ({attachment, sender}) => {
             .catch(err => console.log("Download only: file deleted"));
     };
 
-    useEffect(() => {
-        if(isEncrypted){
-            downloadAndDecrypt();
+    // hide the broken images and display the filepath directly
+    const handleBrokenImage = (e, filename) =>{
+        try{
+            if(!e.target.parentNode){
+                e.target.parentNode.text = filename;
+                e.target.style.display = "hidden";
+            }
         }
-        else{
-            downloadOnly();
+        catch(err){
+            console.log(err);
         }
-        // eslint-disable-next-line
-    }, [isEncrypted])
+    };
 
     return (
-        // <>
-        //     {thirdPartyView ? attachment : (<a href={url} download><img src={url} alt={filename} loading="lazy" /></a>)}
-        // </>
-        <a href={url} download><img src={url} alt={filename} loading="lazy" /></a>
+        <a href={url} download rel="noreferrer">
+            <img src={url} alt={filename} loading="lazy" onError={(e) => handleBrokenImage(e, filename)}/>
+        </a>
         
     );
     
 };
-
-
 
 export default Attachment;

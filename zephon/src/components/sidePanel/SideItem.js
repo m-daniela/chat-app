@@ -31,15 +31,12 @@ const SideItem = ({element}) => {
                     dispatch(changeConversation(""));
                     dispatch(deleteConversation(id));
                     const receivers = participants.slice().filter(elem => elem !== email);
-                    // // check if the chat is a private or a group chat, based on the title
-                    // if (receivers[0] !== name){
                     // broadcast only when there are more users than yourself
                     if (participants.length > 1){
                         const date = new Date();
     
                         socket.emit("user left", ({username: email, room: chatInformation.id, date, receivers}));
                     }
-                    // }
                     
                     
                 })

@@ -1,5 +1,5 @@
 
-// @Virgil Security
+// Virgil Security
 // taken from https://github.com/VirgilSecurity/demo-backend-nodejs
 
 const crypto = require('crypto');

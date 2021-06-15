@@ -84,7 +84,7 @@ The frameworks, libraries and platforms that were used for this application are 
 
 # Theoretical Aspects
 
-In this chapter, some of the main concepts that will be used throughout the thesis are briefly discussed. More information is given in [Chapter 3](#existing-technologies). 
+In this chapter, some of the main concepts that will be used throughout the thesis are briefly discussed. More information is given in [Chapter 3](#existing-technologies) and general definitions are taken from [@hoac], [@cc], [@sc]. 
 
 
 ## Symmetric key encryption
@@ -704,9 +704,11 @@ For data management, the application uses services from Firebase, a web and mobi
 
 In Cloud Firestore, the data is organized in documents, which are records with a representation similar to JSON and identified by an ID, and collections, which are containers for the documents. 
 
-The key management and encryption process are handled by the VirgilSecurity platform. The end-to-end logic of the application is developed with its E3Kit framework. [^4]
+The key management and encryption process are handled by the VirgilSecurity platform. The end-to-end logic of the application is developed with its E3Kit framework. 
 
-[^4]: More details are available on their official webpages. React: [https://reactjs.org/](https://reactjs.org/), Redux Toolkit: [https://redux-toolkit.js.org/](https://redux-toolkit.js.org/), express: [https://expressjs.com/](https://expressjs.com/), VirgilSecurity: [https://developer.virgilsecurity.com/docs/e3kit/](https://developer.virgilsecurity.com/docs/e3kit/), socket.io: [https://socket.io/](https://socket.io/), Firebase: [https://firebase.google.com/](https://firebase.google.com/)
+The frontend and the server are run locally using Docker. [^4]
+
+[^4]: More details are available on their official webpages. React: [https://reactjs.org/](https://reactjs.org/), Redux Toolkit: [https://redux-toolkit.js.org/](https://redux-toolkit.js.org/), express: [https://expressjs.com/](https://expressjs.com/), VirgilSecurity: [https://developer.virgilsecurity.com/docs/e3kit/](https://developer.virgilsecurity.com/docs/e3kit/), socket.io: [https://socket.io/](https://socket.io/), Firebase: [https://firebase.google.com/](https://firebase.google.com/), Docker: [https://www.docker.com/](https://www.docker.com/)
 
 \newpage
 
@@ -738,10 +740,6 @@ To use this application, the user needs to login with an existing account or cre
 \end{figure}
 
 When the user clicks the button, a form, like the one in Figure \ref{fig:newchat}, will open in which they can enter the required details: chat name, in case of a group conversation (at least 2 participants), and the emails of the participants, one at a time by pressing "Add another email" after each written. Their addresses appear beneath the form as they are added. 
-
-
-
-
 
 The user can choose between encrypted and unencrypted unencrypted by pressing the switch. Encrypted chats are selected by default, but this feature is aimed to show the risks of using the unencryted version, through the "third party view" feature. Based on this choice, the attachments are encrypted or not. 
 
@@ -904,7 +902,7 @@ Each user has a collection of conversations. In it, they have conversations, ide
 ```
 
 
-# Conclusions
+# Conclusions and future work
 
 In this thesis, I have presented an overview of the popular end-to-end encrypted messaging applications and their underlying protocols, these being Signal, MTProto, Signcryption, Letter Sealing and Threema. Past and present vulnerabilities were discussed for each protocol and applications that implement them in a separate section, along with possible solutions.
 
@@ -921,6 +919,12 @@ Some of these issues were solved by most applications in newer versions, but oth
 The novel techniques developed to protect the privacy and anonimity of the users and provide more efficient algorithms were also in the spotlight. These include the Double Ratchet algorithm, on which the MLS protocol proposals are based, X3DH protocol, joined signature and encryption, Sealed sender and verification levels instead of requiring personal information. 
 
 Therefore, we can conclude that end-to-end encryption is a growing field, as more research is done, analyses are being conducted and many companies move towards including and improving such features in their messaging applications. Hence the evolution of this domain can be tied to both the past experiences and future innovations, and must also pay attention to common mistakes, in order to offer better products. 
+
+## Future work
+
+The application can be improved upon and some of these would be to scale it to a bigger user base and to make it accessible from outside the local network by deploying the Docker image. Also, the frontend could be intercheanged with a mobile application created with React Native, which can be linked in a similar manner to the database and the server. 
+
+As new features, the application could support voice and video calls and a more customizable user interface and user profile - profile pictures, password change, username. 
 
 # References
 

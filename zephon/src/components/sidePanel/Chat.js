@@ -5,9 +5,8 @@ import { Switch } from '@material-ui/core';
 
 // Chat
 // the form for the private and group chat
-// if you add one participant, it will be a pivate chat
-// and the chat name field will be disabled
-// otherwise, for 3+ participants, you can choose a name
+// the form for the chat name is locked until
+// you add at least one participant
 const Chat = ({close}) =>{
     const [newChat, setNewChat] = useState("");
     const [current, setCurrent] = useState("");

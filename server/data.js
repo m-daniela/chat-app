@@ -4,9 +4,11 @@
 var admin = require("firebase-admin");
 var serviceAccount = require("./key.json");
 
-// change
+// access the constants
 const { cts } = require("./constants");
 
+
+// initialize the firebase instance
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://zephon-45471.firebaseio.com"
@@ -35,14 +37,14 @@ const addUser = async (email) =>{
       const userAdded = await db.collection(cts.users).doc(email);
       await userAdded.set({});
       await userAdded.collection(cts.conversations).doc("ignore").set({});
-      console.log("Add user: user added", email);
+      console.log("Data/ Add user: user added", email);
     }
     else{
-      console.log(`Add user: ${email} already here`)
+      console.log(`Data/ Add user: ${email} already here`)
     }
   }
   catch (err){
-    console.log("Add user: ", err);
+    console.log("Data/ Add user error: ", err);
   }
 }
 
@@ -94,10 +96,7 @@ const createChat = async (name, participants, date, isEncrypted) => {
       isEncrypted,
       participants,
       date: newDate
-    }  
-    // const convoRef = await createChatReference(chat, message);
-    // deleteConvoRef(convoRef);
-    // chat["convoRef"] = convoRef
+    }
     const chatId = await addConversationDatabase(participants[0], chat, message);
     for (const receiver of participants.slice(1)){
       await addConversationWithIdDatabase(chatId, receiver, chat, message);
@@ -120,18 +119,24 @@ const removeParticipant = (chat, participant, user) =>{
       .update({
         participants: admin.firestore.FieldValue.arrayRemove(participant)
       });
-    console.log("Participant removed", participant);
+    console.log("Data/ Participant removed", participant);
   }
   catch(err){
-    console.log("Participant removed, something went wrong");
+    console.log("Data/ Participant removed, error", err);
   }
   
 }
 
-// add a message to the database
-// name - name of the chat
-// receiver - name of the receiving user
-// message - the message object
+// handle user leaving 
+// remove the user from the lists
+// of the rest of the participants
+// and send a sys message stating it
+// return the message so it can be 
+// added to each participant that remains
+// in:
+// - message - the message object
+// out: 
+// - the message with id and everything
 const userLeftMessage = async (message) => {
   try{
     const newMessage = {
@@ -155,32 +160,11 @@ const userLeftMessage = async (message) => {
     
     newMessage["id"] = messageId;
     newMessage["room"] = message.room;
+    console.log("Data/ UserLeftMessage")
   
     return newMessage;
   }catch(err){
-    console.log("Not removed?", err)
-    return {};
-  }
-}
-
-
-const createChatReference = async (chatInformation, message) =>{
-  try{
-
-    // create the reference
-    const convoRef = await db
-      .collection(cts.conversations)
-      .doc();
-    await convoRef
-      .set(chatInformation);
-    await convoRef
-      .collection(cts.messages)
-      .add(message);
-
-    return convoRef;
-  }
-  catch(err) {
-    console.log("Add Conversation DB: ", err);
+    console.log("Data/ UserLeftMessage", err)
     return {};
   }
 }
@@ -204,15 +188,14 @@ const addConversationDatabase = async (receiver, chat, message) =>{
       .collection(cts.messages)
       .add(message);
 
-    console.log("Add Conversation DB");
+    console.log("Data/ Add Conversation DB", ref.id);
     return ref.id;
   }
   catch(err) {
-    console.log("Add Conversation DB: ", err);
+    console.log("Data/ Add Conversation DB: ", err);
     return "";
   }
 }
-
 
 // same as addConversationDatabase, but the id is specified
 const addConversationWithIdDatabase = async (chatId, receiver, chat, message) =>{
@@ -227,52 +210,61 @@ const addConversationWithIdDatabase = async (chatId, receiver, chat, message) =>
         .collection(cts.messages)
         .add(message)
 
-    console.log("Add Conversation DB");
+    console.log("Data/ Add Conversation DB with ID");
   }
   catch(err) {
-    console.log("Add Conversation DB", err);
+    console.log("Data/ Add Conversation DB with ID", err);
   }
 }
 
 
 // send a message
+// in:
 // - sender - sender of the message
 // - name - name of the chat; can be either the email of the
 // receiver or the name of the group chat
 // - receivers - all the participants in the chat
 // - date - date of the sent message
+// out:
+// - message id
 const sendMessage = async (message) => {
-  
-  const newMessage = {
-    sender: message.sender,
-    text: message.text,
-    date: convertToTimestamp(message.date),
-    attachment: message.attachment ? message.attachment : false,
-  }
-
-  if (message.receivers.length === 2){
-    const [recv1, recv2] = [...message.receivers];
-    console.log("Send messages: ", recv1, recv2, message.receivers)
-
-    const messageId = await sendMessageDatabase(message.room, recv2, newMessage);
-    sendMessageWithIdDatabase(message.room, recv1, newMessage, messageId);
-    return messageId;
-  }
-  else{
-    const messageId = await sendMessageDatabase(message.room, message.receivers[0], newMessage);
-    for (const receiver of message.receivers.splice(1)){
-      sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
+  try{
+    const newMessage = {
+      sender: message.sender,
+      text: message.text,
+      date: convertToTimestamp(message.date),
+      attachment: message.attachment ? message.attachment : false,
     }
-    return messageId;
-  }
-  
+    console.log("Data/ sendMessage");
+    if (message.receivers.length === 2){
+      const [recv1, recv2] = [...message.receivers];
+      // console.log("Send messages: ", recv1, recv2, message.receivers)
 
+      const messageId = await sendMessageDatabase(message.room, recv2, newMessage);
+      sendMessageWithIdDatabase(message.room, recv1, newMessage, messageId);
+      return messageId;
+    }
+    else{
+      const messageId = await sendMessageDatabase(message.room, message.receivers[0], newMessage);
+      for (const receiver of message.receivers.splice(1)){
+        sendMessageWithIdDatabase(message.room, receiver, newMessage, messageId);
+      }
+      return messageId;
+    }
+  }
+  catch(err){
+    console.log("Data/ sendMessage", err);
+    return "";
+  }
 }
 
 // add a message to the database
-// name - name of the chat
-// receiver - name of the receiving user
-// message - the message object
+// in:
+// - name - name of the chat
+// - receiver - name of the receiving user
+// - message - the message object
+// out:
+// - message id
 const sendMessageDatabase = async (room, receiver, message) =>{
   try{
     const ref = await db.collection(cts.users)
@@ -299,23 +291,14 @@ const sendMessageWithIdDatabase = async (room, receiver, message, messageId) =>{
       .doc(receiver)
       .collection(cts.conversations)
       .doc(room)
-      // .get()
-      // .then(snapshot => {
-      //   if (snapshot.exists){
-      //     console.log("exists")
-      //   }
-      //   else{
-      //     console.log("doesn't exist")
-      //   }
-      // })
       .collection(cts.messages)
       .doc(messageId)
       .set(message);
 
-    console.log("Send message DB: Message saved");
+    console.log("Data/ Send message DB: Message saved");
   }
   catch(err) {
-    console.log("Send message DB: ", err);
+    console.log("Data/ Send message DB: ", err);
   }
 }
 
@@ -325,7 +308,6 @@ const sendMessageWithIdDatabase = async (room, receiver, message, messageId) =>{
 // - user - email of the user
 // out: 
 // - conversation - list of conversation objects (id, name, participants)
-// TODO: don't send the participants list 
 const getConversations = async(user) =>{
   const conversations = [];
   const conversationDB = await db
@@ -334,7 +316,6 @@ const getConversations = async(user) =>{
   .collection(cts.conversations)
   .orderBy("date")
   .get();
-
   
   conversationDB.forEach(snapshot =>{
     const chat = snapshot.data();
@@ -360,7 +341,6 @@ const getMessages = async (user, conversation) =>{
   const rawMessages = await conversationDB
     .collection(cts.messages)
     .orderBy("date")
-    // .limit(10)
     .get();
 
   rawMessages.forEach(snapshot =>{
@@ -402,22 +382,26 @@ const deleteMessage = async (user, chat, messageId) =>{
 // user - email of the user that deletes the chat
 // chat - chat name
 const deleteConversation = async (user, chat) =>{
+  try{
+    const conversation = await db
+      .collection(cts.users)
+      .doc(user)
+      .collection(cts.conversations)
+      .doc(chat);
+      
+    const messages = await conversation.collection(cts.messages).get();
 
-  const conversation = await db
-    .collection(cts.users)
-    .doc(user)
-    .collection(cts.conversations)
-    .doc(chat);
-    
-  const messages = await conversation.collection(cts.messages).get();
+    messages.forEach(snapshot => {
+      snapshot.ref.delete();
+    });
 
-  messages.forEach(snapshot => {
-    snapshot.ref.delete();
-  });
+    await conversation.delete();
 
-  await conversation.delete();
-
-  console.log("Delete conversation: conversation deleted", chat);
+    console.log("Data/ Delete conversation", chat);
+  }
+  catch(err){
+    console.log("Data/ Delete conversation", err)
+  }
 }
 
 // add the user to the room
@@ -436,7 +420,6 @@ module.exports = {
   addUser, 
   current, 
   createChat, 
-  // createGroup,
   sendMessage,
   getMessages, 
   deleteMessage,

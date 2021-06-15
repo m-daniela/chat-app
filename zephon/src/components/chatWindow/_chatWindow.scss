@@ -116,11 +116,15 @@
         margin: 15px;
     }
 
-    img, svg{
+    svg{
         // margin: 0 auto;
         max-height: 60%;
         width: auto;
         // box-sizing: border-box;
+    }
+    img{
+        height: auto;
+        width: 70%;
     }
 }
 
@@ -142,6 +146,9 @@
 
     div, #filename{
         margin: 0 50px;
+    }
+    img{
+        max-width: 50%;
     }
     
     #filename{

@@ -16,8 +16,6 @@ import { uploadFile } from '../../utils/services/firebase';
 // Chat Window
 // the logic for message sending and receiving
 // combines MessageInput and MessageList
-// TODO: refactor this part
-// TODO: the code for add message and add attachment is similar, extract it
 const ChatWindow = () => {
     const {socket} = useContext(SocketContext);
     const {token} = useContext(E3Context);
@@ -77,22 +75,8 @@ const ChatWindow = () => {
     // a message is received
     useEffect(() =>{
         socket.on("message", (message) =>{
-            // state update issues going on here
-            // the selected chat changes when the recv
-            // is on another chat and recv a message
-            // and the wrong messages are loaded
-            // POSSIBLE FIX: use different containers for this bacause the state
-            // changes on one window when it changes on the other one
-            // it doesn't even do what is in the if
-
-            // TODO: fix this
-            // don't reload the messages when a new one is sent
-            // state update issues here too 
             if (message.room === current.id){
-
                 dispatch(addMessage(message));
-                // things change here?
-                // dispatch(getMessagesThunk({email, conversation: current.id}));
             }
 
 
@@ -105,18 +89,13 @@ const ChatWindow = () => {
         socket.on("user left", (res) =>{
             // reload the conversations
             dispatch(getConversationsThunk({email}));
-            // dispatch(getMessagesThunk({current}));
             console.log("Merge, bravo");
             console.log("User left", res.room, current);
-            // TODO: the selected conversation changes when 
-            // the user deletes it, like it happens for the 
-            // conversation onMessage
+
             if (res.room === current.id){
                 console.log("Message from the user");
                 dispatch(addMessage(res));
                 dispatch(getMessagesThunk({email, conversation: res.room}));
-                // things change here?
-                // dispatch(getMessagesThunk({email, conversation: current.id}));
             }
         });
     }, [socket, participants]);
@@ -162,8 +141,6 @@ const ChatWindow = () => {
                         dispatch(addMessage({id, text: enc, sender: email, date: dateFirebase, attachment: isAttached}));
                         socket.emit('message', {id, text: enc, sender: email, date: dateFirebase, room: current.id, attachment: isAttached});
                     });
-
-                // dispatch(getMessagesThunk({email, conversation: current}));
             })
             .catch(err => console.log(err));
     };
@@ -178,9 +155,6 @@ const ChatWindow = () => {
                 dispatch(addMessage({id, text: message, sender: email, date: dateFirebase, attachment: isAttached}));
                 socket.emit('message', {id, text: message, sender: email, date: dateFirebase, room: current.id, attachment: isAttached});
             });
-
-        // dispatch(getMessagesThunk({email, conversation: current}));
-            
     };
 
     

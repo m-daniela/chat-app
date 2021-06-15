@@ -171,9 +171,13 @@
           </group>
         </else-if>
         <else-if type="bill book graphic legal_case legislation motion_picture report song" match="any">
-          <group delimiter=". " suffix="">
+          <group delimiter=", " suffix="">
             <text variable="title" font-style="" text-case="title"/>
             <text variable="publisher"/>
+            <text variable="address"/>
+            <date variable="issued" prefix=" " suffix="">
+              <date-part name="year"/>
+            </date>
             <text variable="url" font-style=""/>
 
           </group>
