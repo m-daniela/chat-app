@@ -23,6 +23,7 @@ const MessageList = () => {
 
     // decrypt the messages that are in the current state
     useEffect(() => {
+        // setNewMessages([]);
         if(isEncrypted){
             getDecryptedMessages(participants, token, messages)
                 .then(msg => setNewMessages(msg))
